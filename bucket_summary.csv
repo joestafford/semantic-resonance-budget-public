@@ -1,0 +1,6 @@
+bucket,tokens_baseline,tokens_srb,wall_time_baseline_s,wall_time_srb_s,resonance_efficiency,num_prompts,tokens_pct_change,wall_time_pct_change
+creative,531.933,529.333,66.362,59.452,0.085,15,-0.489,-10.413
+code,624.133,588.467,86.733,71.443,0.085,15,-5.715,-17.629
+summaries,445.0,448.15,53.14,48.09,0.053,20,0.708,-9.504
+essays,627.45,601.35,87.719,103.831,0.051,20,-4.16,18.369
+procedures,665.733,701.4,95.106,92.458,0.004,15,5.358,-2.784
