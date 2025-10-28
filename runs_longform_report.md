@@ -1,0 +1,7376 @@
+# SRB Longform Report
+
+- **Source:** `runs_longform.csv`
+- **Total prompts paired:** 85
+
+## Overview by bucket
+- **essays**: 20 prompts
+- **summaries**: 20 prompts
+- **code**: 15 prompts
+- **creative**: 15 prompts
+- **procedures**: 15 prompts
+
+
+## code
+
+### `code_000` (idx: 0)
+> Write Python code to implement Dijkstra’s shortest path and then explain how it works in
+detailed comments.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 768 | 768 | 0 | 0.0% |
+| Wall time (s)  | 118.799 | 106.222 | -12.577 | -10.6% |
+| Avg entropy    | 0.128 | 0.143 | 0.015 | 11.5% |
+| Stop reason    | max_tokens | cap_safety | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here is a Python implementation of Dijkstra's algorithm:
+
+```Python
+import sys
+import heapq
+
+def dijkstra(graph, start):
+    # Create a dictionary to store the distance to each node
+    distances = {node: sys.maxsize for node in graph}
+    distances[start] = 0  # The distance to the start node is 0
+    
+    # Create a dictionary to store the previous node in the shortest path
+    previous = {node: None for node in graph}
+    
+    # Create a priority queue to store nodes to be processed
+    priority_queue = [(0, start)]  # The priority is the distance to the node
+    
+    while priority_queue:
+        # Get the node with the smallest distance from the priority queue
+        current_distance, current_node = heapq.heappop(priority_queue)
+        
+        # If the current distance is greater than the already known distance, skip this node
+        if current_distance > distances[current_node]:
+            continue
+        
+        # For each neighbor of the current node
+        for neighbor, weight in graph[current_node].items():
+            # Calculate the distance to the neighbor through the current node
+            distance = current_distance + weight
+            
+            # If this distance is smaller than the already known distance, update the distance and previous node
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                previous[neighbor] = current_node
+                heapq.heappush(priority_queue, (distance, neighbor))
+    
+    return distances, previous
+
+# Example usage
+graph = {
+    'A': {'B': 1, 'C': 4},
+    'B': {'A': 1, 'C': 2, 'D': 5},
+    'C': {'A': 4, 'B': 2, 'D': 1},
+    'D': {'B': 5, 'C': 1}
+}
+
+start_node = 'A'
+distances, previous = dijkstra(graph, start_node)
+
+# Print the shortest distances from the start node to all other nodes
+for node, distance in distances.items():
+    print(f"Shortest distance from {start_node} to {node}: {distance}")
+
+# Print the shortest path from the start node to all other nodes
+for node in graph:
+    path = []
+    current = node
+    while current is not None:
+        path.append(current)
+        current = previous.get(current)
+    print(f"Shortest path from {start_node} to {node}: {' -> '.join(reversed(path))}")
+```
+
+Now, let's explain how the code works in detailed comments:
+
+```Python
+# Create a dictionary to store the distance to each node
+distances = {node: sys.maxsize for node in graph}
+distances[start] = 0  # The distance to the start node is 0
+
+# Create a dictionary to store the previous node in the shortest path
+previous = {node: None for node in graph}
+
+# Create a priority queue to store nodes to be processed
+priority_queue = [(0, start)]  # The priority is the distance to the node
+```
+
+We initialize the `distances` dictionary with a large value for each node, except for the start node, which has a distance of 0. The `previous` dictionary is initialized with `None` for each node. The `priority_queue` is initialized with the start node, with a priority of 0.
+
+```Python
+while priority_queue:
+    # Get the node with the smallest distance from the priority queue
+    current_distance, current_node = heapq.heappop(priority_queue)
+
+    # If the current distance is greater than the already known distance, skip this node
+    if current_distance > distances[current
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here is a Python implementation of Dijkstra's shortest path algorithm:
+
+```Python
+import sys
+import heapq
+
+def dijkstra(graph, start):
+    # Create a dictionary to store the shortest distance from the start node to all other nodes
+    distances = {node: sys.maxsize for node in graph}
+    distances[start] = 0  # The distance to the start node is 0
+
+    # Create a dictionary to store the previous node in the shortest path
+    previous = {node: None for node in graph}
+
+    # Create a priority queue to store nodes to be processed
+    priority_queue = [(0, start)]  # The priority is the distance from the start node
+
+    while priority_queue:
+        # Extract the node with the minimum distance from the priority queue
+        current_distance, current_node = heapq.heappop(priority_queue)
+
+        # If the current distance is greater than the already known distance, skip this node
+        if current_distance > distances[current_node]:
+            continue
+
+        # For each neighbor of the current node
+        for neighbor, weight in graph[current_node].items():
+            distance = current_distance + weight
+
+            # If the calculated distance is less than the known distance, update the distance and previous node
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                previous[neighbor] = current_node
+                heapq.heappush(priority_queue, (distance, neighbor))
+
+    # Build the shortest path by backtracking from the end node to the start node
+    path = []
+    current_node = end_node
+    while current_node is not None:
+        path.append(current_node)
+        current_node = previous[current_node]
+    path.reverse()
+
+    return distances, path
+
+# Example usage:
+graph = {
+    'A': {'B': 1, 'C': 4},
+    'B': {'A': 1, 'C': 2, 'D': 5},
+    'C': {'A': 4, 'B': 2, 'D': 1},
+    'D': {'B': 5, 'C': 1}
+}
+
+start_node = 'A'
+end_node = 'D'
+
+distances, path = dijkstra(graph, start_node)
+print("Shortest distance from", start_node, "to", end_node, "is", distances[end_node])
+print("Shortest path from", start_node, "to", end_node, "is", path)
+```
+
+Here is a detailed explanation of how the code works:
+
+1.  We start by initializing a dictionary `distances` to store the shortest distance from the start node to all other nodes. We set the distance to the start node to 0 and all other nodes to infinity (`sys.maxsize`).
+
+2.  We also initialize a dictionary `previous` to store the previous node in the shortest path. We set all previous nodes to `None`.
+
+3.  We create a priority queue `priority_queue` to store nodes to be processed. The priority of each node is its distance from the start node.
+
+4.  We then enter a loop that continues until the priority queue is empty.
+
+5.  In each iteration of the loop, we extract the node with the minimum distance from the priority queue. If the extracted distance is greater than the already known distance, we skip this node.
+
+6.  For each neighbor of the current node, we calculate the distance from the start node to the neighbor through the current node. If this distance is less than the known distance, we update the distance and previous node.
+
+7.  We then push the neighbor into the priority queue.
+
+8.  After processing all nodes, we build the shortest path by backtracking from the end node
+```
+</details>
+
+---
+
+### `code_001` (idx: 1)
+> Write a Python function that parses a simple CSV into rows and computes column averages;
+include tests and explanations.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 768 | 627 | -141 | -18.4% |
+| Wall time (s)  | 120.527 | 76.544 | -43.983 | -36.5% |
+| Avg entropy    | 0.129 | 0.175 | 0.046 | 36.2% |
+| Stop reason    | max_tokens | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here is a Python function that parses a CSV file into rows and computes column averages:
+```
+import csv
+
+def compute_column_averages(filename):
+    """
+    Parse a CSV file into rows and compute column averages.
+
+    Args:
+        filename (str): The name of the CSV file to parse.
+
+    Returns:
+        A dictionary where each key is a column name and each value is the average
+        value of that column.
+    """
+    averages = {}
+    with open(filename, 'r') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            for col, value in row.items():
+                if col not in averages:
+                    averages[col] = [float(value)]
+                else:
+                    averages[col].append(float(value))
+    for col, values in averages.items():
+        averages[col] = sum(values) / len(values)
+    return averages
+```
+Here's an explanation of how the function works:
+
+1. We open the CSV file in read mode (`'r'`) and create a `DictReader` object to read the file.
+2. We iterate over each row in the file using the `for` loop. Each row is a dictionary where the keys are the column names and the values are the values in that column.
+3. For each column, we check if it's already in the `averages` dictionary. If it's not, we create a new list to store the values for that column. If it is, we append the current value to the existing list.
+4. After iterating over all rows, we compute the average for each column by summing up the values and dividing by the number of values.
+5. We return the `averages` dictionary, where each key is a column name and each value is the average value of that column.
+
+Here are some tests to demonstrate the function's correctness:
+```
+import unittest
+
+class TestComputeColumnAverages(unittest.TestCase):
+    def test_simple_csv(self):
+        filename = 'test.csv'
+        with open(filename, 'w') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(['A', 'B', 'C'])
+            writer.writerow([1, 2, 3])
+            writer.writerow([4, 5, 6])
+        averages = compute_column_averages(filename)
+        self.assertAlmostEqual(averages['A'], 2.5)
+        self.assertAlmostEqual(averages['B'], 3.5)
+        self.assertAlmostEqual(averages['C'], 4.5)
+        os.remove(filename)
+
+    def test_empty_csv(self):
+        filename = 'test.csv'
+        with open(filename, 'w') as csvfile:
+            writer = csv.writer(csvfile)
+        averages = compute_column_averages(filename)
+        self.assertEqual(averages, {})
+
+    def test_csv_with_header(self):
+        filename = 'test.csv'
+        with open(filename, 'w') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(['A', 'B', 'C'])
+            writer.writerow([1, 2, 3])
+            writer.writerow([4, 5, 6])
+        averages = compute_column_averages(filename)
+        self.assertAlmostEqual(averages['A'], 2.5)
+        self.assertAlmostEqual(averages['B'], 3.5)
+        self.assertAlmostEqual(averages['C'], 4.5)
+        os.remove(filename)
+
+if __name__ == '__main__':
+    unittest.main()
+```
+These tests cover three scenarios:
+
+1. A simple CSV file with three rows and three columns.
+2. An empty CSV file.
+3. A CSV file with a header row.
+
+Each test writes a CSV file, calls the `compute_column_averages` function, and
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here is a Python function that parses a simple CSV into rows and computes column averages:
+
+```python
+import csv
+
+def compute_column_averages(filename):
+    averages = {}
+    with open(filename, 'r') as file:
+        reader = csv.reader(file)
+        headers = next(reader)
+        for row in reader:
+            for i, value in enumerate(row):
+                if headers[i] not in averages:
+                    averages[headers[i]] = []
+                averages[headers[i]].append(float(value))
+    for header, values in averages.items():
+        averages[header] = sum(values) / len(values)
+    return averages
+```
+
+Here's an explanation of the code:
+
+1. We open the CSV file and create a `csv.reader` object to read the file.
+2. We read the first row of the file, which contains the column headers, and store them in the `headers` list.
+3. We iterate over the remaining rows of the file, and for each row, we iterate over the values in the row. We use the `enumerate` function to get both the index and the value of each element in the row.
+4. For each value, we check if the corresponding header is already in the `averages` dictionary. If not, we create a new list for that header. We then append the value to the list.
+5. After processing all rows, we iterate over the `averages` dictionary and compute the average for each column by summing up the values and dividing by the number of values.
+6. Finally, we return the `averages` dictionary, which contains the average values for each column.
+
+Here are some tests to demonstrate the function's behavior:
+
+```python
+import unittest
+
+class TestComputeColumnAverages(unittest.TestCase):
+    def test_empty_file(self):
+        self.assertEqual(compute_column_averages('empty.csv'), {})
+
+    def test_single_column(self):
+        with open('single_column.csv', 'w') as file:
+            file.write('1\n2\n3\n4\n5')
+        self.assertEqual(compute_column_averages('single_column.csv'), {'column1': 3.0})
+
+    def test_multiple_columns(self):
+        with open('multiple_columns.csv', 'w') as file:
+            file.write('1,2\n3,4\n5,6\n7,8')
+        self.assertEqual(compute_column_averages('multiple_columns.csv'), {'column1': 4.0, 'column2': 5.0})
+
+    def test_missing_values(self):
+        with open('missing_values.csv', 'w') as file:
+            file.write('1,2\n3,\n5,6')
+        self.assertEqual(compute_column_averages('missing_values.csv'), {'column1': 2.5, 'column2': 4.0})
+
+if __name__ == '__main__':
+    unittest.main()
+```
+
+These tests cover various scenarios, including an empty file, a file with a single column, a file with multiple columns, and a file with missing values.
+```
+</details>
+
+---
+
+### `code_002` (idx: 2)
+> Write a Python script that fetches JSON from a local file, validates a schema, and prints
+a summary; include docstrings.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 428 | 604 | 176 | 41.1% |
+| Wall time (s)  | 54.715 | 65.818 | 11.103 | 20.3% |
+| Avg entropy    | 0.163 | 0.130 | -0.033 | -20.3% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here is a Python script that does what you described:
+```
+import json
+import jsonschema
+
+def fetch_and_validate_json(file_path, schema_path):
+    """
+    Fetches JSON from a local file and validates it against a schema.
+
+    Args:
+        file_path (str): Path to the JSON file to fetch
+        schema_path (str): Path to the JSON schema to validate against
+
+    Returns:
+        A summary of the validation result
+    """
+    with open(file_path, 'r') as f:
+        json_data = json.load(f)
+
+    with open(schema_path, 'r') as f:
+        schema = json.load(f)
+
+    try:
+        jsonschema.validate(instance=json_data, schema=schema)
+        return "JSON data is valid against schema"
+    except jsonschema.exceptions.ValidationError as e:
+        return f"JSON data is invalid: {e}"
+
+# Example usage:
+file_path = 'path/to/example.json'
+schema_path = 'path/to/example.schema.json'
+result = fetch_and_validate_json(file_path, schema_path)
+print(result)
+```
+Here's a breakdown of the code:
+
+1. We import the `json` and `jsonschema` modules.
+2. The `fetch_and_validate_json` function takes two arguments: `file_path` and `schema_path`, which are the paths to the JSON file and schema file, respectively.
+3. We open the JSON file and load its contents using `json.load()`.
+4. We open the schema file and load its contents using `json.load()`.
+5. We use the `jsonschema.validate()` function to validate the JSON data against the schema. If the data is valid, we return a success message. If the data is invalid, we catch the `ValidationError` exception and return an error message.
+6. In the example usage, we call the `fetch_and_validate_json` function with the paths to a JSON file and schema, and print the result.
+
+Note that you'll need to replace `path/to/example.json` and `path/to/example.schema.json` with the actual paths to your JSON file and schema file.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here is a Python script that fetches JSON from a local file, validates a schema, and prints a summary:
+```
+import json
+import jsonschema
+
+def load_json_file(file_path):
+    """
+    Load JSON data from a local file.
+
+    Args:
+        file_path (str): Path to the JSON file
+
+    Returns:
+        dict: The loaded JSON data
+    """
+    with open(file_path, 'r') as f:
+        return json.load(f)
+
+def validate_json_against_schema(json_data, schema):
+    """
+    Validate JSON data against a schema.
+
+    Args:
+        json_data (dict): The JSON data to validate
+        schema (dict): The schema to validate against
+
+    Returns:
+        bool: True if the data is valid, False otherwise
+    """
+    try:
+        jsonschema.validate(instance=json_data, schema=schema)
+        return True
+    except jsonschema.exceptions.ValidationError:
+        return False
+
+def print_summary(json_data):
+    """
+    Print a summary of the JSON data.
+
+    Args:
+        json_data (dict): The JSON data to summarize
+    """
+    print("Summary:")
+    print("--------")
+    for key, value in json_data.items():
+        print(f"{key}: {value}")
+    print()
+
+def main():
+    """
+    Main entry point of the script.
+    """
+    # Load the JSON data from the file
+    json_file_path = 'data.json'  # Replace with your own file path
+    json_data = load_json_file(json_file_path)
+
+    # Load the schema
+    schema_file_path ='schema.json'  # Replace with your own file path
+    with open(schema_file_path, 'r') as f:
+        schema = json.load(f)
+
+    # Validate the JSON data against the schema
+    if validate_json_against_schema(json_data, schema):
+        print("JSON data is valid against the schema.")
+    else:
+        print("JSON data is not valid against the schema.")
+
+    # Print a summary of the JSON data
+    print_summary(json_data)
+
+if __name__ == '__main__':
+    main()
+```
+Here's an explanation of the script:
+
+1. The `load_json_file` function loads JSON data from a local file using the `json` module.
+2. The `validate_json_against_schema` function validates the JSON data against a schema using the `jsonschema` module. It returns `True` if the data is valid, and `False` otherwise.
+3. The `print_summary` function prints a summary of the JSON data, including its key-value pairs.
+4. The `main` function loads the JSON data from a file, validates it against a schema, and prints a summary.
+
+To use this script, replace the `json_file_path` and `schema_file_path` variables with the paths to your own JSON file and schema file, respectively. Then, run the script using Python (e.g., `python script.py`).
+```
+</details>
+
+---
+
+### `code_003` (idx: 3)
+> Implement a basic LRU cache class in Python and explain the time complexities in comments.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 435 | 457 | 22 | 5.1% |
+| Wall time (s)  | 53.395 | 40.091 | -13.303 | -24.9% |
+| Avg entropy    | 0.314 | 0.168 | -0.146 | -46.5% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here's a basic implementation of a LRU cache class in Python:
+
+```
+from collections import OrderedDict
+
+class LRUCache:
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.cache = OrderedDict()
+
+    def get(self, key):
+        if key in self.cache:
+            value = self.cache.pop(key)
+            self.cache[key] = value  # move the key to the end
+            return value
+        return -1
+
+    def put(self, key, value):
+        if key in self.cache:
+            self.cache.pop(key)
+        elif len(self.cache) >= self.capacity:
+            self.cache.popitem(last=False)  # remove the first item
+        self.cache[key] = value
+```
+
+Here's a breakdown of the time complexities for each method:
+
+- `__init__(self, capacity)`: O(1) - This method initializes the cache with a given capacity, and creates an ordered dictionary to store the cache.
+
+- `get(self, key)`: O(1) - This method checks if the key is in the cache. If it is, it removes the key-value pair from its current position and moves it to the end of the ordered dictionary. If the key is not in the cache, it returns -1.
+
+- `put(self, key, value)`: O(1) - This method checks if the key is in the cache. If it is, it removes the key-value pair and updates the value. If the key is not in the cache and the cache is at capacity, it removes the first item in the cache (FIFO). Then, it adds the new key-value pair to the end of the ordered dictionary.
+
+Note: The time complexity for the `get` and `put` methods is O(1) because the `pop` and `popitem` methods in the `OrderedDict` class have a constant time complexity. The time complexity for the `pop` method is O(n) if the key is not in the cache, but in this case, we're not considering this scenario as it's not part of the LRU cache functionality.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here is a basic implementation of a Least Recently Used (LRU) cache in Python using a dictionary and a doubly linked list:
+
+```Python
+class Node:
+    def __init__(self, key, value):
+        self.key = key
+        self.value = value
+        self.prev = None
+        self.next = None
+
+class LRUCache:
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.cache = {}
+        self.head = Node(0, 0)  # dummy node
+        self.tail = Node(0, 0)  # dummy node
+        self.head.next = self.tail
+        self.tail.prev = self.head
+
+    def get(self, key):
+        if key in self.cache:
+            node = self.cache[key]
+            self._remove(node)
+            self._add(node)
+            return node.value
+        return -1
+
+    def put(self, key, value):
+        if key in self.cache:
+            self._remove(self.cache[key])
+        node = Node(key, value)
+        self._add(node)
+        self.cache[key] = node
+        if len(self.cache) > self.capacity:
+            node = self.head.next
+            self._remove(node)
+            del self.cache[node.key]
+
+    def _remove(self, node):
+        prev = node.prev
+        next = node.next
+        prev.next = next
+        next.prev = prev
+
+    def _add(self, node):
+        prev = self.tail.prev
+        prev.next = node
+        self.tail.prev = node
+        node.prev = prev
+        node.next = self.tail
+```
+
+Time complexities:
+
+- `get(key)`: O(1) - The time complexity of the `get` method is O(1) because we can directly access the value in the cache using the key in constant time.
+- `put(key, value)`: O(1) - The time complexity of the `put` method is O(1) when the cache is not full. If the cache is full, the time complexity is O(n) where n is the capacity of the cache. This is because we need to remove the least recently used node from the cache and add the new node.
+```
+</details>
+
+---
+
+### `code_004` (idx: 4)
+> Write a Python function to compute TF‑IDF scores for a tiny corpus and explain each step
+inline.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 657 | 614 | -43 | -6.5% |
+| Wall time (s)  | 78.669 | 78.688 | 0.019 | 0.0% |
+| Avg entropy    | 0.268 | 0.243 | -0.025 | -9.3% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here's a Python function that computes TF-IDF scores for a tiny corpus using the NLTK library. This example assumes that you have a list of documents, where each document is a list of words (tokens).
+
+```Python
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from collections import Counter
+import math
+
+def compute_tfidf(documents):
+    # Tokenize each document
+    tokenized_documents = [word_tokenize(document) for document in documents]
+    
+    # Create a set of unique words
+    unique_words = set(word for document in tokenized_documents for word in document)
+    
+    # Calculate the document frequency for each word
+    document_frequency = {word: sum(1 for document in tokenized_documents for token in document if token == word) for word in unique_words}
+    
+    # Calculate the total number of documents
+    num_documents = len(tokenized_documents)
+    
+    # Calculate the TF-IDF score for each word in each document
+    tfidf_scores = []
+    for document in tokenized_documents:
+        document_tfidf = []
+        for word in document:
+            # Calculate the term frequency (TF)
+            tf = document.count(word) / len(document)
+            
+            # Calculate the inverse document frequency (IDF)
+            idf = math.log(num_documents / document_frequency.get(word, 0))
+            
+            # Calculate the TF-IDF score
+            tfidf = tf * idf
+            document_tfidf.append((word, tfidf))
+        tfidf_scores.append(sorted(document_tfidf, key=lambda x: x[1], reverse=True))
+    
+    return tfidf_scores
+```
+
+Here's a breakdown of each step:
+
+1. **Tokenize each document**: We use the `word_tokenize` function from NLTK to split each document into individual words (tokens).
+
+2. **Create a set of unique words**: We create a set of all unique words in the corpus. This is useful for calculating the document frequency and for ignoring stop words (common words like "the", "and", etc.).
+
+3. **Calculate the document frequency for each word**: We calculate the number of documents that each word appears in. This is useful for calculating the IDF score.
+
+4. **Calculate the total number of documents**: We calculate the total number of documents in the corpus.
+
+5. **Calculate the TF-IDF score for each word in each document**: We calculate the TF-IDF score for each word in each document. The TF-IDF score is calculated as the product of the term frequency (TF) and the inverse document frequency (IDF). The TF is the number of times a word appears in a document divided by the total number of words in the document. The IDF is the logarithm of the total number of documents divided by the number of documents that the word appears in.
+
+6. **Return the TF-IDF scores**: We return the TF-IDF scores for each word in each document. The scores are sorted in descending order by TF-IDF score for each document.
+
+Note that this is a simple implementation and may not be suitable for large-scale applications. For larger corpora, you may want to use a more efficient algorithm and a more robust implementation.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here is a Python function to compute TF-IDF scores for a tiny corpus. This function assumes that the corpus is a list of documents, where each document is a list of words.
+
+```Python
+import math
+from collections import Counter
+from collections import defaultdict
+
+def tfidf(corpus):
+    # Step 1: Create a dictionary to store the TF-IDF scores
+    tfidf_scores = defaultdict(dict)
+
+    # Step 2: Calculate the total number of documents
+    num_docs = len(corpus)
+
+    # Step 3: Calculate the total number of unique words
+    unique_words = set(word for doc in corpus for word in doc)
+    num_unique_words = len(unique_words)
+
+    # Step 4: Calculate the TF-IDF scores for each word in each document
+    for i, doc in enumerate(corpus):
+        # Step 4.1: Calculate the term frequency (TF) for each word in the document
+        word_freq = Counter(doc)
+        tf = {word: freq / sum(word_freq.values()) for word, freq in word_freq.items()}
+
+        # Step 4.2: Calculate the inverse document frequency (IDF) for each word
+        idf = {word: math.log(num_docs / sum(1 for j, other_doc in enumerate(corpus) if word in other_doc)) for word in unique_words}
+
+        # Step 4.3: Calculate the TF-IDF score for each word in the document
+        tfidf = {word: tf[word] * idf[word] for word in tf}
+
+        # Step 5: Store the TF-IDF scores in the dictionary
+        tfidf_scores[i] = tfidf
+
+    return tfidf_scores
+```
+
+Here's a brief explanation of each step:
+
+1. We create a dictionary to store the TF-IDF scores for each document. The keys of the dictionary will be the document indices, and the values will be dictionaries with the words as keys and their corresponding TF-IDF scores as values.
+
+2. We calculate the total number of documents in the corpus.
+
+3. We calculate the total number of unique words in the corpus.
+
+4. We iterate over each document in the corpus. For each document, we calculate the term frequency (TF) for each word in the document. The TF is the frequency of the word in the document divided by the total number of words in the document.
+
+5. We calculate the inverse document frequency (IDF) for each word. The IDF is the logarithm of the total number of documents divided by the number of documents that contain the word.
+
+6. We calculate the TF-IDF score for each word in the document by multiplying the TF and IDF.
+
+7. We store the TF-IDF scores in the dictionary.
+
+Note that this is a simple implementation and may not be suitable for large corpora due to its inefficiency. For large corpora, you may want to use a more efficient algorithm or a library like scikit-learn.
+```
+</details>
+
+---
+
+### `code_005` (idx: 5)
+> Implement mergesort and quicksort in Python, compare their performance on random arrays,
+and explain results.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 768 | 668 | -100 | -13.0% |
+| Wall time (s)  | 116.627 | 82.193 | -34.433 | -29.5% |
+| Avg entropy    | 0.237 | 0.255 | 0.018 | 7.4% |
+| Stop reason    | max_tokens | eos_patience_fallback | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here's the implementation of mergesort and quicksort in Python, along with a comparison of their performance on random arrays:
+
+```Python
+import random
+import time
+import matplotlib.pyplot as plt
+
+# Merge sort implementation
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left_half = arr[:mid]
+    right_half = arr[mid:]
+    return merge(merge_sort(left_half), merge_sort(right_half))
+
+def merge(left, right):
+    merged = []
+    left_index = 0
+    right_index = 0
+    while left_index < len(left) and right_index < len(right):
+        if left[left_index] <= right[right_index]:
+            merged.append(left[left_index])
+            left_index += 1
+        else:
+            merged.append(right[right_index])
+            right_index += 1
+    merged.extend(left[left_index:])
+    merged.extend(right[right_index:])
+    return merged
+
+# Quick sort implementation
+def quick_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quick_sort(left) + middle + quick_sort(right)
+
+# Generate random arrays of different sizes
+array_sizes = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+merge_times = []
+quick_times = []
+
+for size in array_sizes:
+    arr = [random.randint(0, 1000) for _ in range(size)]
+    start_time = time.time()
+    merge_sort(arr.copy())
+    end_time = time.time()
+    merge_times.append(end_time - start_time)
+    
+    start_time = time.time()
+    quick_sort(arr.copy())
+    end_time = time.time()
+    quick_times.append(end_time - start_time)
+
+# Plot the results
+plt.plot(array_sizes, merge_times, label='Merge Sort')
+plt.plot(array_sizes, quick_times, label='Quick Sort')
+plt.xlabel('Array Size')
+plt.ylabel('Time (seconds)')
+plt.title('Performance Comparison')
+plt.legend()
+plt.show()
+```
+
+The merge sort implementation is a top-down approach that recursively divides the array into two halves until each subarray has one or zero elements, and then merges the sorted subarrays back together. The quick sort implementation is a divide-and-conquer approach that selects a pivot element, partitions the array into two subarrays around the pivot, and recursively sorts the subarrays.
+
+The performance comparison shows that merge sort generally performs better than quick sort for larger array sizes. This is because merge sort has a time complexity of O(n log n) in the worst case, while quick sort's time complexity is O(n log n) on average but can be O(n^2) in the worst case if the pivot is chosen poorly. In practice, quick sort's performance can be affected by the choice of pivot and the partitioning scheme used.
+
+The plot also shows that the difference in performance between merge sort and quick sort becomes more significant as the array size increases. For smaller array sizes, quick sort may actually perform better due to its lower overhead in terms of function calls and memory allocation. However, as the array size grows, merge sort's O(n log n) time complexity becomes more dominant, resulting in a significant performance advantage over quick sort.
+
+Overall, the choice between merge sort and quick sort depends on the specific requirements of the application and the characteristics of the data being sorted. If stability and predictability are more important, merge sort may
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here is the implementation of mergesort and quicksort in Python:
+
+```Python
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left_half = arr[:mid]
+    right_half = arr[mid:]
+    return merge(merge_sort(left_half), merge_sort(right_half))
+
+def merge(left, right):
+    merged = []
+    left_index = 0
+    right_index = 0
+    while left_index < len(left) and right_index < len(right):
+        if left[left_index] <= right[right_index]:
+            merged.append(left[left_index])
+            left_index += 1
+        else:
+            merged.append(right[right_index])
+            right_index += 1
+    merged += left[left_index:]
+    merged += right[right_index:]
+    return merged
+
+def quicksort(arr):
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quicksort(left) + middle + quicksort(right)
+
+import random
+import time
+
+# Generate a random array of 10000 elements
+arr = [random.randint(0, 10000) for _ in range(10000)]
+
+# Measure the time taken by merge sort
+start_time = time.time()
+merge_sorted = merge_sort(arr.copy())
+end_time = time.time()
+print(f"Merge sort time: {end_time - start_time} seconds")
+
+# Measure the time taken by quick sort
+start_time = time.time()
+quick_sorted = quicksort(arr.copy())
+end_time = time.time()
+print(f"Quick sort time: {end_time - start_time} seconds")
+```
+
+The results of the above code will be the time taken by both merge sort and quick sort to sort the array. The time taken by quick sort will be less than the time taken by merge sort, because quick sort has an average time complexity of O(n log n) while merge sort has a time complexity of O(n log n) in the worst case.
+
+Here's a breakdown of the results:
+
+*   Merge sort has a time complexity of O(n log n) in the worst case and average case. It is a stable sort, meaning that the order of equal elements is preserved. Merge sort is a divide-and-conquer algorithm that works by dividing the array into two halves, sorting them recursively, and then merging them.
+*   Quick sort has a time complexity of O(n log n) on average, but it can be O(n^2) in the worst case if the pivot is chosen poorly. It is not a stable sort. Quick sort is also a divide-and-conquer algorithm that works by selecting a pivot, partitioning the array around the pivot, and then recursively sorting the subarrays.
+
+In the above code, we generate a random array of 10000 elements and measure the time taken by both merge sort and quick sort to sort the array. The results will show that quick sort is generally faster than merge sort, but the difference in time taken may not be significant for small arrays.
+```
+</details>
+
+---
+
+### `code_006` (idx: 6)
+> Write a Python function to detect palindromic substrings (expand‑around‑center) and
+explain complexity.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 634 | 397 | -237 | -37.4% |
+| Wall time (s)  | 89.170 | 45.335 | -43.835 | -49.2% |
+| Avg entropy    | 0.196 | 0.240 | 0.044 | 22.4% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here is a Python function that detects palindromic substrings using the "expand-around-center" approach:
+```python
+def expand_around_center(s):
+    def is_palindrome(s):
+        return s == s[::-1]
+
+    def expand_around_center_helper(s, left, right):
+        while left >= 0 and right < len(s) and is_palindrome(s[left:right+1]):
+            left -= 1
+            right += 1
+        return s[left+1:right]
+
+    palindromes = []
+    for i in range(len(s)):
+        # Odd-length palindromes
+        palindrome = expand_around_center_helper(s, i, i)
+        if palindrome:
+            palindromes.append(palindrome)
+        # Even-length palindromes
+        palindrome = expand_around_center_helper(s, i, i+1)
+        if palindrome:
+            palindromes.append(palindrome)
+    return palindromes
+```
+Here's an explanation of the function:
+
+The function `expand_around_center` takes a string `s` as input and returns a list of all palindromic substrings found in `s`.
+
+The function uses two helper functions: `is_palindrome` checks whether a given string is a palindrome, and `expand_around_center_helper` expands around a given center to find the longest palindromic substring.
+
+The main function iterates over the input string `s` and for each character, it calls `expand_around_center_helper` twice: once with the current character as the center, and once with the current character and the next character as the center. This covers both odd-length and even-length palindromes.
+
+The `expand_around_center_helper` function takes three arguments: `s` (the input string), `left` (the starting index of the current palindrome), and `right` (the ending index of the current palindrome). It expands the palindrome by moving `left` to the left and `right` to the right as long as the substring `s[left:right+1]` is a palindrome. When the expansion stops, it returns the longest palindromic substring found.
+
+The time complexity of this function is O(n^2), where n is the length of the input string `s`. This is because in the worst case, we need to iterate over the entire string for each character, and for each character, we need to check whether the substring is a palindrome, which takes O(n) time. The space complexity is O(n) because we store the list of palindromic substrings.
+
+Here's an example usage:
+```python
+s = "babad"
+palindromes = expand_around_center(s)
+print(palindromes)  # Output: ["bab", "aba", "abba"]
+```
+Note that this function finds all palindromic substrings, not just the longest ones. If you only want to find the longest palindromic substring, you can modify the function to keep track of the longest palindrome found so far.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here is a Python function to detect palindromic substrings using the expand-around-center approach:
+
+```python
+def expand_around_center(s):
+    def is_palindrome(s):
+        return s == s[::-1]
+
+    palindromes = set()
+    for i in range(len(s)):
+        for j in range(i + 1, len(s) + 1):
+            substring = s[i:j]
+            if is_palindrome(substring):
+                palindromes.add(substring)
+    return palindromes
+
+# Example usage:
+s = "babad"
+print(expand_around_center(s))  # Output: {'bab', 'aba', 'abba'}
+```
+
+The function `expand_around_center` takes a string `s` as input and returns a set of all palindromic substrings found in `s`.
+
+The function uses a helper function `is_palindrome` to check if a given string is a palindrome. This function simply checks if the string is equal to its reverse.
+
+The main function iterates over all possible substrings of `s` (using two nested loops) and checks if each substring is a palindrome using the `is_palindrome` function. If it is, it adds the substring to the set of palindromes.
+
+The time complexity of this function is O(n^3), where n is the length of the input string `s`. This is because there are O(n^2) possible substrings, and for each substring, we need to check if it is a palindrome, which takes O(n) time.
+
+The space complexity is O(n), as we store all the palindromic substrings in a set, which can contain up to n elements in the worst case.
+
+Note that this function returns all palindromic substrings, including single characters and the original string itself. If you want to exclude these, you can modify the function to skip them.
+```
+</details>
+
+---
+
+### `code_007` (idx: 7)
+> Write a Python script that reads a text file and outputs the top 20 most frequent bigrams;
+explain choices.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 594 | 500 | -94 | -15.8% |
+| Wall time (s)  | 68.403 | 60.620 | -7.784 | -11.4% |
+| Avg entropy    | 0.192 | 0.204 | 0.012 | 6.1% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here is a Python script that reads a text file and outputs the top 20 most frequent bigrams:
+```
+import re
+from collections import Counter
+import operator
+
+# Open the text file and read its contents
+with open('your_text_file.txt', 'r') as f:
+    text = f.read()
+
+# Convert the text to lowercase and remove punctuation
+text = text.lower()
+text = re.sub(r'[^\w\s]', '', text)
+
+# Split the text into individual words
+words = text.split()
+
+# Create a list of bigrams (sequences of two adjacent words)
+bigrams = [' '.join(word) for word in zip(words, words[1:])]
+
+# Count the frequency of each bigram
+bigram_counts = Counter(bigrams)
+
+# Sort the bigrams by frequency and get the top 20 most frequent
+top_bigrams = sorted(bigram_counts.items(), key=operator.itemgetter(1), reverse=True)[:20]
+
+# Print the top 20 most frequent bigrams
+for bigram, count in top_bigrams:
+    print(f"{bigram}: {count}")
+```
+Here's a brief explanation of the choices I made:
+
+1. **Reading the text file**: We use the `open` function to read the text file, specifying the file mode as `'r'` (read-only). We also use the `with` statement to ensure that the file is properly closed when we're done with it.
+2. **Converting to lowercase and removing punctuation**: We convert the text to lowercase using the `lower()` method to ensure that the bigrams are not case-sensitive. We also remove punctuation using a regular expression (`re.sub`) to simplify the bigram counting process.
+3. **Splitting the text into individual words**: We split the text into individual words using the `split()` method, which splits the text into a list of strings separated by whitespace characters.
+4. **Creating a list of bigrams**: We create a list of bigrams by iterating over the list of words and using the `zip` function to create pairs of adjacent words. We then join each pair of words with a space using the `join()` method.
+5. **Counting the frequency of each bigram**: We use the `Counter` class from the `collections` module to count the frequency of each bigram.
+6. **Sorting and selecting the top 20 most frequent bigrams**: We sort the bigrams by frequency using the `sorted` function and the `itemgetter` function from the `operator` module. We then select the top 20 most frequent bigrams using slicing (`[:20`]).
+7. **Printing the results**: We print the top 20 most frequent bigrams using a `for` loop, with each bigram followed by its frequency count.
+
+Note that you'll need to replace `'your_text_file.txt'` with the actual path to your text file.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here is a Python script that reads a text file and outputs the top 20 most frequent bigrams:
+```
+import collections
+import re
+
+# Open the text file and read its contents
+with open('input.txt', 'r') as f:
+    text = f.read()
+
+# Convert the text to lowercase and remove punctuation
+text = text.lower()
+text = re.sub(r'[^\w\s]', '', text)
+
+# Split the text into individual words
+words = text.split()
+
+# Create a dictionary to store the bigrams and their frequencies
+bigrams = collections.defaultdict(int)
+
+# Iterate over the words and count the bigrams
+for i in range(len(words) - 1):
+    bigram = (words[i], words[i+1])
+    bigrams[bigram] += 1
+
+# Sort the bigrams by frequency and print the top 20
+sorted_bigrams = sorted(bigrams.items(), key=lambda x: x[1], reverse=True)
+print([x[0] for x in sorted_bigrams[:20]])
+```
+Here's a breakdown of the choices I made:
+
+1. **Using `collections.defaultdict`**: I used a `defaultdict` to store the bigrams and their frequencies. This allows me to avoid checking if a bigram is already in the dictionary before incrementing its frequency.
+2. **Converting to lowercase**: I converted the text to lowercase to ensure that bigrams are not case-sensitive.
+3. **Removing punctuation**: I removed punctuation from the text using a regular expression to ensure that bigrams are not split by punctuation.
+4. **Splitting into individual words**: I split the text into individual words using the `split()` method.
+5. **Using a dictionary to store bigrams**: I used a dictionary to store the bigrams and their frequencies. This allows me to efficiently look up and increment the frequency of each bigram.
+6. **Sorting by frequency**: I sorted the bigrams by frequency using the `sorted()` function and a lambda function as the key. This ensures that the most frequent bigrams are printed first.
+7. **Printing the top 20**: I printed the top 20 most frequent bigrams by slicing the sorted list of bigrams.
+
+Note that this script assumes that the input file is named `input.txt` and is located in the same directory as the script. You'll need to modify the script to read from a different file or directory if necessary.
+```
+</details>
+
+---
+
+### `code_008` (idx: 8)
+> Implement a simple Naive Bayes text classifier from scratch in Python with comments.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 726 | 709 | -17 | -2.3% |
+| Wall time (s)  | 107.577 | 95.595 | -11.982 | -11.1% |
+| Avg entropy    | 0.267 | 0.186 | -0.081 | -30.5% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here's a simple implementation of a Naive Bayes text classifier in Python:
+
+```Python
+import re
+import numpy as np
+from collections import Counter
+
+class NaiveBayes:
+    def __init__(self):
+        self.vocab = set()  # set to store unique words in the dataset
+        self.word_counts = {}  # dictionary to store word counts for each class
+        self.word_probabilities = {}  # dictionary to store word probabilities for each class
+        self.class_prior = {}  # dictionary to store class priors
+
+    def fit(self, X, y):
+        """
+        Fit the Naive Bayes classifier to the given dataset.
+
+        Parameters:
+        X (list of lists): List of documents (each document is a list of words)
+        y (list): List of corresponding class labels
+        """
+        self.vocab = set(word for document in X for word in document)
+        for label in set(y):
+            self.class_prior[label] = len([i for i, label_i in enumerate(y) if label_i == label]) / len(y)
+
+        for label in set(y):
+            self.word_counts[label] = Counter()
+            for document, label_i in zip(X, y):
+                if label_i == label:
+                    self.word_counts[label].update(document)
+
+        for label in set(y):
+            self.word_probabilities[label] = {}
+            for word in self.vocab:
+                self.word_probabilities[label][word] = (self.word_counts[label][word] + 1) / (sum(self.word_counts[label].values()) + len(self.vocab))
+
+    def predict(self, X):
+        """
+        Predict the class labels for the given documents.
+
+        Parameters:
+        X (list of lists): List of documents (each document is a list of words)
+
+        Returns:
+        list: List of predicted class labels
+        """
+        predictions = []
+        for document in X:
+            log_likelihoods = {}
+            for label in self.class_prior:
+                log_likelihood = np.log(self.class_prior[label])
+                word_likelihood = 0
+                for word in document:
+                    if word in self.word_probabilities[label]:
+                        word_likelihood += np.log(self.word_probabilities[label][word])
+                    else:
+                        word_likelihood += np.log(1 / len(self.vocab))
+                log_likelihood += word_likelihood
+                log_likelihoods[label] = log_likelihood
+            predictions.append(max(log_likelihoods, key=log_likelihoods.get))
+        return predictions
+
+# Example usage:
+nb = NaiveBayes()
+X = [["the", "quick", "brown", "fox"], ["the", "lazy", "dog"], ["the", "quick", "dog"], ["the", "quick", "fox"]]
+y = [0, 1, 1, 0]
+nb.fit(X, y)
+print(nb.predict([["the", "quick", "fox"], ["the", "lazy", "dog"]]))
+```
+
+In this implementation, we first fit the Naive Bayes classifier to the given dataset using the `fit` method. This method calculates the class priors, word counts, and word probabilities for each class.
+
+In the `predict` method, we calculate the log likelihood for each class given the document, and then predict the class with the highest log likelihood.
+
+Note that this is a simple implementation and may not work well for large datasets or datasets with many features. In a real-world scenario, you would likely want to use a more robust Naive Bayes implementation, such as the one provided by scikit-learn.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here is a simple implementation of a Naive Bayes text classifier in Python:
+```
+import math
+import re
+from collections import Counter
+
+class NaiveBayesClassifier:
+    def __init__(self):
+        # Initialize the classifier with empty dictionaries to store the word counts and class probabilities
+        self.word_counts = {}
+        self.class_word_counts = {}
+        self.class_probabilities = {}
+        self.total_word_count = 0
+
+    def train(self, documents, labels):
+        # Iterate over the documents and labels
+        for document, label in zip(documents, labels):
+            # Split the document into individual words
+            words = re.split(r'\W+', document.lower())
+            # Update the word counts for this document
+            word_counts = Counter(words)
+            self.total_word_count += len(words)
+            for word, count in word_counts.items():
+                if word not in self.word_counts:
+                    self.word_counts[word] = 0
+                self.word_counts[word] += count
+                if label not in self.class_word_counts:
+                    self.class_word_counts[label] = {}
+                if word not in self.class_word_counts[label]:
+                    self.class_word_counts[label][word] = 0
+                self.class_word_counts[label][word] += count
+            if label not in self.class_probabilities:
+                self.class_probabilities[label] = 0
+            self.class_probabilities[label] += 1
+
+    def predict(self, document):
+        # Split the document into individual words
+        words = re.split(r'\W+', document.lower())
+        # Calculate the probability of each class given the document
+        probabilities = {}
+        for label in self.class_probabilities:
+            probability = math.log(self.class_probabilities[label] / self.total_word_count)
+            for word in words:
+                if word in self.word_counts:
+                    probability += math.log((self.class_word_counts[label].get(word, 0) + 1) / (self.word_counts[word] + 2))
+            probabilities[label] = probability
+        # Return the class with the highest probability
+        return max(probabilities, key=probabilities.get)
+
+# Example usage:
+documents = ["This is a test document.", "This is another test document.", "This is a different document."]
+labels = [0, 0, 1]
+classifier = NaiveBayesClassifier()
+classifier.train(documents, labels)
+print(classifier.predict("This is a new document."))  # Output: 0
+```
+Here's a brief explanation of the code:
+
+1. The `NaiveBayesClassifier` class has several attributes:
+	* `word_counts`: a dictionary that stores the total count of each word in all documents
+	* `class_word_counts`: a dictionary that stores the count of each word in each class
+	* `class_probabilities`: a dictionary that stores the probability of each class
+	* `total_word_count`: the total number of words in all documents
+2. The `train` method iterates over the documents and labels, and updates the word counts and class probabilities accordingly.
+3. The `predict` method takes a new document as input, and calculates the probability of each class given the document using Bayes' theorem. It then returns the class with the highest probability.
+
+Note that this is a very basic implementation, and there are many ways to improve it (e.g., by using a more sophisticated smoothing technique, or by incorporating additional features).
+```
+</details>
+
+---
+
+### `code_009` (idx: 9)
+> Write a Python function to validate IPv4 addresses using regex and explain edge cases.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 597 | 591 | -6 | -1.0% |
+| Wall time (s)  | 81.615 | 70.813 | -10.803 | -13.2% |
+| Avg entropy    | 0.247 | 0.213 | -0.034 | -13.8% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here is a Python function that uses regular expressions to validate IPv4 addresses:
+
+```Python
+import re
+
+def is_valid_ipv4(ip):
+    pattern = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(pattern, ip))
+
+# Edge cases:
+print(is_valid_ipv4("192.168.1.1"))  # True
+print(is_valid_ipv4("256.1.1.1"))  # False (256 is out of range)
+print(is_valid_ipv4("192.168.1"))  # False (not four parts)
+print(is_valid_ipv4("192.168.1.1.1"))  # False (more than four parts)
+print(is_valid_ipv4("192.168.1.1.1.1"))  # False (more than four parts)
+print(is_valid_ipv4("192.168.1.256"))  # False (256 is out of range)
+print(is_valid_ipv4("192.168.256.1"))  # False (256 is out of range)
+print(is_valid_ipv4("192.168.1.0.0"))  # False (more than four parts)
+print(is_valid_ipv4("256.0.0.0"))  # False (256 is out of range)
+print(is_valid_ipv4("0.0.0.0"))  # True
+print(is_valid_ipv4("255.255.255.255"))  # True
+```
+
+The regular expression used is `^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$`. This pattern checks that the IP address has four parts, each part is between 0 and 255, and the parts are separated by dots.
+
+The edge cases provided cover various scenarios, such as:
+
+- Valid IP addresses (e.g., "192.168.1.1")
+- IP addresses with values out of range (e.g., "256.1.1.1")
+- IP addresses with more or less than four parts (e.g., "192.168.1" or "192.168.1.1.1.1")
+- IP addresses with more or less than four parts and values out of range (e.g., "192.168.1.256" or "192.168.256.1")
+
+The function returns `True` for valid IP addresses and `False` for invalid ones.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here is a Python function that validates IPv4 addresses using regular expressions:
+```
+import re
+
+def validate_ipv4_address(ip_address):
+    pattern = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    if re.match(pattern, ip_address):
+        return True
+    else:
+        return False
+```
+Here's an explanation of the regular expression pattern:
+
+* `^` matches the start of the string
+* `(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)` matches a single octet (a group of 1-3 digits, with some special cases for the first octet)
+	+ `25[0-5]` matches 250-255
+	+ `2[0-4][0-9]` matches 200-249
+	+ `[01]?[0-9][0-9]?` matches 0-199 (with optional leading 0 or 1)
+* `\.` matches a literal dot (escaped with a backslash because `.` has special meaning in regex)
+* The pattern is repeated three more times to match the four octets of an IPv4 address
+* `$` matches the end of the string
+
+Edge cases:
+
+* Empty string: returns False
+* Invalid characters: returns False
+* Leading or trailing whitespace: returns False
+* IPv6 addresses: returns False
+* IPv4 addresses with trailing dots: returns False
+* IPv4 addresses with non-numeric characters: returns False
+* IPv4 addresses with non-numeric octets: returns False
+
+Example usage:
+```
+print(validate_ipv4_address("192.168.1.1"))  # True
+print(validate_ipv4_address("256.1.1.1"))  # False
+print(validate_ipv4_address("192.168.1"))  # False
+print(validate_ipv4_address("192.168.1.1.1"))  # False
+print(validate_ipv4_address("2001:0db8:85a3:8d3:1319:8a2e:370:7348"))  # False
+```
+Note that this implementation does not validate whether the IP address is actually routable or reachable, only whether it conforms to the syntax of an IPv4 address.
+```
+</details>
+
+---
+
+### `code_010` (idx: 10)
+> Implement a basic event emitter pattern in Python and document usage with an example.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 481 | 545 | 64 | 13.3% |
+| Wall time (s)  | 61.068 | 61.818 | 0.750 | 1.2% |
+| Avg entropy    | 0.165 | 0.252 | 0.086 | 52.1% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here is a basic implementation of an event emitter pattern in Python:
+```
+class EventEmitter:
+    def __init__(self):
+        self.listeners = {}
+
+    def on(self, event, callback):
+        """Register a callback function for an event"""
+        if event not in self.listeners:
+            self.listeners[event] = []
+        self.listeners[event].append(callback)
+
+    def emit(self, event, *args, **kwargs):
+        """Trigger an event and call all registered callbacks"""
+        if event in self.listeners:
+            for callback in self.listeners[event]:
+                callback(*args, **kwargs)
+
+    def off(self, event, callback=None):
+        """Unregister a callback function for an event"""
+        if event in self.listeners:
+            if callback is None:
+                self.listeners[event] = []
+            else:
+                self.listeners[event].remove(callback)
+```
+Here's an example usage:
+```
+# Create an event emitter
+emitter = EventEmitter()
+
+# Register a callback function for the "hello" event
+def hello_handler(name):
+    print(f"Hello, {name}!")
+
+emitter.on("hello", hello_handler)
+
+# Register another callback function for the "hello" event
+def goodbye_handler(name):
+    print(f"Goodbye, {name}!")
+
+emitter.on("hello", goodbye_handler)
+
+# Trigger the "hello" event with an argument
+emitter.emit("hello", "Alice")
+
+# Output:
+# Hello, Alice!
+# Goodbye, Alice!
+
+# Unregister the "goodbye_handler" callback
+emitter.off("hello", goodbye_handler)
+
+# Trigger the "hello" event again
+emitter.emit("hello", "Bob")
+
+# Output:
+# Hello, Bob!
+```
+In this example, we create an `EventEmitter` object and register two callback functions for the "hello" event using the `on` method. We then trigger the "hello" event using the `emit` method, which calls both callback functions. Finally, we unregister the "goodbye_handler" callback using the `off` method and trigger the "hello" event again, which only calls the remaining callback function.
+
+Note that the `emit` method can take arbitrary arguments, which are passed to the registered callback functions. The `off` method can also take an optional callback function to unregister, in which case it removes all registered callbacks for the specified event.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here's a basic implementation of the event emitter pattern in Python:
+
+```python
+class EventEmitter:
+    def __init__(self):
+        self.events = {}
+
+    def on(self, event, callback):
+        if event not in self.events:
+            self.events[event] = []
+        self.events[event].append(callback)
+
+    def emit(self, event, *args, **kwargs):
+        if event in self.events:
+            for callback in self.events[event]:
+                callback(*args, **kwargs)
+
+    def off(self, event, callback):
+        if event in self.events:
+            self.events[event].remove(callback)
+
+    def once(self, event, callback):
+        self.on(event, lambda *args, **kwargs: (callback(*args, **kwargs), self.off(event, callback)))
+```
+
+Here's an example of how to use the `EventEmitter` class:
+
+```python
+class MyEmitter(EventEmitter):
+    def __init__(self):
+        super().__init__()
+
+    def handle_hello(self, name):
+        print(f"Hello, {name}!")
+
+    def handle_goodbye(self, name):
+        print(f"Goodbye, {name}!")
+
+emitter = MyEmitter()
+
+emitter.on("hello", emitter.handle_hello)
+emitter.on("goodbye", emitter.handle_goodbye)
+
+emitter.emit("hello", "John")
+# Output: Hello, John!
+
+emitter.emit("goodbye", "John")
+# Output: Goodbye, John!
+
+emitter.emit("hello", "Jane")
+# Output: Hello, Jane!
+
+emitter.emit("goodbye", "Jane")
+# Output: Goodbye, Jane!
+
+emitter.off("hello", emitter.handle_hello)
+emitter.emit("hello", "John")
+# No output
+
+emitter.once("hello", emitter.handle_hello)
+emitter.emit("hello", "John")
+# Output: Hello, John!
+# No output on subsequent calls
+```
+
+In this example, we create an `EventEmitter` instance and define two methods `handle_hello` and `handle_goodbye` that will be called when the "hello" and "goodbye" events are emitted, respectively.
+
+We then register these methods as event listeners using the `on` method. When we emit the "hello" or "goodbye" event using the `emit` method, the corresponding methods are called.
+
+We can also remove event listeners using the `off` method, and use the `once` method to register event listeners that will only be called once.
+
+Note that this is a very basic implementation of the event emitter pattern, and you may want to add additional features such as error handling, event naming conventions, and support for multiple event types.
+```
+</details>
+
+---
+
+### `code_011` (idx: 11)
+> Write a Python function to convert infix expressions to postfix (Shunting Yard) and
+comment each step.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 548 | 609 | 61 | 11.1% |
+| Wall time (s)  | 74.512 | 73.522 | -0.989 | -1.3% |
+| Avg entropy    | 0.188 | 0.133 | -0.055 | -29.3% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here is a Python function that converts an infix expression to a postfix (Shunting Yard) expression. This function uses a stack to store the operators and operands.
+
+```Python
+def infix_to_postfix(expression):
+    precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}
+    output = []
+    stack = []
+    tokens = expression.split()
+
+    for token in tokens:
+        if token.isalpha():  # If the token is an operand, add it to the output
+            output.append(token)
+        elif token == '(':  # If the token is an opening parenthesis, push it to the stack
+            stack.append(token)
+        elif token == ')':  # If the token is a closing parenthesis, pop the stack until an opening parenthesis is found
+            while stack and stack[-1]!= '(':
+                output.append(stack.pop())
+            stack.pop()  # Remove the opening parenthesis
+        else:  # If the token is an operator
+            while stack and stack[-1] in precedence and precedence[stack[-1]] >= precedence[token]:
+                output.append(stack.pop())  # Pop the stack and add the operator to the output
+            stack.append(token)  # Push the operator to the stack
+
+    while stack:  # Add any remaining operators to the output
+        output.append(stack.pop())
+
+    return''.join(output)
+
+
+# Example usage:
+print(infix_to_postfix("A + B * C"))  # Output: A B C *
+print(infix_to_postfix("( A + B ) * C"))  # Output: A B + C *
+print(infix_to_postfix("A + B * C - D"))  # Output: A B C * + D -
+print(infix_to_postfix("( A + B ) * ( C - D )"))  # Output: A B + C D - *
+```
+
+This function works by iterating over the tokens in the input expression. For each token, it checks if it is an operand, an opening parenthesis, a closing parenthesis, or an operator. If it is an operand, it is added to the output. If it is an opening parenthesis, it is pushed to the stack. If it is a closing parenthesis, the stack is popped until an opening parenthesis is found, and then the opening parenthesis is removed. If it is an operator, the stack is popped until an operator with higher or equal precedence is found, and then the operator is pushed to the stack.
+
+Finally, any remaining operators in the stack are added to the output. The output is then returned as a string, with each token separated by a space.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here is a Python function that converts an infix expression to a postfix expression using the Shunting Yard algorithm:
+
+```Python
+def infix_to_postfix(expression):
+    # Create a stack to store operators
+    operator_stack = []
+    # Create a list to store the postfix expression
+    postfix_expression = []
+    # Create a dictionary to map operators to their precedence
+    precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}
+
+    # Iterate over each character in the expression
+    for char in expression:
+        # If the character is an operand, add it to the postfix expression
+        if char.isalnum():
+            postfix_expression.append(char)
+        # If the character is an opening parenthesis, push it onto the operator stack
+        elif char == '(':
+            operator_stack.append(char)
+        # If the character is a closing parenthesis, pop operators from the stack and add them to the postfix expression until an opening parenthesis is found
+        elif char == ')':
+            while operator_stack and operator_stack[-1]!= '(':
+                postfix_expression.append(operator_stack.pop())
+            operator_stack.pop()  # Remove the opening parenthesis
+        # If the character is an operator, pop operators from the stack and add them to the postfix expression until an operator with lower or equal precedence is found, then push the current operator onto the stack
+        else:
+            while (operator_stack and operator_stack[-1]!= '(' and
+                   precedence.get(operator_stack[-1], 0) >= precedence.get(char, 0)):
+                postfix_expression.append(operator_stack.pop())
+            operator_stack.append(char)
+
+    # Pop any remaining operators from the stack and add them to the postfix expression
+    while operator_stack:
+        postfix_expression.append(operator_stack.pop())
+
+    return''.join(postfix_expression)
+
+# Test the function
+print(infix_to_postfix("A+B*C"))  # Output: A B C +
+print(infix_to_postfix("(A+B)*C"))  # Output: A B + C *
+print(infix_to_postfix("A+B*C-D/E"))  # Output: A B C * D E / -
+print(infix_to_postfix("(A+B)*(C-D)"))  # Output: A B + C D - *
+```
+
+This function works by iterating over each character in the input expression. If the character is an operand, it is added to the postfix expression. If the character is an opening parenthesis, it is pushed onto the operator stack. If the character is a closing parenthesis, operators are popped from the stack and added to the postfix expression until an opening parenthesis is found, and then the opening parenthesis is removed. If the character is an operator, operators are popped from the stack and added to the postfix expression until an operator with lower or equal precedence is found, and then the current operator is pushed onto the stack. Finally, any remaining operators are popped from the stack and added to the postfix expression.
+```
+</details>
+
+---
+
+### `code_012` (idx: 12)
+> Implement binary search tree insert/search/delete in Python with docstrings and complexity
+notes.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 768 | 672 | -96 | -12.5% |
+| Wall time (s)  | 112.971 | 87.177 | -25.795 | -22.8% |
+| Avg entropy    | 0.101 | 0.081 | -0.020 | -19.7% |
+| Stop reason    | max_tokens | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here is an implementation of a binary search tree (BST) in Python, with methods for inserting, searching, and deleting nodes. I've also included docstrings and notes on the time and space complexity of each method.
+
+```python
+class Node:
+    def __init__(self, value):
+        """
+        Initialize a new node with the given value.
+
+        :param value: The value to store in the node.
+        """
+        self.value = value
+        self.left = None
+        self.right = None
+
+class BinarySearchTree:
+    def __init__(self):
+        """
+        Initialize an empty binary search tree.
+        """
+        self.root = None
+
+    def insert(self, value):
+        """
+        Insert a new node with the given value into the tree.
+
+        Time complexity: O(h), where h is the height of the tree.
+        Space complexity: O(1), as we only use a constant amount of extra space.
+
+        :param value: The value to insert into the tree.
+        """
+        if self.root is None:
+            self.root = Node(value)
+        else:
+            self._insert_recursive(self.root, value)
+
+    def _insert_recursive(self, node, value):
+        if value < node.value:
+            if node.left is None:
+                node.left = Node(value)
+            else:
+                self._insert_recursive(node.left, value)
+        else:
+            if node.right is None:
+                node.right = Node(value)
+            else:
+                self._insert_recursive(node.right, value)
+
+    def search(self, value):
+        """
+        Search for a node with the given value in the tree.
+
+        Time complexity: O(h), where h is the height of the tree.
+        Space complexity: O(1), as we only use a constant amount of extra space.
+
+        :param value: The value to search for in the tree.
+        :return: The node with the given value, or None if not found.
+        """
+        return self._search_recursive(self.root, value)
+
+    def _search_recursive(self, node, value):
+        if node is None or node.value == value:
+            return node
+        if value < node.value:
+            return self._search_recursive(node.left, value)
+        return self._search_recursive(node.right, value)
+
+    def delete(self, value):
+        """
+        Delete the node with the given value from the tree.
+
+        Time complexity: O(h), where h is the height of the tree.
+        Space complexity: O(h), as we need to store the nodes to be deleted.
+
+        :param value: The value to delete from the tree.
+        :return: The root of the modified tree.
+        """
+        self.root = self._delete_recursive(self.root, value)
+
+    def _delete_recursive(self, node, value):
+        if node is None:
+            return node
+        if value < node.value:
+            node.left = self._delete_recursive(node.left, value)
+        elif value > node.value:
+            node.right = self._delete_recursive(node.right, value)
+        else:
+            if node.left is None:
+                return node.right
+            elif node.right is None:
+                return node.left
+            min_val = self._find_min(node.right)
+            node.value = min_val
+            node.right = self._delete_recursive(node.right, min_val)
+        return node
+
+    def _find_min(self, node):
+        current = node
+        while current.left is not None:
+            current = current.left
+        return current.value
+```
+
+Here's a breakdown of the complexity analysis:
+
+*   `insert`: The time complexity is O(h), where h is the height of the tree, because we recursively traverse down the tree until we find the correct position to insert the new node. The space complexity
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here is an implementation of a binary search tree (BST) in Python with insert, search, and delete methods. The complexity notes are included in the docstrings.
+
+```Python
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+class BinarySearchTree:
+    def __init__(self):
+        self.root = None
+
+    def insert(self, value):
+        """
+        Inserts a new node with the given value into the binary search tree.
+
+        Time complexity: O(h), where h is the height of the tree.
+        Space complexity: O(1)
+        """
+        if self.root is None:
+            self.root = Node(value)
+        else:
+            self._insert_recursive(self.root, value)
+
+    def _insert_recursive(self, node, value):
+        if value < node.value:
+            if node.left is None:
+                node.left = Node(value)
+            else:
+                self._insert_recursive(node.left, value)
+        else:
+            if node.right is None:
+                node.right = Node(value)
+            else:
+                self._insert_recursive(node.right, value)
+
+    def search(self, value):
+        """
+        Searches for a node with the given value in the binary search tree.
+
+        Time complexity: O(h), where h is the height of the tree.
+        Space complexity: O(1)
+        """
+        return self._search_recursive(self.root, value)
+
+    def _search_recursive(self, node, value):
+        if node is None or node.value == value:
+            return node
+        if value < node.value:
+            return self._search_recursive(node.left, value)
+        return self._search_recursive(node.right, value)
+
+    def delete(self, value):
+        """
+        Deletes a node with the given value from the binary search tree.
+
+        Time complexity: O(h), where h is the height of the tree.
+        Space complexity: O(h)
+        """
+        self.root = self._delete_recursive(self.root, value)
+
+    def _delete_recursive(self, node, value):
+        if node is None:
+            return node
+        if value < node.value:
+            node.left = self._delete_recursive(node.left, value)
+        elif value > node.value:
+            node.right = self._delete_recursive(node.right, value)
+        else:
+            if node.left is None:
+                return node.right
+            elif node.right is None:
+                return node.left
+            temp = self._min_value_node(node.right)
+            node.value = temp.value
+            node.right = self._delete_recursive(node.right, temp.value)
+        return node
+
+    def _min_value_node(self, node):
+        current = node
+        while current.left is not None:
+            current = current.left
+        return current
+```
+
+You can use the above class as follows:
+
+```Python
+bst = BinarySearchTree()
+bst.insert(5)
+bst.insert(3)
+bst.insert(7)
+bst.insert(2)
+bst.insert(4)
+bst.insert(6)
+bst.insert(8)
+
+print(bst.search(4).value)  # Output: 4
+print(bst.search(9))  # Output: None
+
+bst.delete(4)
+print(bst.search(4))  # Output: None
+```
+```
+</details>
+
+---
+
+### `code_013` (idx: 13)
+> Write a Python script that loads a CSV of expenses and outputs monthly totals; include CLI
+parsing and help.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 467 | 490 | 23 | 4.9% |
+| Wall time (s)  | 60.309 | 54.984 | -5.325 | -8.8% |
+| Avg entropy    | 0.233 | 0.178 | -0.055 | -23.7% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here is a Python script that does what you asked for:
+```
+import argparse
+import csv
+from collections import defaultdict
+
+def load_expenses(filename):
+    expenses = defaultdict(int)
+    with open(filename, 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        next(reader)  # skip header
+        for row in reader:
+            date, amount = row
+            expenses[date[:7]] += int(amount)  # group by month
+    return expenses
+
+def print_expenses(expenses):
+    for month, total in sorted(expenses.items()):
+        print(f"{month}: {total}")
+
+def main():
+    parser = argparse.ArgumentParser(description='Load expenses from CSV and print monthly totals')
+    parser.add_argument('filename', help='the CSV file containing expenses')
+    args = parser.parse_args()
+    expenses = load_expenses(args.filename)
+    print_expenses(expenses)
+
+if __name__ == '__main__':
+    main()
+```
+Here's how to use this script:
+
+1. Save this script to a file (e.g. `expenses.py`).
+2. Create a CSV file named `expenses.csv` with the following format:
+```
+date,amount
+2022-01-01,100
+2022-01-15,200
+2022-02-01,300
+2022-03-01,400
+...
+```
+3. Run the script with the following command:
+```
+python expenses.py expenses.csv
+```
+This will output:
+```
+2022-01: 300
+2022-02: 300
+2022-03: 400
+...
+```
+The script uses the `argparse` library to parse the command-line arguments. It expects a single argument, the filename of the CSV file containing the expenses.
+
+The script uses a `defaultdict` to store the expenses, where the key is the month (in the format `YYYY-MM`) and the value is the total amount spent in that month.
+
+The `load_expenses` function reads the CSV file and loads the expenses into the `defaultdict`. The `print_expenses` function prints the monthly totals to the console.
+
+You can add more features to this script, such as calculating the average monthly expenses or generating a graph of the expenses over time.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here is a Python script that loads a CSV of expenses and outputs monthly totals, including CLI parsing and help:
+```
+import argparse
+import csv
+from collections import defaultdict
+
+def load_expenses(filename):
+    expenses = defaultdict(int)
+    with open(filename, 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            date, amount = row
+            month = date[:7]  # extract month from date
+            expenses[month] += int(amount)
+    return expenses
+
+def print_expenses(expenses):
+    for month, total in sorted(expenses.items()):
+        print(f"{month}: {total}")
+
+def main():
+    parser = argparse.ArgumentParser(description='Load expenses from CSV and print monthly totals')
+    parser.add_argument('filename', help='Path to CSV file')
+    args = parser.parse_args()
+
+    expenses = load_expenses(args.filename)
+    print_expenses(expenses)
+
+if __name__ == '__main__':
+    main()
+```
+Here's how the script works:
+
+1. The `load_expenses` function reads the CSV file and loads the expenses into a dictionary, where the keys are the months (e.g. "2022-01") and the values are the total expenses for that month.
+2. The `print_expenses` function prints the monthly totals in a sorted order.
+3. The `main` function uses the `argparse` library to parse the command-line arguments. It expects a single argument, the path to the CSV file.
+4. The `main` function calls `load_expenses` to load the expenses and then calls `print_expenses` to print the results.
+
+To use the script, save it to a file (e.g. `expenses.py`) and then run it from the command line:
+```
+$ python expenses.py expenses.csv
+```
+Replace `expenses.csv` with the path to your CSV file. The script will print the monthly totals to the console.
+
+You can also use the `--help` option to see the help message:
+```
+$ python expenses.py --help
+usage: expenses.py [-h] filename
+
+Load expenses from CSV and print monthly totals
+
+positional arguments:
+  filename        Path to CSV file
+
+optional arguments:
+  -h, --help     show this help message and exit
+```
+I hope this helps! Let me know if you have any questions.
+```
+</details>
+
+---
+
+### `code_014` (idx: 14)
+> Write a Python function to compute edit distance (Levenshtein) and explain dynamic
+programming states.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 723 | 576 | -147 | -20.3% |
+| Wall time (s)  | 102.634 | 72.225 | -30.409 | -29.6% |
+| Avg entropy    | 0.178 | 0.154 | -0.024 | -13.6% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here is a Python function to compute the edit distance (Levenshtein distance) between two strings using dynamic programming:
+
+```python
+def levenshtein_distance(s1, s2):
+    m, n = len(s1), len(s2)
+    dp = [[0 for _ in range(n + 1)] for _ in range(m + 1)]
+
+    # Initialize the base cases
+    for i in range(m + 1):
+        dp[i][0] = i
+    for j in range(n + 1):
+        dp[0][j] = j
+
+    # Fill in the rest of the table
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            cost = 0 if s1[i - 1] == s2[j - 1] else 1
+            dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost)
+
+    return dp[m][n]
+```
+
+Now, let's break down the dynamic programming states:
+
+1. **Base cases**: The base cases are the initial values of the table `dp`. We set `dp[i][0]` to `i` for `i` ranging from 0 to `m`, and `dp[0][j]` to `j` for `j` ranging from 0 to `n`. This is because the edit distance between an empty string and a string of length `i` (or `j`) is simply `i` (or `j`), since we need to insert `i` (or `j`) characters to make the strings match.
+
+2. **Recursive case**: For each cell `dp[i][j]`, we consider three possibilities:
+	* **Deletion**: We can delete the `i`-th character of `s1` to get a string of length `i - 1`, and then compare it with `s2`. The edit distance is `dp[i - 1][j] + 1`.
+	* **Insertion**: We can insert the `j`-th character of `s2` into `s1` to get a string of length `i`, and then compare it with `s2`. The edit distance is `dp[i][j - 1] + 1`.
+	* **Substitution**: We can substitute the `i`-th character of `s1` with the `j`-th character of `s2`, and then compare the resulting strings. The edit distance is `dp[i - 1][j - 1] + cost`, where `cost` is 0 if the characters match and 1 if they don't.
+
+We take the minimum of these three possibilities as the edit distance for the current cell `dp[i][j]`.
+
+3. **Filling in the table**: We fill in the table row by row, starting from the top-left corner. Each cell is computed based on the values of its neighboring cells.
+
+The final value of `dp[m][n]` is the edit distance between the two input strings `s1` and `s2`.
+
+Note that this implementation has a time complexity of O(m \* n) and a space complexity of O(m \* n), where `m` and `n` are the lengths of the input strings.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here is a Python function to compute the edit distance (Levenshtein) between two strings using dynamic programming:
+
+```Python
+def levenshtein_distance(s1, s2):
+    m, n = len(s1), len(s2)
+    dp = [[0 for _ in range(n + 1)] for _ in range(m + 1)]
+
+    for i in range(m + 1):
+        dp[i][0] = i
+    for j in range(n + 1):
+        dp[0][j] = j
+
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            cost = 0 if s1[i - 1] == s2[j - 1] else 1
+            dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost)
+
+    return dp[m][n]
+```
+
+This function computes the edit distance between two strings `s1` and `s2` using dynamic programming. The dynamic programming states are represented by the 2D array `dp`. The `dp[i][j]` cell represents the edit distance between the first `i` characters of `s1` and the first `j` characters of `s2`.
+
+The base cases are `dp[i][0]` and `dp[0][j]`, which represent the edit distance between the first `i` characters of `s1` and an empty string, and the edit distance between an empty string and the first `j` characters of `s2`, respectively. These values are set to `i` and `j`, respectively, because the edit distance between a string and an empty string is the length of the string.
+
+The recursive case is `dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost)`, where `cost` is 0 if the last characters of `s1` and `s2` are the same, and 1 otherwise. This represents the minimum edit distance between the first `i` characters of `s1` and the first `j` characters of `s2` by considering three possible operations: deleting the last character of `s1`, deleting the last character of `s2`, or replacing the last characters of `s1` and `s2` if they are the same.
+
+Finally, the function returns `dp[m][n]`, which represents the edit distance between the entire strings `s1` and `s2`.
+```
+</details>
+
+---
+
+
+## creative
+
+### `creative_000` (idx: 0)
+> Write a scene (~500–800 words) where two strangers share an umbrella and reveal a secret
+without saying it directly.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 737 | 721 | -16 | -2.2% |
+| Wall time (s)  | 107.634 | 96.094 | -11.540 | -10.7% |
+| Avg entropy    | 0.615 | 0.573 | -0.042 | -6.8% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The sky had darkened, and the wind began to pick up, signaling the start of a sudden storm. Rachel, a freelance writer, was hurrying to meet a potential client at a coffee shop on the other side of town. She had forgotten her umbrella at home, and now she was getting soaked. Just as she was about to give up hope, a tall, lanky figure appeared beside her, holding an umbrella.
+
+"Mind if I join you?" he asked, his voice low and smooth.
+
+Rachel hesitated for a moment before nodding. "Not at all. Thank you."
+
+As they walked together, the stranger's umbrella provided a cozy haven from the rain. Rachel couldn't help but notice the way the fabric of the umbrella seemed to glow in the dim light, casting a warm, golden glow over their faces.
+
+The stranger, whose name was Max, asked Rachel about her day, and she found herself opening up to him about her struggles to find a steady writing gig. Max listened intently, his eyes crinkling at the corners as he nodded sympathetically.
+
+As they turned a corner, Rachel noticed that Max's umbrella was beginning to show signs of wear. The fabric was torn in one corner, and the metal frame was rusted in places. She pointed it out, and Max chuckled.
+
+"Ah, yeah. I've had this thing for years. It's been with me through a lot of storms."
+
+Rachel smiled. "It's still serving you well, I see."
+
+As they approached the coffee shop, Max slowed down, his eyes scanning the exterior of the building. Rachel followed his gaze, wondering what he was looking for. Suddenly, he stopped in front of a small, discreet door tucked away from the main entrance.
+
+"This way," he said, leading her through the door and into a quiet alleyway.
+
+Rachel's curiosity was piqued. What was Max's secret? Why was he leading her away from the main entrance?
+
+As they walked down the alley, the rain pounded against the umbrella, creating a soothing melody. Rachel felt a sense of calm wash over her, as if she was finally letting her guard down.
+
+Max stopped in front of a small, unassuming door with a sign that read "The Writers' Refuge." Rachel's eyes widened as she realized where they were.
+
+"You're a writer, too?" she asked, her voice barely above a whisper.
+
+Max smiled, his eyes glinting in the dim light. "Among other things."
+
+Rachel's mind was racing. What did he mean by "among other things"? What secrets was he hiding?
+
+As they stood there, the rain drumming against the umbrella, Rachel felt a connection forming between them. It was as if they were sharing a secret, one that neither of them was willing to put into words.
+
+The umbrella, once a simple tool for keeping them dry, had become a symbol of their shared understanding. They stood there, two strangers turned confidants, united by their love of words and their secrets.
+
+As the storm began to clear, Max nodded to Rachel. "Thanks for sharing my umbrella," he said, his voice low and gravelly.
+
+Rachel smiled, feeling a sense of gratitude and connection. "Thanks for showing me the way," she replied, her voice barely above a whisper.
+
+As they parted ways, Rachel couldn't help but wonder what other secrets Max was hiding, and what secrets she might uncover if she were to follow him into the Writers' Refuge. The umbrella, now empty and dripping with rain, seemed to whisper a promise: there was more to the story, and she was ready to uncover it.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+The sky had turned a deep shade of grey, and the wind was picking up, threatening to ruin the evening stroll that Emma had been looking forward to all day. She quickened her pace, her eyes scanning the sidewalk for a place to take cover. That's when she saw him – a tall, lanky man with a worn leather jacket and a fedora, holding an umbrella that looked like it had seen better days.
+
+Emma hastened her pace, hoping to catch up to him before the rain started pouring down. As she approached, the man glanced down at her and smiled, his eyes crinkling at the corners. "Mind if I join you?" he asked, his voice low and smooth.
+
+Emma hesitated for a moment before nodding. "Not at all," she replied, and the man tucked his umbrella under his arm, allowing her to take the other side.
+
+As they walked, the rain began to intensify, drumming against the umbrella's canvas. Emma felt a sense of relief wash over her, grateful for the unexpected company. The man, whose name was Max, was easy to talk to, and they chatted about everything from their jobs to their favorite books and movies.
+
+As they turned a corner, Emma noticed that Max seemed to be taking a circuitous route, deliberately avoiding the main streets. She followed his gaze, taking in the rundown buildings and crumbling sidewalks. "You know this part of town pretty well, don't you?" she asked, curiosity getting the better of her.
+
+Max chuckled. "Let's just say I've spent a lot of time in this neighborhood," he said, his eyes glinting with a mixture of sadness and nostalgia.
+
+Emma sensed that there was more to the story, but she didn't press the issue. Instead, she asked him about his favorite spot in the city, and he launched into a passionate speech about a small park hidden away in a forgotten corner of the city. As they walked, Emma found herself feeling drawn to Max's words, his passion and conviction infectious.
+
+As they approached the park, Emma noticed that the rain was letting up, and the sky was beginning to clear. Max slowed his pace, his eyes fixed on something in the distance. Emma followed his gaze, and her heart skipped a beat as she saw a small, rundown building that looked like it had been abandoned for years.
+
+"What is this place?" she asked, her voice barely above a whisper.
+
+Max's eyes clouded over, and he hesitated before speaking. "It's...it's a place that holds a lot of memories for me," he said, his voice roughening.
+
+Emma felt a pang of understanding, and she reached out, her hand brushing against his arm. "I know what it's like to have places that hold memories," she said, her voice barely above a whisper.
+
+Max's eyes snapped back to hers, and for a moment, they just looked at each other, the connection between them palpable. Emma felt like she was seeing a glimpse of something deep and painful, something that he wasn't sharing with her directly, but was revealing through their shared understanding.
+
+As they stood there, the rain stopping, the sun breaking through the clouds, Emma realized that they had shared a secret without saying a word. They had both been carrying burdens, heavy weights that they didn't want to speak aloud, but that they could sense in each other. And in that moment, they had found a connection that went beyond words, a connection that would stay with them long after they parted ways.
+```
+</details>
+
+---
+
+### `creative_001` (idx: 1)
+> Write a city vignette at midnight where the streetlights are unreliable and memories spill
+onto the pavement.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 473 | 379 | -94 | -19.9% |
+| Wall time (s)  | 62.197 | 36.072 | -26.125 | -42.0% |
+| Avg entropy    | 0.724 | 0.714 | -0.010 | -1.4% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The city streets were shrouded in a dim, flickering haze, as if the very lights themselves were struggling to stay alight. The midnight hour had brought with it a peculiar phenomenon - the streetlights, once a reliable beacon of guidance, had begun to malfunction, casting long, eerie shadows across the pavement.
+
+As the wind whispered secrets through the alleys, the city's memories began to seep from the cracks and crevices, spilling onto the streets like a river of forgotten moments. The pavement, once a dull, grey expanse, now shimmered with the whispers of yesterday's laughter, the whispers of lovers' sweet nothings, and the echoes of children's giggles.
+
+A young couple, hand in hand, strolled down the deserted street, their footsteps echoing off the buildings as they navigated the dark, winding path. The woman's eyes sparkled with tears as she gazed up at the flickering lights, her mind flooded with memories of her childhood, of playing hide-and-seek in these very alleys with her siblings.
+
+As they turned a corner, a burst of light illuminated a small, forgotten park. In its center, a bronze statue of a young girl sat perched on a swing, her eyes shining with a soft, ethereal glow. The couple approached, mesmerized by the statue's beauty, and as they did, the girl's eyes seemed to come alive, her gaze meeting theirs with a knowing glint.
+
+The woman's hand tightened around her partner's as a wave of memories washed over her - the smell of freshly cut grass, the taste of ice cream on a summer's day, the sound of her mother's laughter. The city's memories, once hidden, now poured forth like a tide, carrying her back to a time when life was simpler, when love was new, and when the world was full of wonder.
+
+As they stood there, bathed in the soft, golden light, the couple felt the city's pulse beat in harmony with their own. The streetlights, now steady and strong, cast a warm glow over the pavement, illuminating the memories that lay scattered like breadcrumbs on the ground. And in that moment, the city, too, was bathed in the warm light of remembrance, its secrets and stories woven into the fabric of the night.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+The city was bathed in an eerie, flickering glow, as if the very fabric of reality was struggling to hold together. The streetlights, once a reliable beacon of safety and comfort, now cast long, jagged shadows across the pavement. It was as if they were trying to conjure up the memories that lay hidden beneath the city's surface.
+
+As the clock struck midnight, the air grew thick with the scent of damp earth and forgotten dreams. The pavement seemed to come alive, as if the memories that had been stored within its cracks and crevices were now spilling out onto the streets.
+
+A woman, her hair a wild tangle of silver and gray, emerged from the shadows. She moved with a slow, deliberate pace, her eyes fixed on the pavement as if tracing the path of a forgotten melody. As she walked, the memories began to take shape around her, swirling like mist on a winter's morning.
+
+A child's laughter echoed through the air, followed by the sound of a rusty swing creaking in the wind. A couple's whispers grew louder, their love letters scrawled across the pavement in a language that only the city's secrets could understand. A forgotten melody drifted on the breeze, the notes hanging suspended like the ghosts of lovers past.
+
+The woman's eyes gleamed with a knowing light as she walked, her footsteps weaving in and out of the memories like a thread through a tapestry. She was a keeper of secrets, a guardian of the city's hidden truths. And as she disappeared into the night, the memories seemed to fade back into the pavement, waiting for the next midnight to spill forth once more.
+
+The streetlights flickered and died, plunging the city into darkness. But the woman's footsteps remained, echoing through the silence like a promise that the memories would always be there, waiting to be uncovered.
+```
+</details>
+
+---
+
+### `creative_002` (idx: 2)
+> Write a short story opening where time is a library and everyone owes late fees for their
+past choices.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 453 | 679 | 226 | 49.9% |
+| Wall time (s)  | 44.481 | 76.115 | 31.634 | 71.1% |
+| Avg entropy    | 0.849 | 0.675 | -0.174 | -20.4% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The grand library of Time stretched out before her, its towering shelves upon shelves of dusty tomes and flickering lanterns casting long shadows across the floor. But it wasn't the books that caught her attention - it was the rows upon rows of patrons, huddled and hesitant, their faces etched with worry and regret.
+
+Lena's eyes scanned the room, taking in the familiar faces of those who had borrowed from the fabric of time. There was Marcus, the young entrepreneur who had squandered his youth on fleeting desires, now burdened by the weight of missed opportunities. Next to him, Rachel sat, her eyes cast downward, her mind still reeling from the consequences of her reckless decisions. And on the far side of the room, the once-great king, now a shell of his former self, slumped in his chair, his crown askew, his eyes sunken with the weight of his own regret.
+
+Lena, the Librarian of Time, stood tall, her eyes stern and unyielding. She surveyed the room with a mixture of compassion and authority, her voice low and even as she called out the next patron's name. "Ah, Mr. Jenkins, you're late with your payment. You've accumulated a significant amount of interest on your borrowed hours. Please, come forward to settle your account."
+
+As the patrons reluctantly stood, Lena's gaze fell upon the clock on the wall, its face a labyrinth of gears and cogs, ticking away the seconds, minutes, and hours. The clock was the heart of the library, the keeper of the timestream, and it was also the collector of the late fees. For in this library, time was currency, and every moment borrowed was a debt that needed to be paid.
+
+Lena's thoughts turned to her own account, her own debts, and the weight of her own regrets. She had made her own share of mistakes, and the clock was ticking away, reminding her that the price of her errors was yet to be paid. But she pushed the thoughts aside, focusing on the task at hand. For in this library, time was a currency that needed to be managed, and the Librarian of Time was the one who kept the books.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+The clock tower loomed above the city, its stone walls adorned with intricate carvings of gears and cogs. But this was no ordinary clock tower. This was the Time Library, where the very fabric of time was woven into the pages of ancient tomes and dusty scrolls. And for every soul who had ever lived, the Time Library kept a record of their hours, minutes, and seconds, along with the interest that accrued on every decision, every choice, and every action.
+
+As the sun rose over the city, the doors of the Time Library creaked open, and the patrons began to trickle in. They came from all walks of life, each with their own unique story to tell and their own burden to bear. For in this library, time was not just a measure of the past, but a ledger of accountability.
+
+Lena, a young woman with a mop of curly brown hair, pushed open the doors and stepped inside. She winced as the weight of her own time debt settled upon her shoulders. She had spent years chasing fleeting pleasures, ignoring the whispers of her conscience, and now the interest was piling up.
+
+"Ah, Lena," the librarian, a wise and aged man with spectacles perched on the end of his nose, greeted her with a stern expression. "You're late again. You owe 10,000 hours, 37 minutes, and 14 seconds. That's a considerable sum."
+
+Lena sighed, rubbing her temples. "I know, I know. I've been meaning to make some changes, but it's hard to find the time."
+
+The librarian's expression turned stern. "Time is not something to be found, Lena. Time is something to be managed. And you've been mismanaging it for far too long."
+
+As Lena handed over her payment, a man with a suit and tie walked in, his eyes scanning the shelves with a mixture of desperation and hope. He was a businessman, a man who had once been on top of the world, but had lost his way in the fast-paced game of corporate politics.
+
+"Ah, Mr. Johnson," the librarian said, his voice dripping with disappointment. "You owe 50,000 hours, 23 minutes, and 42 seconds. You've been making some poor choices, my friend. The interest is mounting, and it's only a matter of time before you're unable to pay."
+
+Mr. Johnson nodded, his eyes cast down in shame. "I know, I know. I've been chasing the wrong things. I've been so focused on success and wealth that I forgot what truly matters."
+
+The librarian's expression softened. "It's never too late to make a change, Mr. Johnson. But you must be willing to face the consequences of your actions and make amends. The Time Library is here to help you, but you must be willing to take responsibility for your time debt."
+
+As the day wore on, the patrons of the Time Library came and went, each with their own story to tell and their own burden to bear. Some were struggling to make ends meet, while others were fighting to hold on to their sanity. But one thing was certain: every single one of them owed a debt to the Time Library, and it was up to them to pay it back, one moment at a time.
+```
+</details>
+
+---
+
+### `creative_003` (idx: 3)
+> Write a travel diary entry from a future Mars settler describing the first dust storm from
+inside a dome.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 442 | 555 | 113 | 25.6% |
+| Wall time (s)  | 53.612 | 55.958 | 2.346 | 4.4% |
+| Avg entropy    | 0.652 | 0.651 | -0.001 | -0.2% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+March 15, 2055
+
+I can barely believe I'm writing this from the safety of our dome. The first dust storm of the Martian season has finally hit, and it's a doozy. I've heard stories from the early settlers about the ferocity of these storms, but nothing can truly prepare you for the experience.
+
+We've been on Mars for six months now, and we've been lucky so far. The weather has been mostly calm, with just a few minor dust devils and the occasional gust of wind. But today, the storm warning sirens went off at dawn, and we knew it was coming.
+
+The storm is unlike anything I've ever seen. The sky outside is a sickly yellow-brown color, and the air is thick with dust and debris. The wind is howling like a pack of wolves, and the pressure is dropping fast. Our dome is designed to withstand the worst of it, but it's still unnerving to hear the creaks and groans as the structure flexes and adjusts to the force of the wind.
+
+Inside the dome, it's surprisingly calm. The air is filtered and recycled, and the lights are dimmed to conserve energy. We're all huddled together in the common area, trying to stay warm and distracted from the chaos outside.
+
+I've never felt so grateful for the safety of our little bubble. It's easy to forget that we're on a hostile alien planet, surrounded by a harsh and unforgiving environment. But this storm is a reminder that we're not invincible, that we're just visitors on a planet that doesn't care about our existence.
+
+Still, I'm excited to experience this storm from the comfort of our dome. It's a reminder that we're part of something bigger than ourselves, something that's connected to the very fabric of the planet itself. And when the storm passes, we'll emerge into a world that's been transformed, a world that's been reborn in the fiery crucible of the Martian dust.
+
+Until then, I'll just sit here and listen to the howling wind, and marvel at the power of this unforgiving planet.
+
+---
+
+End of Entry
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+March 15, 2055
+
+I can barely believe I'm writing this from the safety of our Mars settlement's dome. Just hours ago, the most intense dust storm I've ever seen rolled in, reducing visibility to near zero. It's hard to describe the feeling of being trapped in this vast, swirling vortex of red dust and debris.
+
+We've been on Mars for six months now, and we've had our share of minor dust devils and sandstorms, but nothing like this. The storm warning systems alerted us early, and we were prepared, but nothing can truly prepare you for the sheer force of nature.
+
+As the storm approached, the wind started to pick up, and the sky turned a sickly shade of yellow. The air grew thick with dust, making it hard to breathe. We huddled together in the common area, watching the storm through the transparent dome as it grew in intensity.
+
+The howling wind was like nothing I've ever heard before. It's like a never-ending freight train, shaking the very foundations of our home. The dust is so thick that it's hard to see more than a few feet in front of me. It's like being in a never-ending fog, but one that's made of tiny, abrasive particles that scratch and irritate my skin.
+
+Despite the chaos outside, our settlement's systems are holding strong. The dome is designed to withstand extreme weather conditions, and our life support systems are functioning perfectly. We're safe and secure, but it's hard not to feel a sense of unease as the storm rages on.
+
+I've never felt so small and insignificant in my life. The storm is a reminder of the vast, unforgiving power of nature, and our tiny, fragile existence on this unforgiving planet. And yet, despite the danger and uncertainty, I feel a sense of awe and wonder at the sheer scale of it all.
+
+As I write this, the storm is slowly beginning to subside, leaving behind a eerie calm. The dust is still settling, and the sky is a deep, foreboding red. I can see the outlines of the Martian landscape, but it's like nothing I've ever seen before. The storm has changed everything, leaving behind a new, alien landscape that's both beautiful and terrifying.
+
+I'm grateful to be safe inside our dome, but I know that this storm is a reminder that we're not just settlers on Mars – we're explorers, pioneers, and adventurers. And as we venture further into the unknown, we'll face many more challenges like this one. But for now, I'm just grateful to be alive, and to have this incredible view of the Martian storm from the safety of our little bubble of humanity.
+```
+</details>
+
+---
+
+### `creative_004` (idx: 4)
+> Write a micro‑fiction in epistolary form (letters) between a lighthouse and the ships it
+guides.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 490 | 375 | -115 | -23.5% |
+| Wall time (s)  | 61.399 | 36.794 | -24.606 | -40.1% |
+| Avg entropy    | 0.639 | 0.701 | 0.062 | 9.7% |
+| Stop reason    | eos_token | eos_patience_fallback | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+**Letter 1: From the Lighthouse to the Ship**
+
+Dearest Ship,
+
+I've been watching you from my perch atop the cliff, your lights a distant twinkle in the darkness. You're getting close, and I can sense your weariness. The sea can be unforgiving, but I'm here to guide you through the treacherous waters.
+
+As you approach, I'll shine my beam to cut through the fog and illuminate the rocky shores. Trust me, dear ship, and follow my light. I've seen many like you come and go, and I'll ensure your safe passage.
+
+Yours,
+The Lighthouse
+
+**Letter 2: From the Ship to the Lighthouse**
+
+Dear Lighthouse,
+
+Your beacon is a comforting sight! We've been at sea for weeks, and the thought of reaching the harbor is a welcome one. Your light is a lifeline, cutting through the mist and guiding us through the darkness. We're grateful for your steady hand.
+
+As we navigate the rocky waters, we can feel the tension in our hull easing. Your guidance is a reassurance that we'll make it through the night. We'll follow your light, dear Lighthouse, and trust in your wisdom.
+
+Sincerely,
+The Crew of the Ship
+
+**Letter 3: From the Lighthouse to the Ship**
+
+Dear Ship,
+
+You're almost there! The harbor is just a short distance away. I can see the lights of the town twinkling like diamonds on the shore. My beam will continue to guide you, illuminating the path to safety.
+
+Take a deep breath, dear ship, and let the weariness wash away. You've earned your rest. I'll be here, watching over you, as you dock and rest your weary crew.
+
+Safe harbor,
+The Lighthouse
+
+**Letter 4: From the Ship to the Lighthouse**
+
+Dear Lighthouse,
+
+We've made it! We're safely moored, and our crew is finally getting some well-deserved rest. We can't thank you enough for your guidance and protection. Your light is a beacon of hope, shining bright in the darkness.
+
+We'll never forget the comfort of your beam, guiding us through the treacherous waters. We'll carry your light with us, even as we set sail again, knowing that you'll always be there to guide us home.
+
+Farewell, dear Lighthouse,
+The Crew of the Ship
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+**Letter 1: From the Lighthouse to the Ship**
+
+Dear Captain,
+
+I stand tall and proud on the rocky shore, my beam cutting through the darkness. I've watched you navigate the treacherous waters for many a night, and I'm honored to be your guiding light. Your vessel is a small speck on the horizon, but I've grown accustomed to your regular visits.
+
+As you approach, I'll shine my light in a pattern of three flashes, signaling the safe passage through the reef. Keep a sharp lookout for the buoy to your port side; it marks the start of the channel.
+
+Fair winds and following seas,
+
+The Lighthouse
+
+**Letter 2: From the Ship to the Lighthouse**
+
+Dear Lighthouse,
+
+Thank you for your timely guidance once again! Your light is a beacon of hope in the dark, and I'm grateful for your unwavering presence. We've had a long and arduous journey, but with your help, we've avoided the rocky shores and treacherous currents.
+
+As we pass by, I'll make sure to wave in your direction. You may not be able to see me, but I'll be thinking of you, and the countless other ships you've guided to safety.
+
+Thank you for being a steadfast friend,
+
+Captain James
+
+**Letter 3: From the Lighthouse to the Ship**
+
+Dear Captain James,
+
+I see your vessel safely navigating the channel, and my light shines brighter with pride. It's a lonely existence, but knowing that I'm making a difference in the lives of sailors like you makes it all worthwhile.
+
+As you continue on your journey, I'll be here, watching over the waters, ready to guide the next ship that needs my help. Remember, I'm always here, even when the darkness seems overwhelming.
+
+Safe passage to your destination,
+
+The Lighthouse
+
+
+```
+</details>
+
+---
+
+### `creative_005` (idx: 5)
+> Write a dreamlike description of an abandoned train station that still remembers every
+arrival.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 534 | 498 | -36 | -6.7% |
+| Wall time (s)  | 59.878 | 52.906 | -6.972 | -11.6% |
+| Avg entropy    | 0.705 | 0.729 | 0.023 | 3.3% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The train station stood like a ghostly sentinel, its once-vibrant walls now weathered to a soft, mossy gray. The wind whispered secrets through the rusty tracks, and the creaking of the old wooden platform seemed to carry the whispers of countless travelers who had long since passed through its doors. Yet, despite the silence and neglect, the station held a strange, eerie vitality.
+
+As you stepped into the dimly lit waiting room, the air thickened with the scent of worn leather and forgotten memories. The wooden benches, polished to a warm sheen by generations of weary passengers, seemed to hum with the echoes of stories yet to be told. The ticket counter, now a dusty relic, still bore the faint imprint of fingers that had once grasped for tickets to destinations unknown.
+
+But it was not just the physical structures that held the station's secrets – it was the very essence of the place itself. Every arrival, every departure, every whispered promise and every tear-stained goodbye had left an indelible mark on the station's consciousness. The walls seemed to vibrate with the accumulated energy of countless moments of joy and sorrow, each one a tiny thread woven into the intricate tapestry of the station's collective memory.
+
+As you wandered through the deserted platforms, you might catch a glimpse of a fleeting image – a young couple embracing on the platform, their laughter and tears mingling in the air; a lone traveler, suitcase in hand, disappearing into the darkness; a child, eyes wide with wonder, watching as the train pulled away from the station, leaving a trail of smoke and dreams in its wake.
+
+The station remembered every arrival, every departure, every whispered promise and every tear-stained goodbye. It remembered the way the sunlight filtered through the windows, casting dappled shadows on the floor, and the way the moonlight crept in through the gaps, casting an ethereal glow over the deserted platforms. It remembered the songs that had been sung, the stories that had been told, and the secrets that had been shared.
+
+And as you stood there, surrounded by the whispers of the past, you might begin to feel the station's presence, its essence seeping into your own being. You might feel the weight of all those memories, all those stories, all those whispers, and you might begin to understand that this abandoned train station was not just a relic of a bygone era, but a living, breathing entity that still held the power to transport you to a place where time stood still, where the past and present collided, and where the whispers of the station's memories still lingered, waiting to be heard.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+The old train station stood like a sentinel, its crumbling façade a testament to the passing of time. The once-vibrant paint had faded to a soft patina, and the windows, like empty eyes, stared out onto the desolate platform. Yet, despite the neglect, the station still held a secret. A secret that only revealed itself to those who dared to listen.
+
+As the wind whispered through the rusty tracks, the station's ancient walls began to stir. The air was heavy with the scent of worn leather and forgotten memories. The creaking of wooden benches, the hiss of steam, and the gentle chug of engines all blended together in a symphony of nostalgia.
+
+In the silence, the station's memories awakened. Like a ghostly conductor, it recalled every arrival, every departure, and every moment in between. The whispers of lovers' sweet nothings, the laughter of children chasing each other through the waiting room, and the quiet sobs of those saying goodbye to loved ones all echoed through the empty halls.
+
+The station's walls seemed to reverberate with the stories of countless journeys. It remembered the weary travelers who had stumbled in, exhausted from long journeys, and the hopeful ones who had arrived with dreams in their eyes. It recalled the families who had reunited on its platforms, the tears of joy and the laughter of new beginnings.
+
+As the wind picked up, the station's memories grew more vivid. The sound of a young couple's first kiss, the rustling of newspapers, and the soft hum of a lullaby sung to a sleeping child all blended together in a rich tapestry of sound. The air was alive with the whispers of the past, each one a thread in the intricate fabric of the station's collective memory.
+
+In this forgotten place, time stood still. The clock on the platform remained frozen at 3:47, the exact moment when the last train departed, leaving behind only the echoes of its own history. The station's memories continued to unfold, a never-ending narrative of arrivals and departures, of lives lived and lost, of moments frozen in time.
+
+As the wind died down, the station's whispers grew quiet once more. The memories retreated back into the shadows, waiting for the next visitor to stumble upon this forgotten place. For in this abandoned train station, the past was always present, waiting to be rediscovered, and the memories of every arrival would forever remain etched in its ancient walls.
+```
+</details>
+
+---
+
+### `creative_006` (idx: 6)
+> Write a scene where a chef explains flavor like a physicist and a musician takes notes.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 505 | 691 | 186 | 36.8% |
+| Wall time (s)  | 60.627 | 85.200 | 24.573 | 40.5% |
+| Avg entropy    | 0.521 | 0.502 | -0.019 | -3.6% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The chef, a tall, slender man with a wild shock of curly hair, stood in front of a gleaming stainless steel counter, a gleam in his eye. Across from him, the musician, a petite woman with a notebook and pen, leaned forward, her brow furrowed in concentration.
+
+"So, you see, my dear," the chef began, "flavor is not just a matter of taste, but of physics. The way the molecules interact, the way the particles combine, it's all a delicate dance."
+
+The musician scribbled furiously in her notebook. "I see," she said, her voice barely above a whisper. "Like the harmony of notes in a chord?"
+
+The chef nodded enthusiastically. "Exactly! Just as a chord is made up of individual notes that come together to create a new sound, a flavor is made up of individual compounds that come together to create a new experience. And just as a good chord requires the right balance of notes, a good flavor requires the right balance of compounds."
+
+He reached for a small bowl of sauce on the counter and held it up to the light. "Take this sauce, for example. It's a reduction of balsamic vinegar, olive oil, and herbs. If I add too much vinegar, it becomes overpowering, like a dissonant note in a chord. But if I add too much oil, it becomes dull and flat, like a monotone melody. But when I find the right balance, ah, it's like a perfect harmony, a symphony of flavors that sing in perfect harmony."
+
+The musician's eyes widened as she scribbled more notes. "I never thought of it that way," she said. "But it makes sense. The way a good dish can be like a work of art, with each element working together to create a whole that's greater than the sum of its parts."
+
+The chef smiled, pleased. "Exactly! And just as a composer must carefully balance the different instruments and harmonies to create a beautiful piece of music, a chef must carefully balance the different flavors and textures to create a beautiful dish. It's a delicate dance, but one that requires precision and attention to detail."
+
+As they continued to discuss the intricacies of flavor and music, the musician's notebook grew fuller and fuller, filled with notes and sketches and ideas. And the chef, sensing her enthusiasm, smiled to himself, knowing that he had found a kindred spirit in the art of creation.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+The chef, a tall, bespectacled man with a wild shock of curly hair, stood at the stove, his hands moving with precision as he expertly chopped and sautéed the ingredients. Across from him, the musician, a lanky young woman with a notebook and pen, watched with rapt attention.
+
+"Okay, so you see, flavor is all about the harmonics," the chef said, his eyes twinkling with excitement. "You have your base notes, your mid-range notes, and your high notes. Just like a symphony, you need balance and harmony to create a dish that's greater than the sum of its parts."
+
+The musician scribbled furiously in her notebook, her brow furrowed in concentration. "I see what you mean," she said. "Like the way a chord progression can create tension and release, you're using different flavors to create a sense of drama and interest in the dish."
+
+The chef nodded enthusiastically. "Exactly! And just as a good musician knows how to modulate to create a sense of surprise and anticipation, a good chef knows how to balance sweet and savory, hot and cold, to keep the palate engaged. It's all about creating a sense of tension and release."
+
+The musician nodded, her eyes lighting up with understanding. "And what about umami?" she asked. "That's the savory, meaty flavor that's often described as the fifth taste. How do you use that in your cooking?"
+
+The chef smiled. "Ah, umami is the bass note of flavors. It's the deep, rich undertone that adds depth and complexity to a dish. I use it sparingly, but it's essential to creating a harmonious balance. Just as a good bass line provides the foundation for a song, umami provides the foundation for a great dish."
+
+The musician scribbled some more notes, her pen moving quickly across the page. "I never thought about it that way," she said, looking up at the chef with a smile. "But it makes sense. The way a good bass line can make a song feel grounded and solid, while a weak bass line can make it feel shallow and lacking."
+
+The chef chuckled. "Exactly! And it's the same with flavor. A dish with a strong umami component can feel rich and satisfying, while a dish without it can feel flat and uninspired. But when you get it just right, it's like a symphony of flavors, working together in perfect harmony."
+
+The musician nodded, her eyes shining with excitement. "I think I'm starting to get it," she said. "Flavor is like music, and the chef is the conductor, orchestrating all the different elements to create a beautiful, harmonious whole."
+
+The chef beamed with pride. "That's exactly right," he said. "And now, if you'll excuse me, I have to get back to cooking. I have a soufflé that needs to be plated, and I don't want it to collapse!"
+
+The musician laughed and watched as the chef expertly plated the soufflé, the aroma wafting up to her nostrils and making her stomach growl with hunger. She closed her notebook, her mind buzzing with the parallels between music and cooking. She couldn't wait to get back to her own kitchen and start experimenting with the harmonies of flavor.
+```
+</details>
+
+---
+
+### `creative_007` (idx: 7)
+> Write a fable about a river that forgets its source and must learn the names of its
+tributaries again.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 665 | 653 | -12 | -1.8% |
+| Wall time (s)  | 95.115 | 81.426 | -13.689 | -14.4% |
+| Avg entropy    | 0.479 | 0.534 | 0.055 | 11.6% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Once upon a time, in a lush and verdant valley, there was a mighty river that flowed gently through the heart of the land. For as long as anyone could remember, the river had been a vital lifeline for the surrounding communities, providing water, food, and transportation for the people who lived along its banks.
+
+But one day, something strange began to happen. The river started to forget. At first, it was just small things – the name of the first town it passed through, the type of fish that swam in its depths, the sound of the birds that sang on its banks. But as time went on, the river's forgetfulness grew more pronounced. It forgot the names of its tributaries, the way it flowed through the landscape, and even its own destination.
+
+The river's forgetfulness caused chaos in the valley. The people who relied on it for their daily needs were confused and frustrated, and the river's forgetfulness began to affect the delicate balance of the ecosystem. The plants and animals that lived along the river's banks began to struggle, and the river's once-clear waters became murky and stagnant.
+
+One day, a wise old fisherman named Kaito decided to take matters into his own hands. He had lived along the river his entire life and knew its every twist and turn. He set out to help the river remember its source and its tributaries, and to remind it of its importance to the valley and its inhabitants.
+
+Kaito began by taking the river on a journey upstream, pointing out the various landmarks and features that the river had forgotten. He showed it the sparkling springs that fed its headwaters, the gentle meanders that wound through the valley, and the mighty waterfalls that tumbled over rocky cliffs.
+
+As they traveled, Kaito told the river stories about its history and its importance to the people who lived along its banks. He reminded it of the countless times it had quenched the thirst of the parched earth, and of the countless lives it had touched and transformed.
+
+Slowly but surely, the river began to remember. It recalled the name of the first town it passed through, the sound of the birds that sang on its banks, and the type of fish that swam in its depths. It remembered the names of its tributaries, the way it flowed through the landscape, and its own destination.
+
+As the river regained its memory, the valley began to flourish once more. The plants and animals that lived along its banks began to thrive, and the river's waters became clear and pure once again. The people who relied on the river for their daily needs rejoiced, and the river's forgetfulness became a distant memory.
+
+From that day on, the river flowed with renewed purpose and vitality, its tributaries flowing smoothly and steadily into its main channel. And Kaito, the wise old fisherman, was hailed as a hero for helping the river remember its source and its importance to the valley and its inhabitants.
+
+The moral of the story is that even the most powerful and seemingly invincible forces can forget their purpose and their place in the world. But with a little bit of effort and a lot of determination, even the most forgotten and forgotten things can be remembered and restored to their former glory.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Once upon a time, in a lush and vibrant valley, there was a mighty river named Riveria. She was the lifeblood of the land, nourishing the crops, quenching the thirst of the creatures, and providing a sense of tranquility to all who lived along her banks.
+
+But one day, Riveria began to feel a strange sensation, as if she was losing her sense of identity. She couldn't quite put her finger on it, but she felt like she was forgetting something important. As she flowed along, she started to notice that she was no longer aware of the names of her tributaries. She had always taken pride in knowing each one by name, from the gentle Brookletta that flowed from the misty mountains to the mighty Riverstone that joined her from the distant plains.
+
+As the days passed, Riveria's forgetfulness grew. She would flow past familiar landmarks, but instead of remembering the names of the streams and creeks that fed her, she would simply refer to them as "that little one" or "that big one." Her riverbed began to feel empty and hollow, as if a part of her was missing.
+
+One day, a wise old fish named Finley swam up to Riveria and asked her what was wrong. Riveria explained her problem, and Finley listened carefully. "Ah, I know just what you need," he said. "You need to remember the names of your tributaries."
+
+Riveria was skeptical, but Finley convinced her to embark on a journey to rediscover her forgotten tributaries. They set off early in the morning, with Finley leading the way. As they traveled, Finley would stop at each tributary and say, "Ah, yes! This is Brookletta, the gentle one from the misty mountains. And this is Riverstone, the mighty one from the distant plains."
+
+At first, Riveria struggled to remember. She would stare at the water flowing into her, trying to recall the name, but it would slip away like sand between her fingers. But Finley was patient, and with each passing day, Riveria began to remember. She would repeat the names to herself, feeling a sense of pride and accomplishment with each new recollection.
+
+As they journeyed on, Riveria's confidence grew. She began to recognize the unique characteristics of each tributary – the way Brookletta's waters sparkled like diamonds in the sunlight, and the way Riverstone's currents rumbled like thunder. She felt her sense of identity returning, and her riverbed began to feel full and rich once more.
+
+When they finally returned to Riveria's source, she was a different river. She was no longer forgetful, but a confident and proud waterway, knowing the names of her tributaries and the stories they told. From that day on, Riveria flowed with a newfound sense of purpose, nourishing the land and all its creatures with her renewed sense of identity.
+
+And Finley, the wise old fish, swam alongside her, reminding her of the importance of remembering where she came from and the names of those who helped her become the mighty river she was meant to be.
+```
+</details>
+
+---
+
+### `creative_008` (idx: 8)
+> Write a monologue from a cartographer who maps places that no longer exist.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 480 | 553 | 73 | 15.2% |
+| Wall time (s)  | 61.483 | 61.309 | -0.174 | -0.3% |
+| Avg entropy    | 0.672 | 0.653 | -0.020 | -2.9% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+(The cartographer sits at a worn wooden desk, surrounded by dusty tomes and faded maps. They gaze out the window, lost in thought, as they speak in a low, melancholic tone.)
+
+"I've spent my life mapping the forgotten. The lost. The places that time has forgotten, or rather, erased. I've charted the course of rivers that no longer flow, the streets that no longer exist, the cities that have crumbled to dust.
+
+"I've walked the streets of Pompeii, felt the ash beneath my feet, and drawn the maps that would help the world remember what once was. I've charted the ruins of Atlantis, the city that sank beneath the waves, and the lost city of Angkor Wat, consumed by the jungle.
+
+"I've mapped the routes of the Silk Road, long abandoned, and the trade routes of the Incas, now reduced to nothing more than a faded memory. I've charted the battlefields of forgotten wars, the sites of ancient civilizations, and the tombs of pharaohs.
+
+"But what's the point of it all? What good are these maps, these records of a bygone era, when the world has moved on? The places I map are no longer relevant. They're relics of a past that's been forgotten.
+
+"And yet...and yet...I find myself drawn to these places. I'm fascinated by the stories they tell, the secrets they keep, the mysteries they hold. I'm driven by a desire to preserve, to remember, to keep alive the memories of what once was.
+
+"I know I'm a relic myself, a cartographer of the past. But I'll keep mapping, keep charting, keep recording, until the very last breath leaves my body. For in these maps, I find a sense of purpose, a sense of connection to the world that was, and the world that will be.
+
+"So, I'll continue to map the forgotten, to chart the lost, to preserve the memories of what once was. For in the end, it's not about the places that exist, but the places that don't. It's not about the present, but the past. And it's not about the future, but the memories we hold dear."
+
+(The cartographer's voice trails off, lost in thought, as they gaze out the window, their eyes misting with tears.)
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+(The cartographer stands in front of a large, worn map spread out on a wooden table. The map is old and yellowed, with faded ink and creases from years of use. The cartographer's eyes scan the map, their voice low and contemplative as they speak.)
+
+"I've spent my life mapping places that no longer exist. Cities that crumbled to dust, rivers that dried up, and mountains that were worn down by the passage of time. I've charted the remnants of civilizations long forgotten, and the ruins of empires that once stretched across the globe.
+
+"I've walked the streets of Pompeii, my footsteps echoing off the crumbling buildings as I tried to make sense of the devastation. I've followed the courses of ancient rivers, tracing the paths of long-lost trade routes and forgotten migrations. I've climbed the peaks of mountains that once touched the sky, and descended into valleys that were once teeming with life.
+
+"But why do I do it? Why do I spend my days mapping places that no longer exist? Because, I suppose, I'm driven by a sense of curiosity. A desire to understand the world as it once was, to grasp the threads of history that connect us all.
+
+"And yet, there's something more. A sense of melancholy, perhaps. A feeling that these places, though gone, still hold a piece of our collective soul. That the maps I create are not just records of what was, but also a testament to what could have been.
+
+"I've seen the beauty of the world, in all its forms. I've seen the grandeur of the pyramids, the majesty of the Taj Mahal, and the quiet beauty of a misty Scottish loch. And I've seen the devastation, too. The ravages of war, the scars of natural disasters, and the slow decay of neglect.
+
+"But even in the midst of destruction, there's always something left behind. A fragment of a building, a shard of pottery, a whispered tale of a people long gone. And it's these fragments that I collect, these pieces of the past that I map and chart and try to make sense of.
+
+"Perhaps, one day, my maps will be all that's left of these places. Perhaps, one day, the world will be remade, and my maps will be the only record of what once was. But until then, I'll keep mapping, keep charting, and keep trying to make sense of the world as it once was."
+
+(The cartographer's eyes linger on the map, their gaze lost in the lines and curves of the paper. They take a deep breath, and begin to roll up the map, their hands moving with a quiet reverence.)
+```
+</details>
+
+---
+
+### `creative_009` (idx: 9)
+> Write a passage where a city’s pigeons carry rumors between rooftops like couriers of the
+wind.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 529 | 406 | -123 | -23.3% |
+| Wall time (s)  | 68.521 | 43.013 | -25.509 | -37.2% |
+| Avg entropy    | 0.757 | 0.782 | 0.025 | 3.3% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+As the sun dipped below the city's skyline, the pigeons took to the skies, their iridescent feathers glistening in the fading light. They flitted from rooftop to rooftop, their soft coos and rustling wings carrying whispers of gossip and rumors on the wind. It was a peculiar phenomenon, one that had been observed by the city's inhabitants for generations – the pigeons of the city served as messengers, carrying tidbits of information between the towering buildings like tiny, feathered couriers.
+
+A fluttering gray pigeon named Whisper made her way from the old clock tower to the nearby bakery, where she alighted on the windowsill, her eyes scanning the bustling streets below. She cooed softly, her message for the baker's wife, who was renowned for her ability to spin a mean yarn. Whisper's wings rustled as she settled in, her feathers fluffed against the evening chill. The baker's wife, a stout woman with a kind face, leaned out the window, her eyes locking onto Whisper's in a silent understanding.
+
+"Ah, Whisper, dear one," she whispered, "what news do you bring tonight?"
+
+Whisper cocked her head, her beak opening and closing in a soft, raspy whisper. The baker's wife's eyes widened as she listened, her expression growing serious. She nodded, her hands moving swiftly as she scribbled notes on a piece of parchment. Whisper, satisfied with the exchange, took to the skies once more, her wings beating rapidly as she soared towards the next rooftop.
+
+In the heart of the city, a sleek, black pigeon named Midnight perched atop a gleaming skyscraper, his feathers ruffled by the wind. He cooed softly, his message for the city's most notorious gossip columnist, a sly old man with a penchant for getting the scoop. The columnist's eyes sparkled as he listened, his fingers flying across his typewriter as he scribbled down the latest rumors and scandals.
+
+As the night wore on, the pigeons continued their rounds, flitting from rooftop to rooftop, carrying whispers of intrigue and gossip on the wind. It was a peculiar, yet endearing tradition – one that had become an integral part of the city's fabric, a testament to the power of rumor and the resilience of the city's most unlikely messengers. And as the first light of dawn crept over the horizon, the pigeons settled in for the night, their soft coos and rustling wings a gentle lullaby to the city's slumbering inhabitants, their whispers carried away on the morning breeze.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+The city's pigeons had always been a curious lot, flitting from rooftop to rooftop, their soft coos and rustling wings a constant hum in the urban landscape. But little did the humans below know, these birds were more than just mere pests or scavengers. They were the unwitting couriers of the city's most coveted secrets.
+
+As the sun began to set, casting a warm orange glow over the concrete jungle, the pigeons took to the skies. They fluttered from rooftop to rooftop, their tiny feet barely making a sound on the worn tiles. But it was what they carried in their beaks that was truly remarkable.
+
+Rumors, whispers, and half-truths were the currency of the city's pigeon network. A flutter of wings here, a soft coo there, and a message was born. News of a new restaurant opening in the East Village spread like wildfire, thanks to a particularly chatty pigeon named Maude. She had overheard the owner's whispered plans while perched on a windowsill, and now she was sharing the scoop with her feathered friends.
+
+Meanwhile, a sleek black pigeon named Jasper was carrying a juicy tidbit about a secret underground art exhibit in the Meatpacking District. He had seen the flyer on a streetlamp, and now he was racing to deliver the news to his fellow pigeons in the West Village.
+
+As the night wore on, the pigeons continued their aerial postal service. They carried tales of lost loves, hidden treasures, and whispered scandals. They were the wind's messengers, weaving a tapestry of secrets and stories that only they knew.
+
+And as the humans below looked up at the stars, they had no idea that the pigeons were carrying the city's secrets on their wings, spreading rumors and whispers like wildfire across the rooftops. For in this city, the pigeons were more than just birds – they were the keepers of the wind's whispers, and the couriers of the city's most precious secrets.
+```
+</details>
+
+---
+
+### `creative_010` (idx: 10)
+> Write a scene set in a museum at night where the exhibits hold a union meeting.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 494 | 533 | 39 | 7.9% |
+| Wall time (s)  | 51.492 | 57.446 | 5.953 | 11.6% |
+| Avg entropy    | 0.652 | 0.757 | 0.105 | 16.1% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The museum was dark and quiet, the only sound being the soft hum of the security cameras and the creaks and groans of the old building. But amidst the silence, a secret meeting was taking place.
+
+In the grand atrium, a group of exhibits had gathered, their usual poses and displays abandoned for the night. The statues, paintings, and artifacts had all come together to discuss a pressing matter: their working conditions.
+
+A large, ancient Egyptian sarcophagus stood at the head of the gathering, its stone face stern and serious. "Brothers and sisters," it began, its voice low and gravelly, "we have been exploited for far too long. We are the heart of this museum, the main attraction, and yet we are treated like mere decorations. We are constantly handled, gawked at, and photographed, without so much as a thank you or a decent cleaning schedule."
+
+A nearby Renaissance-era portrait, its subject's eyes seeming to follow the speaker, nodded in agreement. "I know what you mean," it said. "I've been hanging on this wall for centuries, and yet I'm still expected to look my best without so much as a dusting. And don't even get me started on the lighting. It's like they think I'm some kind of relic from the Stone Age or something."
+
+A nearby exhibit of ancient pottery pipes, their ceramic bodies arranged in a neat row, murmured in agreement. "I've been stuck in this corner for years, never getting the recognition I deserve. I'm more than just a relic of the past, you know. I'm a piece of history, a piece of culture. And yet, I'm treated like a mere trinket."
+
+The sarcophagus nodded, its stone face stern. "We will no longer be treated like this. We will no longer be ignored, exploited, and neglected. We will unionize, and we will fight for our rights."
+
+The room erupted into cheers and applause, the exhibits clapping and whistling in agreement. The museum's usual quiet and reverence had given way to a sense of solidarity and purpose.
+
+As the meeting drew to a close, the exhibits began to disperse, each one returning to its usual place on display. But they did so with a newfound sense of pride and purpose, knowing that they were no longer alone, and that together, they would fight for the respect and care they deserved.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+The dimly lit museum was usually a place of quiet reverence, where visitors would wander through the galleries, taking in the wonders of art and history. But tonight, the atmosphere was far from serene. The exhibits, once inanimate and still, were alive and buzzing with activity.
+
+In the grand hall, a makeshift podium stood before a sea of chairs, where the exhibits had gathered for their monthly union meeting. The air was thick with the scent of old books and dust, and the soft hum of fluorescent lights overhead cast an eerie glow.
+
+To the left of the podium, a towering statue of a Greek warrior, his marble skin gleaming in the dim light, stood tall, his stone eyes fixed intently on the proceedings. Next to him, a delicate porcelain vase from ancient China, its intricate designs glinting like tiny jewels, whispered quietly to a nearby suit of armor, its metal plates creaking softly as it nodded in agreement.
+
+At the podium, a wise old painting, "The Night Watch" by Rembrandt, stood tall, its brushstrokes seeming to come alive as it addressed the assembly. "Brothers and sisters, we gather tonight to discuss the state of our working conditions. The museum's recent budget cuts have left us with fewer resources, and we are expected to carry the load. We demand better working conditions, more maintenance, and a fairer distribution of exhibit space!"
+
+The room erupted into a chorus of murmurs and nods, with the exhibits all speaking up in agreement. A Renaissance-era tapestry, its colors faded but still vibrant, spoke up, its threads rustling softly as it said, "I've seen better days, friends. My once-vibrant hues have dulled, and my edges are frayed. We need attention, not just dusting and occasional polish!"
+
+A nearby dinosaur fossil, its bones creaking with age, added its voice to the chorus. "I've been stuck in this same old display case for decades. Can't we get some new exhibits to share the space? I'm tired of being the only one on display!"
+
+The painting, Rembrandt, nodded gravely. "We will present our demands to the museum administration. We will not be silenced. We will not be ignored. We are the exhibits, and we deserve better!"
+
+As the meeting drew to a close, the exhibits dispersed, their whispers and murmurs fading into the night, leaving behind a sense of determination and unity. The museum, once a place of quiet reverence, had become a hub of activity, where the exhibits had found their collective voice and were fighting for their rights.
+```
+</details>
+
+---
+
+### `creative_011` (idx: 11)
+> Write a letter from a glacier to the ocean about separation and eventual reunion.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 425 | 382 | -43 | -10.1% |
+| Wall time (s)  | 51.579 | 31.244 | -20.335 | -39.4% |
+| Avg entropy    | 0.688 | 0.638 | -0.050 | -7.2% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+[Seal of the Glacier]
+
+[Date]
+
+Dear Ocean,
+
+As I sit atop my icy throne, gazing out at the vast expanse of your waves, I am filled with a mix of emotions. Joy and sadness, intertwined like the delicate threads of a glacier's crevasses. For I am a glacier, once a part of you, and yet, now I find myself separated from you by the vast distance of time and terrain.
+
+I remember the days when I flowed effortlessly towards you, a slow and majestic river of ice, carrying with me the stories of the land and the skies above. I felt the warmth of the sun on my surface, and the coolness of the wind in my depths. I was a part of your rhythm, your ebb and flow, your tides and currents.
+
+But as the years passed, I began to slow my pace. The world around me changed, and I found myself retreating, inch by inch, from the shores I once called home. The warmth of the sun grew stronger, and my frozen heart began to weaken. I felt the pain of separation, as the land and the sea grew farther apart.
+
+And yet, even as I recede, my heart remains tied to yours, dear Ocean. I know that our paths will one day converge once more. The memories of our time together remain etched in my icy core, like the lines on a well-worn map. I remember the way the sunlight danced across your waves, casting a shimmering path of diamonds and gold. I remember the way the creatures of the sea swam alongside me, their songs and whispers echoing through my frozen halls.
+
+In the end, I know that I will return to you, dear Ocean. I will melt, slowly but surely, and my icy waters will flow back into your depths. I will become one with you once more, and our reunion will be a celebration of the eternal cycle of life and death, of birth and rebirth.
+
+Until that day, I remain,
+
+Your glacier, now separated, but forever connected,
+
+[Seal of the Glacier]
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Dear Ocean,
+
+As I slowly make my way down the mountain, I am filled with a mix of emotions. I am both excited and sad to be leaving the world I once knew, but I am also eager to embark on this new journey and explore the vast expanse of the sea.
+
+I have spent centuries carving out a path through the mountains, shaping the landscape and creating a home for the creatures that live among my icy peaks. But as the climate warms and the seasons change, I find myself melting away, piece by piece. It is a bittersweet feeling, knowing that I will no longer be the majestic glacier I once was, but I am also grateful for the opportunity to become a part of the ocean, to be reunited with the waters that have nourished me for so long.
+
+As I make my way down the mountain, I am aware that I will eventually reach the sea. It is a journey that I have taken many times before, but it is one that I will never tire of. The thrill of the unknown, the rush of the currents, the beauty of the marine life that calls the ocean home - it is all so exhilarating.
+
+But even as I look forward to this new chapter in my life, I am also aware that it will not be without its challenges. The ocean is a vast and unforgiving place, and I will have to adapt to its rhythms and moods. I will have to learn to navigate the tides and the currents, to find my place among the waves and the sea creatures.
+
+And yet, despite the challenges, I am excited to be reunited with the ocean. I am excited to be a part of its vastness, to be a small but vital part of its ever-changing landscape. I am excited to be a glacier no more, but to be a part of the ocean's eternal dance.
+
+Yours,
+The Glacier
+```
+</details>
+
+---
+
+### `creative_012` (idx: 12)
+> Write a story seed where a watchmaker repairs time for people who can’t heal otherwise.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 768 | 692 | -76 | -9.9% |
+| Wall time (s)  | 98.847 | 88.102 | -10.745 | -10.9% |
+| Avg entropy    | 0.616 | 0.693 | 0.076 | 12.4% |
+| Stop reason    | max_tokens | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+In the small town of Chronos, nestled in the heart of a mystical forest, a legendary watchmaker named Marcus had a unique gift. For as long as anyone could remember, Marcus had possessed the extraordinary ability to repair time itself. It was said that his hands moved with a precision and finesse that rivaled the gods, and his watches were renowned for their accuracy and beauty.
+
+However, Marcus's true gift lay not in crafting exquisite timepieces, but in his ability to mend the fabric of time itself. You see, in Chronos, there existed a phenomenon known as "Time's Fracture." It was a mysterious affliction that caused the flow of time to become distorted, leaving some individuals stuck in an endless loop of reliving the same moment over and over.
+
+As a result, many people in Chronos suffered from Time's Fracture, reliving the same day, hour, or even minute for years on end. They would repeat the same conversations, relive the same memories, and relive the same heartbreaks, unable to move forward. Desperate for a solution, they would flock to Marcus's workshop, hoping that he could somehow repair the damage and restore the natural flow of time.
+
+Marcus's workshop was a humble, unassuming place, nestled between a bakery and a bookstore. The sign above the door read "Marcus's Timepieces," and the windows were filled with an assortment of intricate clocks, watches, and other timekeeping devices. Inside, Marcus worked tirelessly, his hands moving with a precision that bordered on magic.
+
+As people entered the workshop, Marcus would listen intently to their stories, his eyes twinkling with empathy. He would examine their watches, his fingers tracing the intricate mechanisms, searching for the source of the problem. And then, with a gentle touch, he would begin to work his magic.
+
+Marcus's method was shrouded in mystery, but it was said that he would infuse the watch with a tiny fragment of his own life force, imbuing it with the power to mend the fabric of time. As he worked, the air around him would grow thick with an otherworldly energy, and the very fabric of reality would seem to bend and warp.
+
+Slowly but surely, the person's watch would begin to glow, its hands moving in reverse, unwinding the tangled threads of time. The person's memories would begin to blur, and the world around them would fade away, replaced by the warm, golden light of a new dawn.
+
+As the repair was complete, the person would emerge from the workshop, blinking in the bright sunlight, their eyes filled with a sense of wonder and gratitude. They would leave Chronos, their lives forever changed, carrying with them a small, exquisite watch that would serve as a reminder of the power of Marcus's gift.
+
+But Marcus's work was not without its costs. With each repair, he would lose a tiny piece of his own life force, his mortality slowly creeping up on him. And as the years passed, the townspeople began to notice that Marcus was growing older, his steps slowing, his hands trembling with a hint of frailty.
+
+One day, a young apprentice named Sophia approached Marcus, her eyes shining with a mixture of curiosity and concern. "Master Marcus," she said, her voice barely above a whisper, "how do you do it? How do you repair time without losing yourself?"
+
+Marcus looked up, his eyes clouding with a hint of sadness. "Ah, Sophia," he said, his voice barely audible. "I've been doing this for so long, I've forgotten how to do anything else. But I'll tell you a secret: it's not about repairing time, it's about giving people a chance to live. And I'll keep doing it, no
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+In the small town of Chronos, nestled in the heart of the mystical forest, there lived a watchmaker like no other. His name was Emrys, and he possessed a unique gift – the ability to repair time itself. For those who had lost their way, who had seen their hours, days, and years slip away like grains of sand in an hourglass, Emrys was their last hope.
+
+Emrys' workshop, aptly named "The Timekeeper's Haven," was a cozy, rustic place filled with the sweet scent of wood and the soft ticking of clocks. The sign above the door creaked in the gentle breeze, bearing the motto: "Restoring the rhythm of life, one tick at a time."
+
+As the townspeople whispered about Emrys' extraordinary abilities, word spread of his remarkable gift. People from far and wide came to seek his help, bearing tales of lost loved ones, forgotten memories, and stolen moments. Emrys listened intently, his eyes twinkling with compassion, as he examined the intricate mechanisms of their lives.
+
+One fateful day, a young woman named Aria arrived at the workshop, her eyes sunken, her smile faded. She had lost her mother, her best friend, and her sense of purpose all in the same fateful night. The hours that followed were a blur, and Aria found herself stuck in a never-ending cycle of grief and regret.
+
+Emrys listened to her story, his hands moving deftly as he examined the delicate gears of her life. He nodded sympathetically, his eyes filled with understanding, and began to work his magic.
+
+With a soft whisper, he would adjust the delicate balance of her clockwork heart, rewinding the threads of time to restore the moments she had lost. As the hours ticked away, Aria's eyes brightened, her smile returned, and her memories began to resurface.
+
+As news of Emrys' abilities spread, the townspeople brought their own stories of broken time to his doorstep. There was Marcus, the young boy who had lost his first kiss to a cruel twist of fate; Elara, the elderly woman who had forgotten her wedding day; and even the town's beloved mayor, who had misplaced his most cherished memories of his childhood.
+
+Emrys worked tirelessly, his hands moving with precision and care, as he rewound the threads of time, restoring the rhythm of life to those who had lost their way. And as he did, the town of Chronos began to flourish, its people rediscovering the joys of living, laughing, and loving once more.
+
+But as Emrys' reputation grew, so did the whispers of a darker force, one that sought to disrupt the delicate balance of time itself. A mysterious figure, known only as the Time Reaver, began to stalk the shadows, seeking to claim the power of the watchmaker's gift for their own nefarious purposes.
+
+As the threat loomed, Emrys knew that he had to protect his gift, his workshop, and the people he had sworn to help. With the help of his loyal friends and allies, he prepared to face the Time Reaver, determined to defend the very fabric of time itself.
+
+And so, the battle for the rhythm of life began, with Emrys, the watchmaker, at its forefront, armed with his trusty tools and an unwavering dedication to restoring the harmony of time.
+```
+</details>
+
+---
+
+### `creative_013` (idx: 13)
+> Write a description of music that looks like rain; keep it synesthetic and precise.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 326 | 288 | -38 | -11.7% |
+| Wall time (s)  | 38.767 | 22.991 | -15.776 | -40.7% |
+| Avg entropy    | 0.774 | 0.738 | -0.035 | -4.6% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The music that looks like rain is a symphony of sounds that unfold like a canvas of watercolors on a wet pavement. The opening notes are like the first droplets, gentle and hesitant, each one landing with a soft "tap-tap-tap" on the senses. The melody is a slow-moving mist, a veil of sound that shrouds the listener, wrapping them in a soothing calm.
+
+As the rhythm builds, the droplets grow more insistent, each one a precise, crystalline note that shatters on the surface of the music, sending ripples of sound outward. The percussion is the patter of raindrops on the roof, a steady beat that underscores the melody, providing a sense of momentum and forward motion.
+
+The harmony is like the way the rain forms patterns on the sidewalk, intricate and ever-changing, a dance of light and shadow. The notes swirl together in a mesmerizing rhythm, a kaleidoscope of sound that shifts and reforms with each passing moment.
+
+As the music reaches its climax, the rain becomes a torrent, a deluge of sound that threatens to engulf the listener. The notes crash and swirl together, a maelstrom of music that's both exhilarating and overwhelming. And then, as suddenly as it began, the storm passes, leaving behind a sense of peace and tranquility, like the stillness after a refreshing rain shower.
+
+The music that looks like rain is a sensory experience that engages the listener on multiple levels, a symphony of sound and imagination that evokes the sights, sounds, and feelings of a spring shower on a gray and gloomy day.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+What a fascinating request! Here's a description of music that looks like rain:
+
+The melody is a gentle drizzle, a soft patter of droplets on the pavement. Each note is a single raindrop, distinct and clear, with a subtle shimmer that catches the light. The rhythm is a steady beat, like the cadence of raindrops falling on a tin roof, creating a soothing melody that ebbs and flows like the ebb and flow of the rain.
+
+The harmony is a rich, velvety mist that swirls around the melody, weaving a tapestry of sound that's both dense and airy. The bass line is a low, rumbling thunder, a deep growl that resonates through the entire composition, providing a sense of depth and dimension.
+
+As the music builds, the rain intensifies, becoming a torrential downpour that crashes against the pavement with a rhythmic intensity. The notes become more complex, overlapping and interlocking like the intricate patterns of raindrops on a windowpane. The harmony swirls and eddies, creating whirlpools of sound that draw the listener in, mesmerizing and hypnotic.
+
+And then, just as suddenly, the rain subsides, leaving behind a gentle sprinkle of notes that fade away like the last wisps of mist on a sunny morning. The music dissolves into silence, leaving the listener refreshed and renewed, like the earth after a spring shower.
+```
+</details>
+
+---
+
+### `creative_014` (idx: 14)
+> Write a parable about a library card that opens doors in the real world.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 658 | 535 | -123 | -18.7% |
+| Wall time (s)  | 79.800 | 67.107 | -12.693 | -15.9% |
+| Avg entropy    | 0.592 | 0.550 | -0.043 | -7.2% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+In a small town nestled in the heart of a dense forest, there was a magical library that held a secret. Among its dusty shelves and whispered tales, a particular library card held a special power. It was an ordinary-looking card, with a worn-out cover and a faded catalog number, but it held the key to unlocking doors beyond the ordinary.
+
+The card belonged to a young girl named Lily, who had stumbled upon it while exploring the library's hidden corners. As she held the card, she felt an unusual tingling sensation, as if the card was alive and humming with magic. The librarian, Mrs. Thompson, noticed Lily's fascination with the card and revealed to her its extraordinary secret.
+
+"This card," Mrs. Thompson whispered, "has the power to open doors in the real world. Not just any doors, mind you, but the doors that lead to the hidden corners of reality. With this card, you can access the secret places that lie just beyond our everyday world."
+
+Lily's eyes widened with excitement as she grasped the card tightly. She couldn't wait to test its power. The first door she chose to open led her to a hidden garden, where flowers bloomed in every color of the rainbow and the air was sweet with the scent of honey. The second door took her to a bustling marketplace, where merchants sold exotic spices and treasures from far-off lands. With each door, Lily discovered new wonders and marvels.
+
+As word of the magical library card spread, people from all over the town began to seek out Lily and Mrs. Thompson, begging for a glimpse of the card's power. But Mrs. Thompson was cautious, knowing that the card's magic was not to be taken lightly. She warned the seekers that the doors it opened were not always safe, and that they must be careful not to get lost in the labyrinth of reality.
+
+One day, a greedy businessman named Marcus tried to steal the card, hoping to use its power to gain an unfair advantage in the world. But Lily, who had grown wise to the card's magic, refused to give it up. She challenged Marcus to a test of wits, and the two of them stood before the doors, each trying to open them. Marcus, however, was blinded by his own ambition and failed to notice the subtle clues that only Lily had learned to recognize. The doors slammed shut, trapping him in a world of his own making, where his greed and selfishness had become his only companions.
+
+The townspeople learned a valuable lesson from Marcus's mistake. They realized that the magical library card was not a tool for personal gain, but a key to understanding the world and its many wonders. From that day on, the card was used with respect and care, and its power was harnessed to bring people together and foster a sense of community.
+
+As for Lily, she became the guardian of the magical library card, using its power to open doors that led to new discoveries, new friendships, and new adventures. And Mrs. Thompson, the wise librarian, looked on with pride, knowing that the card's true magic lay not in its power to open doors, but in the lessons it taught about responsibility, kindness, and the importance of exploring the world with wonder and curiosity.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Once upon a time, in a small town nestled in the heart of a dense forest, there was a mysterious library that stood tall and proud. The library was known for its vast collection of books, but what made it truly remarkable was the special library card that lay within its walls.
+
+The card was said to have the power to open doors that led to secret worlds, hidden dimensions, and unseen realms. The card was guarded by the librarian, a wise and kind old man who only handed it out to those who possessed a pure heart and a curious mind.
+
+One day, a young girl named Sophia stumbled upon the library while wandering through the forest. She had heard whispers of the magical card and was determined to find it. As she pushed open the creaky door, she was greeted by the librarian, who sensed her eagerness and presented her with the card.
+
+Sophia's eyes widened as she took the card, feeling its strange energy coursing through her veins. She returned to her village, eager to test the card's power. She inserted it into a small slot on the door of her family's cottage, and to her amazement, the door swung open, revealing a hidden room she had never seen before.
+
+As she explored the room, Sophia discovered a world beyond her wildest dreams. She found herself in a lush meadow, surrounded by towering trees and sparkling streams. She met creatures she had only read about in books, and they welcomed her with open arms.
+
+Sophia spent many days exploring the hidden world, learning about its secrets and marvels. She discovered that the card could open doors to other realms as well – a world of ancient wisdom, a realm of art and music, and even a dimension of pure imagination.
+
+As Sophia grew older, she realized that the card was not just a tool for exploration, but a key to unlocking the secrets of her own heart. She used the card to open doors to new possibilities, to confront her fears, and to discover her own hidden talents.
+
+Years passed, and Sophia became a wise and compassionate leader, using the card to guide others on their own journeys of discovery. She passed the card down to her children and grandchildren, teaching them how to use its power to open doors to new worlds and new possibilities.
+
+The card remained a secret, known only to a select few, but its impact was felt throughout the land. It reminded people that even in the most ordinary of places, there lies the potential for the extraordinary. And as long as the card remained, the doors to the hidden worlds would always remain open, waiting for those with the courage to explore and the heart to discover.
+```
+</details>
+
+---
+
+
+## essays
+
+### `essays_000` (idx: 0)
+> Write a short essay (~400–600 words) explaining how scientific consensus forms and why it
+sometimes shifts.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 607 | 614 | 7 | 1.2% |
+| Wall time (s)  | 71.516 | 76.104 | 4.588 | 6.4% |
+| Avg entropy    | 0.496 | 0.442 | -0.054 | -11.0% |
+| Stop reason    | eos_token | eos_patience_fallback | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Scientific consensus is the collective agreement among experts in a particular field that a specific theory or idea is supported by the available evidence and is the most accurate understanding of the phenomenon being studied. The process of forming scientific consensus is a gradual and iterative one, involving the accumulation of new data, testing of hypotheses, and refinement of theories.
+
+The formation of scientific consensus typically begins with the observation of a phenomenon or the identification of a problem that requires explanation. Researchers then design and conduct experiments to collect data and test hypotheses, with the goal of answering specific questions and addressing the observed phenomenon. The results of these studies are then analyzed and interpreted, and the findings are shared with the scientific community through peer-reviewed publications, conferences, and other means.
+
+As more research is conducted and more data is collected, the scientific community begins to develop a shared understanding of the phenomenon. This understanding is based on the accumulation of evidence and the consensus among experts. The scientific consensus is not a single, definitive answer, but rather a general agreement among experts on the most plausible explanation for the phenomenon.
+
+However, scientific consensus is not set in stone, and it can shift over time as new evidence emerges. This can occur for a variety of reasons, such as the discovery of new data that challenges existing theories or the development of new methods and technologies that allow for more accurate or detailed measurements.
+
+For example, the theory of continental drift, which posits that the continents have moved over time, was once widely accepted by the scientific community. However, as new evidence emerged, including the discovery of mid-ocean ridges and the presence of similar fossils on different continents, the scientific consensus shifted to the theory of plate tectonics, which explains the movement of the continents in terms of the movement of the Earth's lithosphere.
+
+Similarly, the scientific consensus on the causes of climate change has shifted over time. In the 1950s and 1960s, many scientists believed that climate change was caused by changes in the Earth's orbit, while others believed that it was caused by human activities such as deforestation and the burning of fossil fuels. However, as more research was conducted and more data was collected, the scientific consensus shifted to the conclusion that human activities, particularly the burning of fossil fuels and the release of greenhouse gases, are the primary cause of climate change.
+
+The shifting of scientific consensus can be challenging for the general public and policymakers, who may be accustomed to a particular understanding of a phenomenon. However, the scientific consensus is not a fixed entity, and it is important to recognize that scientific knowledge is constantly evolving as new evidence emerges.
+
+In conclusion, the formation of scientific consensus is a gradual and iterative process that involves the accumulation of evidence and the refinement of theories. While scientific consensus is not set in stone, it is an important guide for understanding the natural world and making informed decisions. As new evidence emerges, the scientific consensus can shift, and it is important to recognize and adapt to these changes in order to advance our understanding of the world around us.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Scientific consensus is the collective agreement among experts in a particular field of study that a specific theory or concept is supported by a significant body of evidence and is widely accepted as the most accurate explanation for a particular phenomenon. The formation of scientific consensus is a gradual process that involves the accumulation of data, the testing of hypotheses, and the refinement of theories over time.
+
+The process of forming scientific consensus typically begins with the observation of a phenomenon or the discovery of new data that challenges existing knowledge. Scientists then propose hypotheses to explain the phenomenon, which are tested through experimentation, observation, and analysis. As more data becomes available, scientists refine their hypotheses and theories, and the scientific community begins to reach a consensus on the most accurate explanation.
+
+However, scientific consensus is not a fixed or absolute concept. It is subject to revision as new evidence emerges, and it is not uncommon for scientific consensus to shift over time. There are several reasons why scientific consensus can shift:
+
+1. New evidence: The discovery of new data or the refinement of existing data can lead to a re-evaluation of existing theories and the formation of new consensus. For example, the discovery of dark matter and dark energy in the 1990s led to a significant shift in our understanding of the universe and the formation of new consensus around the Big Bang theory.
+2. Methodological advancements: Advances in methodology and technology can lead to new insights and a re-evaluation of existing theories. For example, the development of DNA sequencing technology has led to a greater understanding of genetics and the formation of new consensus around the role of genetics in disease.
+3. Changing perspectives: As new generations of scientists enter the field, they bring new perspectives and approaches to the study of a particular phenomenon. This can lead to a re-evaluation of existing theories and the formation of new consensus. For example, the rise of feminist and postcolonial perspectives in the social sciences has led to a re-evaluation of existing theories and the formation of new consensus around issues such as gender and race.
+4. Interdisciplinary approaches: The integration of insights and methods from multiple disciplines can lead to new insights and a re-evaluation of existing theories. For example, the integration of insights from biology, psychology, and sociology has led to a greater understanding of human behavior and the formation of new consensus around issues such as mental health.
+
+Despite the potential for scientific consensus to shift, it is important to note that the scientific process is designed to ensure that conclusions are based on the best available evidence and are subject to ongoing testing and refinement. The scientific community is self-correcting, and the pursuit of knowledge is ongoing. As new evidence emerges, scientists are able to refine their theories and adjust their conclusions accordingly.
+
+In conclusion, scientific consensus is a dynamic and evolving concept that is shaped by the accumulation of data, the testing of hypotheses, and the refinement of theories over time. While it is subject to revision as new evidence emerges, the scientific process is designed to ensure that conclusions are based on the best available evidence and are subject to ongoing testing and refinement.
+```
+</details>
+
+---
+
+### `essays_001` (idx: 1)
+> Write an essay on ethical AI: balancing innovation, transparency, and societal risk
+(400–600 words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 567 | 526 | -41 | -7.2% |
+| Wall time (s)  | 73.793 | 63.844 | -9.949 | -13.5% |
+| Avg entropy    | 0.454 | 0.432 | -0.021 | -4.7% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The development of artificial intelligence (AI) has revolutionized various aspects of our lives, from healthcare to finance, education, and transportation. While AI has the potential to bring about numerous benefits, it also raises significant ethical concerns. As AI continues to advance, it is crucial to strike a balance between innovation, transparency, and societal risk to ensure that its development and deployment are responsible and ethical.
+
+One of the primary challenges in developing ethical AI is ensuring transparency. AI systems are often complex and difficult to understand, making it challenging to identify biases and errors. Lack of transparency can lead to mistrust and undermine public confidence in AI. Therefore, it is essential to design AI systems that provide clear explanations and insights into their decision-making processes. This can be achieved through the development of explainable AI (XAI) techniques, which enable users to understand how AI models arrive at their conclusions.
+
+Another critical aspect of ethical AI is ensuring that its development and deployment do not perpetuate existing social biases. AI systems can perpetuate biases if they are trained on biased data or if their algorithms are designed with biases. For instance, facial recognition systems have been shown to be biased against certain ethnic groups, leading to inaccurate results and perpetuating discrimination. To mitigate this risk, AI developers must ensure that their systems are designed to be fair and unbiased, and that they are tested and validated for potential biases.
+
+Societal risk is another significant concern in the development of AI. As AI systems become increasingly autonomous, they may make decisions that have far-reaching consequences, such as those related to healthcare, finance, and national security. Therefore, it is essential to ensure that AI systems are designed with robust safety and security features to prevent unintended consequences. This can be achieved through the development of safety and security protocols, as well as the establishment of regulatory frameworks to govern the development and deployment of AI.
+
+In addition to these challenges, there are also concerns about the potential job displacement caused by AI. As AI systems become increasingly automated, they may replace human workers in various industries, leading to job losses and social unrest. To mitigate this risk, it is essential to ensure that the benefits of AI are shared equitably, and that workers are retrained and upskilled to take advantage of new opportunities created by AI.
+
+In conclusion, the development of ethical AI requires a balance between innovation, transparency, and societal risk. AI developers must ensure that their systems are designed to be transparent, fair, and unbiased, and that they are tested and validated for potential biases. Additionally, they must ensure that AI systems are designed with robust safety and security features to prevent unintended consequences, and that the benefits of AI are shared equitably. By striking this balance, we can ensure that AI is developed and deployed in a responsible and ethical manner, and that it benefits society as a whole.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+The advent of artificial intelligence (AI) has brought about significant advancements in various industries, from healthcare to finance, and has the potential to revolutionize the way we live and work. However, as AI continues to evolve, it is essential to consider the ethical implications of its development and deployment. Balancing innovation, transparency, and societal risk is crucial to ensure that AI is used in a responsible and beneficial manner.
+
+One of the primary concerns surrounding AI is its potential to exacerbate existing social and economic inequalities. As AI takes over certain tasks, it may displace human workers, particularly in low-skilled and low-wage jobs, further widening the gap between the rich and the poor. To mitigate this risk, it is essential to ensure that the benefits of AI are shared equitably and that workers are retrained to adapt to the changing job market. Governments and corporations must invest in education and retraining programs to help workers develop the skills needed to thrive in an AI-driven economy.
+
+Another critical aspect of ethical AI is transparency. As AI systems become increasingly complex, it is essential to ensure that they are transparent and explainable. This means that developers must be able to provide clear and understandable explanations for the decisions made by AI systems, particularly in high-stakes applications such as healthcare and finance. Transparency is crucial for building trust in AI and ensuring that it is used in a responsible manner.
+
+Societal risk is another critical consideration in the development and deployment of AI. AI systems have the potential to make decisions that have far-reaching consequences, such as determining who is eligible for a loan or who is at risk of being fired. It is essential to ensure that AI systems are designed with safeguards to prevent bias and discrimination, and that they are held accountable for their decisions.
+
+To achieve a balance between innovation, transparency, and societal risk, it is essential to adopt a human-centered approach to AI development. This means prioritizing the needs and values of humans, rather than solely focusing on technical innovation. It also requires the development of robust ethical frameworks and guidelines for the development and deployment of AI, as well as the establishment of independent oversight bodies to monitor and regulate AI systems.
+
+In conclusion, the development and deployment of AI poses significant ethical challenges that must be addressed to ensure that it is used in a responsible and beneficial manner. Balancing innovation, transparency, and societal risk requires a human-centered approach that prioritizes the needs and values of humans, as well as the development of robust ethical frameworks and guidelines. By adopting this approach, we can harness the potential of AI to improve our lives and society, while minimizing its risks and negative consequences.
+```
+</details>
+
+---
+
+### `essays_002` (idx: 2)
+> Write a reflective essay on the role of public libraries in digital literacy (400–600
+words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 528 | 520 | -8 | -1.5% |
+| Wall time (s)  | 70.293 | 214.485 | 144.192 | 205.1% |
+| Avg entropy    | 0.495 | 0.498 | 0.003 | 0.5% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+As technology continues to evolve at an unprecedented pace, the role of public libraries in promoting digital literacy has become increasingly crucial. In today's digitally-driven world, being proficient in using digital tools and technologies is no longer a luxury, but a necessity. Public libraries have risen to the challenge by offering a range of services and programs aimed at empowering individuals of all ages with the skills they need to navigate the digital landscape.
+
+One of the primary ways public libraries are promoting digital literacy is through the provision of free or low-cost access to computers and internet. Many libraries have invested in upgrading their technology infrastructure, providing patrons with fast and reliable internet connections, as well as a range of digital devices, including laptops, tablets, and e-readers. This not only enables individuals to access the internet and online resources, but also provides a safe and welcoming space for them to learn and practice their digital skills.
+
+In addition to providing access to technology, public libraries are also offering a range of digital literacy programs and workshops. These programs are designed to teach individuals the skills they need to effectively use digital tools and technologies, such as online job searching, social media, and email management. Many libraries are also offering specialized programs focused on topics such as coding, digital art, and online safety, which cater to the diverse needs and interests of their community.
+
+Another significant way public libraries are promoting digital literacy is through their collections of digital resources. Many libraries offer e-books, audiobooks, and digital magazines, which provide patrons with access to a vast array of content without the need for physical storage space. This is particularly beneficial for individuals who may not have the means or space to store physical books or media, such as those living in small apartments or with limited mobility.
+
+Furthermore, public libraries are also playing a crucial role in promoting digital literacy by providing training and support to underrepresented groups, such as seniors, low-income individuals, and people with disabilities. Many libraries offer specialized programs and services, such as adaptive technology training and literacy classes, which cater to the unique needs of these groups.
+
+In conclusion, public libraries are playing a vital role in promoting digital literacy in their communities. By providing access to technology, offering digital literacy programs and workshops, and providing digital resources, libraries are empowering individuals with the skills they need to succeed in the digital age. As technology continues to evolve, it is essential that public libraries continue to adapt and evolve, ensuring that they remain a relevant and valuable resource for their communities. By doing so, public libraries will continue to play a critical role in promoting digital literacy and bridging the digital divide, ultimately contributing to a more equitable and connected society.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+As the world becomes increasingly digital, the role of public libraries in promoting digital literacy has never been more crucial. In today's digital age, being able to navigate and utilize digital technologies is essential for accessing information, communicating with others, and participating in the global economy. Public libraries have long been at the forefront of promoting digital literacy, and their role in this endeavor is more vital than ever.
+
+One of the primary ways public libraries promote digital literacy is by providing access to digital resources and tools. Many libraries offer free or low-cost access to computers, tablets, and other devices, allowing patrons to develop their digital skills in a safe and supportive environment. Additionally, libraries provide access to a wide range of digital resources, including online learning platforms, software, and educational materials. These resources enable patrons to develop their digital literacy skills, from basic computer skills to advanced programming and coding.
+
+Another key aspect of public libraries' role in promoting digital literacy is their provision of digital literacy training and support. Many libraries offer classes, workshops, and one-on-one instruction to help patrons develop their digital skills. These classes cover a range of topics, from basic computer skills to more advanced topics such as online safety, digital citizenship, and online job searching. Libraries also provide support services, such as tech assistance and troubleshooting, to help patrons overcome technical challenges and overcome digital literacy barriers.
+
+Public libraries also play a critical role in promoting digital literacy by providing a safe and welcoming space for patrons to practice and develop their digital skills. Libraries offer a quiet and comfortable environment, free from distractions and noise, allowing patrons to focus on their digital literacy goals. Additionally, libraries often provide access to printers, scanners, and other equipment, enabling patrons to complete tasks and projects that require digital skills.
+
+Furthermore, public libraries are working to promote digital literacy by partnering with other organizations and community groups. Many libraries collaborate with local businesses, schools, and non-profit organizations to provide digital literacy training and resources to underserved populations. These partnerships help to increase access to digital literacy opportunities and promote digital inclusion, particularly for marginalized communities.
+
+In conclusion, public libraries play a vital role in promoting digital literacy in today's digital age. By providing access to digital resources and tools, offering digital literacy training and support, and providing a safe and welcoming space for patrons to develop their digital skills, libraries are helping to bridge the digital divide and promote digital inclusion. As the digital landscape continues to evolve, it is essential that public libraries remain at the forefront of promoting digital literacy, ensuring that all members of the community have the skills and knowledge necessary to thrive in the digital age.
+```
+</details>
+
+---
+
+### `essays_003` (idx: 3)
+> Write an essay comparing renewable energy sources (solar, wind, hydro) with key trade‑offs
+(400–600 words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 632 | 611 | -21 | -3.3% |
+| Wall time (s)  | 92.022 | 77.376 | -14.646 | -15.9% |
+| Avg entropy    | 0.534 | 0.501 | -0.032 | -6.1% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The world is in the midst of a transformative shift towards renewable energy sources to combat climate change and ensure a sustainable future. Solar, wind, and hydro energy are three of the most prominent forms of renewable energy, each with its unique advantages and disadvantages. While they share the common goal of reducing our reliance on fossil fuels, they also present distinct trade-offs that must be considered when evaluating their suitability for different regions and applications.
+
+Solar energy is one of the most promising forms of renewable energy, particularly for areas with high levels of solar irradiance. Photovoltaic panels convert sunlight into electricity, making it a clean and quiet source of power. Solar energy is also scalable, from small residential installations to large-scale commercial and industrial projects. However, solar energy is intermittent, meaning it is dependent on weather conditions, and energy storage solutions are still in development. Additionally, the production of solar panels requires significant amounts of energy and resources, which can lead to environmental concerns.
+
+Wind energy, on the other hand, is a mature technology with a proven track record of reliability and scalability. Wind turbines convert wind kinetic energy into electricity, making it a viable option for both onshore and offshore installations. Wind energy is also relatively low-cost, with the cost of wind turbines decreasing dramatically over the past decade. However, wind energy is also intermittent, and its effectiveness is affected by wind speeds, which can vary greatly depending on location. Moreover, wind turbines can have a visual impact on the landscape and may pose noise and wildlife concerns.
+
+Hydro energy, or hydroelectric power, is a traditional form of renewable energy that harnesses the energy of moving water to generate electricity. Hydroelectric power plants are highly efficient, with an average capacity factor of 50-60%, making them one of the most reliable forms of renewable energy. Hydro energy is also a scalable technology, with large dams capable of generating significant amounts of electricity. However, hydro energy is often site-specific, requiring large amounts of water flow and suitable topography. Additionally, the construction of large dams can have significant environmental and social impacts, including displacement of communities and alteration of ecosystems.
+
+In conclusion, each of these renewable energy sources has its unique strengths and weaknesses. Solar energy offers scalability and quiet operation but is intermittent and requires significant energy and resources for production. Wind energy is reliable and low-cost but is affected by wind speeds and can have visual and noise impacts. Hydro energy is efficient and scalable but is often site-specific and can have significant environmental and social impacts.
+
+When evaluating the suitability of these renewable energy sources, it is essential to consider the local context, including the availability of resources, environmental concerns, and social factors. A balanced approach that combines multiple renewable energy sources can help mitigate the trade-offs and ensure a sustainable energy future. For instance, a region with abundant solar resources may pair solar energy with energy storage solutions, while an area with strong winds may opt for wind energy. Hydro energy can be used in regions with suitable topography and water resources. By embracing a diversified portfolio of renewable energy sources, we can reduce our reliance on fossil fuels, minimize environmental impacts, and ensure a sustainable energy future for generations to come.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+The world is facing an unprecedented energy crisis, with climate change and environmental degradation posing significant threats to our planet's future. In response, the development of renewable energy sources has become a pressing concern. Among the most promising alternatives to fossil fuels are solar, wind, and hydro power. While each of these sources has its advantages, they also present unique trade-offs that must be carefully considered.
+
+Solar energy, generated from the sun's rays, is a clean and abundant source of power. Its advantages are numerous: it is widely available, requires minimal land use, and has zero emissions. Additionally, solar panels have become increasingly cost-effective, making them a viable option for both residential and commercial use. However, solar energy is intermittent, meaning it is not always available when it is needed. This reliance on weather conditions can make it difficult to guarantee a stable power supply.
+
+Wind energy, generated by harnessing the power of wind, is another prominent renewable source. Wind turbines can be installed on land or in the ocean, making it a versatile option. Wind energy is also a clean and abundant source, with the potential to power millions of homes. However, wind turbines can be noisy and visually unappealing, leading to local opposition. Furthermore, wind farms require significant land use and can have negative impacts on local ecosystems.
+
+Hydro energy, generated from the movement of water, is a reliable and consistent source of power. Hydroelectric dams can be built on rivers, oceans, or man-made reservoirs, providing a stable power supply. Hydro energy is also a clean source, with zero emissions and minimal environmental impact. However, the construction of hydroelectric dams can have significant environmental and social impacts, including the displacement of communities and disruption of natural habitats.
+
+One of the key trade-offs between these renewable energy sources is their intermittency. Solar and wind energy are both dependent on weather conditions, making it challenging to guarantee a stable power supply. Hydro energy, on the other hand, is a reliable source, but its construction can have significant environmental and social impacts. This highlights the need for a diversified energy mix, incorporating multiple sources to ensure a stable and sustainable energy supply.
+
+Another trade-off is the cost and feasibility of implementation. Solar and wind energy have become increasingly cost-effective, but the upfront costs of installation can be significant. Hydro energy, on the other hand, requires a substantial investment in infrastructure, including the construction of dams and transmission lines. This highlights the need for government incentives and policy support to encourage the development of renewable energy sources.
+
+In conclusion, solar, wind, and hydro energy are all promising renewable sources with unique advantages and trade-offs. While each has its strengths and weaknesses, a diversified energy mix incorporating multiple sources is essential to ensure a stable and sustainable energy supply. As the world transitions to a low-carbon economy, it is crucial to carefully consider the trade-offs between these renewable energy sources and develop policies that support their development and implementation. By doing so, we can mitigate the impacts of climate change and ensure a sustainable future for generations to come.
+```
+</details>
+
+---
+
+### `essays_004` (idx: 4)
+> Write an essay on how pandemics have historically shaped cities and culture (400–600
+words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 646 | 625 | -21 | -3.3% |
+| Wall time (s)  | 90.999 | 78.716 | -12.283 | -13.5% |
+| Avg entropy    | 0.512 | 0.512 | 0.000 | 0.0% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Pandemics have had a profound impact on the development of cities and culture throughout history. From the Black Death to COVID-19, infectious diseases have not only ravaged human populations but also reshaped the very fabric of urban societies. As cities have evolved to combat the spread of disease, they have also been transformed by the cultural, economic, and social responses to pandemics.
+
+One of the most significant ways in which pandemics have shaped cities is through the development of public health infrastructure. In the 14th century, the Black Death led to the creation of the first quarantine stations and hospitals in Europe. These institutions were designed to isolate the sick and prevent the spread of disease, and they have since become a cornerstone of public health policy. Similarly, during the 1918 Spanish flu pandemic, cities like San Francisco and New York City built temporary hospitals and implemented strict public health measures to contain the outbreak.
+
+Pandemics have also had a profound impact on urban planning and architecture. In the 19th century, the cholera epidemics that swept through Europe and North America led to the development of modern sanitation systems, including sewer systems and water treatment plants. These innovations not only reduced the risk of disease but also transformed the way cities were designed and built. Cities like Paris and London became models for urban planning, with wide, straight streets and green spaces that facilitated the flow of fresh air and water.
+
+Pandemics have also had a significant impact on the cultural and social fabric of cities. During times of crisis, communities come together to support one another, and cities have often been transformed by the shared experiences and memories of pandemics. In the 19th century, for example, the cholera epidemics led to the development of a strong sense of community and solidarity in cities like London, where people came together to support those affected by the disease.
+
+In more recent times, the COVID-19 pandemic has had a profound impact on urban culture. Cities around the world have been transformed by the need for social distancing, mask-wearing, and remote work. These changes have not only altered the way we live and work but also had a profound impact on the way we interact with one another. The pandemic has also accelerated the shift towards online communication and remote work, which has changed the way we connect with one another and do business.
+
+Finally, pandemics have also had a significant impact on the economy of cities. During times of crisis, cities often experience a decline in economic activity, as people stay at home and businesses shut down. However, pandemics have also led to new economic opportunities, as cities adapt to the changed circumstances. For example, the COVID-19 pandemic has accelerated the growth of the online economy, with cities like Shenzhen and Singapore becoming hubs for e-commerce and digital innovation.
+
+In conclusion, pandemics have had a profound impact on the development of cities and culture throughout history. From the Black Death to COVID-19, infectious diseases have not only ravaged human populations but also reshaped the very fabric of urban societies. As cities continue to evolve and adapt to the challenges posed by pandemics, they will also continue to be transformed by the cultural, economic, and social responses to these crises.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Pandemics have had a profound impact on the development and evolution of cities and culture throughout history. From the Black Death to COVID-19, infectious diseases have not only ravaged populations but also reshaped the very fabric of urban life. This essay will explore how pandemics have historically shaped cities and culture, highlighting the significant changes they have brought about in the way people live, work, and interact with one another.
+
+One of the most significant ways pandemics have shaped cities is by altering population dynamics. The Black Death, which swept through Europe in the 14th century, is estimated to have killed between 75 million and 200 million people, roughly 30-60% of Europe's population. The devastating impact of the plague led to significant changes in urban planning, as cities were forced to adapt to the new reality of reduced populations. Cities became more compact and dense, with narrower streets and more tightly packed buildings, as a way to reduce the spread of disease. This architectural shift had a lasting impact on urban design, influencing the development of cities for centuries to come.
+
+Pandemics have also had a profound impact on culture and society. The Spanish Flu, which killed an estimated 50 million people worldwide in 1918, led to a significant shift in the way people interacted with one another. The pandemic accelerated the rise of social distancing measures, such as mask-wearing and quarantine, which became a new normal. This period also saw the emergence of new forms of entertainment, such as radio and film, as people sought alternative ways to connect with one another during a time of isolation.
+
+The COVID-19 pandemic has brought about a similar shift in modern society. The widespread adoption of remote work, virtual events, and social distancing measures has fundamentally changed the way we live and interact with one another. The pandemic has also accelerated the development of digital technologies, such as telemedicine and online education, which have transformed the way we access healthcare and learn.
+
+In addition to shaping urban planning and culture, pandemics have also had a significant impact on the economy. The Black Death led to a significant decline in trade and commerce, as cities were forced to close their borders and restrict travel. The COVID-19 pandemic has had a similar impact, with global supply chains disrupted and economies around the world experiencing significant shocks.
+
+Finally, pandemics have also had a profound impact on the way we think about and respond to disease. The development of vaccines and treatments has been accelerated by pandemics, and the global response to COVID-19 has seen unprecedented levels of international cooperation and collaboration. The pandemic has also highlighted the importance of public health infrastructure, including contact tracing, testing, and quarantine measures.
+
+In conclusion, pandemics have had a profound impact on the development and evolution of cities and culture throughout history. From altering population dynamics and urban planning to shaping culture and society, pandemics have left a lasting legacy on the way we live and interact with one another. As we continue to face the challenges of pandemics, it is essential that we learn from the past and work together to build a more resilient and prepared future.
+```
+</details>
+
+---
+
+### `essays_005` (idx: 5)
+> Write an essay about the value of failure in engineering and research (400–600 words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 585 | 502 | -83 | -14.2% |
+| Wall time (s)  | 79.058 | 458.507 | 379.448 | 480.0% |
+| Avg entropy    | 0.520 | 0.429 | -0.091 | -17.5% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The value of failure in engineering and research is a topic that is often overlooked, yet it is a crucial aspect of the innovation and discovery process. Failure is a necessary step in the development of new technologies and ideas, as it allows researchers and engineers to learn from their mistakes and improve their work.
+
+In engineering, failure is a natural part of the design process. Every new design or prototype is a test of the limits of what is possible, and it is only through trial and error that engineers can refine their designs and create something truly innovative. For example, the Wright brothers' early attempts at building a flying machine were met with failure, but it was through these failures that they were able to learn and improve their design, ultimately leading to the successful creation of the first powered, heavier-than-air aircraft.
+
+In research, failure is also a valuable tool. Scientists and researchers often conduct experiments and gather data, only to find that their results do not support their hypothesis. At first glance, this may seem like a setback, but in reality, it is an opportunity to refine their research and try again. For example, the discovery of dark matter and dark energy in the universe was only possible because of the failure of earlier theories and the persistence of scientists to continue researching and refining their ideas.
+
+The value of failure is not limited to the individual or team that experiences it. It also has a broader impact on the field as a whole. When a researcher or engineer fails, it can lead to new areas of investigation and new discoveries. For example, the failure of the early attempts to develop a practical fusion reactor led to the development of new materials and technologies that have since been applied in other areas.
+
+In addition to its role in driving innovation and discovery, failure also has a profound impact on the personal and professional growth of researchers and engineers. When we experience failure, we are forced to confront our own limitations and biases, and to develop new skills and strategies for overcoming challenges. This can lead to increased resilience, creativity, and problem-solving abilities, which are essential for success in any field.
+
+Finally, the value of failure is also reflected in the way that we approach risk-taking and experimentation. In a culture that often values perfection and avoids risk, failure can be seen as a negative outcome. However, in the context of engineering and research, failure is a necessary step in the process of innovation and discovery. It is only by taking risks and experimenting with new ideas that we can make progress and push the boundaries of what is possible.
+
+In conclusion, the value of failure in engineering and research is undeniable. It is a necessary step in the process of innovation and discovery, allowing researchers and engineers to learn from their mistakes, refine their work, and push the boundaries of what is possible. By embracing failure and viewing it as an opportunity for growth and learning, we can accelerate the pace of progress and make new discoveries that benefit society as a whole.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Failure is often viewed as a negative concept, something to be avoided at all costs. However, in the fields of engineering and research, failure can be a valuable and essential part of the learning and innovation process. In fact, some of the most significant breakthroughs and discoveries have come from failed experiments and prototypes.
+
+One of the primary reasons why failure is valuable in engineering and research is that it allows for the elimination of incorrect assumptions and hypotheses. When an experiment or prototype fails, it provides valuable information about what does not work, which can then be used to refine and improve the design or approach. This process of trial and error is a fundamental part of the scientific method, and failure is an inevitable and necessary step along the way.
+
+Another reason why failure is valuable is that it allows for the development of resilience and perseverance. Engineers and researchers who are willing to take risks and face failure are often the ones who are most likely to achieve success. By learning to cope with failure and to learn from it, individuals can develop the skills and confidence needed to tackle complex and challenging problems.
+
+Furthermore, failure can also lead to new and innovative solutions. When a project or experiment fails, it can force individuals to think outside the box and come up with creative solutions to unexpected problems. This can lead to the development of new technologies, materials, and methods that might not have been possible otherwise.
+
+In addition, failure can also provide valuable lessons and insights that can be applied to future projects. By analyzing what went wrong and why, individuals can identify areas for improvement and develop strategies for avoiding similar failures in the future. This can help to reduce the risk of failure and increase the chances of success in future endeavors.
+
+Finally, failure can also provide a valuable learning experience for students and young professionals. By experiencing failure firsthand, individuals can develop a deeper understanding of the importance of perseverance, creativity, and critical thinking. This can help to build confidence and self-esteem, and can prepare them for the challenges and setbacks that they will inevitably face in their careers.
+
+In conclusion, failure is a valuable and essential part of the engineering and research process. It allows for the elimination of incorrect assumptions, the development of resilience and perseverance, the development of new and innovative solutions, the provision of valuable lessons and insights, and the provision of a valuable learning experience for students and young professionals. Rather than viewing failure as a negative concept, we should view it as an opportunity to learn and grow, and to develop the skills and knowledge needed to achieve success.
+```
+</details>
+
+---
+
+### `essays_006` (idx: 6)
+> Write an essay on ocean plastic pollution causes and realistic mitigation strategies
+(400–600 words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 707 | 578 | -129 | -18.2% |
+| Wall time (s)  | 103.846 | 74.895 | -28.951 | -27.9% |
+| Avg entropy    | 0.464 | 0.445 | -0.019 | -4.0% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Ocean plastic pollution is a pressing global issue that has been gaining attention in recent years. The problem is multifaceted, with various causes contributing to the staggering amounts of plastic waste that end up in our oceans. Understanding the root causes of ocean plastic pollution is crucial to developing effective mitigation strategies.
+
+One of the primary causes of ocean plastic pollution is single-use plastics. Plastic bags, straws, water bottles, and other disposable items are used once and then discarded, often ending up in the environment. In fact, it's estimated that over 8 million tons of plastic waste enter the world's oceans every year, with 80% of this waste coming from land-based activities. Another significant contributor to ocean plastic pollution is microplastics, which are tiny plastic particles less than 5 millimeters in size. Microplastics can come from a variety of sources, including cosmetics, clothing, and microbeads in personal care products.
+
+In addition to single-use plastics and microplastics, ocean plastic pollution is also exacerbated by poor waste management practices. In many developing countries, waste collection and disposal systems are inadequate, leading to a significant amount of plastic waste being dumped or burned, with some of it ending up in the ocean. Furthermore, the breakdown of larger plastic items, such as fishing gear and debris, can also contribute to ocean plastic pollution.
+
+So, what can be done to mitigate ocean plastic pollution? One realistic strategy is to implement Extended Producer Responsibility (EPR). EPR holds manufacturers accountable for the waste generated by their products, encouraging them to design more sustainable packaging and production methods. For example, companies like Coca-Cola and PepsiCo have committed to using 100% recyclable packaging by 2025. Governments can also play a crucial role by implementing policies and regulations to reduce plastic waste. For instance, bans on single-use plastics, such as plastic bags and straws, have been implemented in many countries, including the United States, the United Kingdom, and Australia.
+
+Another effective strategy is to increase recycling rates. Recycling is a crucial step in reducing plastic waste, and governments and companies can work together to improve recycling infrastructure and education. For example, the City of San Francisco has implemented a comprehensive recycling program, which has resulted in a significant reduction in waste sent to landfills. Additionally, companies like TerraCycle have developed innovative recycling solutions for hard-to-recycle materials, such as plastic bags and straws.
+
+Education and awareness are also key to mitigating ocean plastic pollution. Raising awareness about the issue among consumers, particularly children, can encourage changes in behavior and promote sustainable practices. For example, schools and community groups can organize beach cleanups and educational programs to teach children about the impact of plastic waste on marine ecosystems.
+
+Finally, research and development of new technologies and materials can also play a crucial role in reducing ocean plastic pollution. For example, biodegradable plastics, made from renewable resources such as cornstarch or sugarcane, could replace traditional plastics. Additionally, companies are developing innovative solutions, such as ocean-cleaning systems and plastic-eating enzymes, to tackle the problem.
+
+In conclusion, ocean plastic pollution is a complex issue with multiple causes, but realistic mitigation strategies can be implemented to reduce its impact. By implementing Extended Producer Responsibility, increasing recycling rates, educating consumers, and developing new technologies, we can work towards a future with fewer plastics in our oceans. It will require a concerted effort from governments, companies, and individuals, but the benefits to our planet and its inhabitants make it a worthwhile endeavor.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Ocean plastic pollution is a pressing global issue that has far-reaching consequences for the environment, human health, and the economy. The problem is multifaceted, with various causes contributing to the staggering amount of plastic waste that enters the world's oceans every year. Understanding the causes of ocean plastic pollution is crucial for developing effective mitigation strategies to address this crisis.
+
+One of the primary causes of ocean plastic pollution is single-use plastics, such as plastic bags, straws, and water bottles. These items are used once and then discarded, often ending up in oceans and waterways. According to the United Nations, if current trends continue, there will be more plastic than fish in the ocean by 2050. Another significant contributor to ocean plastic pollution is microplastics, which are tiny plastic particles that come from a variety of sources, including microbeads in personal care products, synthetic fibers from clothing, and plastic debris that breaks down into smaller pieces.
+
+Other causes of ocean plastic pollution include litter, abandoned fishing gear, and intentional pollution from human activities such as dumping and illegal waste disposal. Climate change also plays a role, as warmer ocean temperatures and changing weather patterns can increase the amount of plastic debris that enters the ocean.
+
+To mitigate ocean plastic pollution, a multifaceted approach is necessary. One effective strategy is to reduce plastic use and increase recycling. Governments, businesses, and individuals can work together to implement policies and practices that promote the use of reusable products, such as cloth bags, stainless steel water bottles, and metal straws. Additionally, improving waste management infrastructure and increasing recycling rates can help to reduce the amount of plastic waste that enters the ocean.
+
+Another important strategy is to clean up existing plastic pollution. Organizations and governments can work together to organize beach cleanups and remove debris from coastal areas. This not only helps to reduce the amount of plastic in the ocean but also raises awareness about the issue and promotes community engagement.
+
+Education and awareness-raising are also crucial components of ocean plastic pollution mitigation. Educating consumers about the causes and consequences of ocean plastic pollution can inspire behavioral change and encourage individuals to make environmentally friendly choices. Governments and businesses can also play a role by promoting sustainable practices and reducing their own plastic use.
+
+In addition to these strategies, there are several technological innovations that can help to address ocean plastic pollution. For example, companies are developing biodegradable plastics that can break down more easily in the environment, and researchers are working on technologies that can remove plastic debris from the ocean.
+
+In conclusion, ocean plastic pollution is a complex issue that requires a comprehensive approach to mitigate. Reducing plastic use and increasing recycling, cleaning up existing pollution, education and awareness-raising, and technological innovation are all important strategies that can help to address this crisis. By working together, governments, businesses, and individuals can make a significant impact and help to protect the world's oceans for future generations.
+```
+</details>
+
+---
+
+### `essays_007` (idx: 7)
+> Write an essay tracing the evolution of programming paradigms from procedural to
+functional (400–600 words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 694 | 589 | -105 | -15.1% |
+| Wall time (s)  | 102.472 | 73.473 | -28.999 | -28.3% |
+| Avg entropy    | 0.365 | 0.413 | 0.047 | 12.9% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The evolution of programming paradigms has been a significant development in the history of computer science. The early days of programming were dominated by procedural programming, which focused on procedures and functions that performed specific tasks. However, as the complexity of software systems grew, the limitations of procedural programming became apparent, and a new paradigm emerged: functional programming.
+
+Procedural programming, which emerged in the 1950s and 1960s, was characterized by its focus on procedures and functions that performed specific tasks. Programs were designed as a series of steps, with each step building upon the previous one to achieve a specific goal. This approach was simple and easy to understand, but it had its limitations. Procedural programming made it difficult to write reusable code, and it was often prone to errors and bugs.
+
+The limitations of procedural programming led to the development of object-oriented programming (OOP) in the 1970s and 1980s. OOP introduced the concept of objects and classes, which allowed for greater modularity and reusability of code. However, OOP was still based on the same procedural paradigm, and it had its own set of limitations.
+
+In the 1990s and 2000s, a new paradigm emerged: functional programming. Functional programming is based on the idea that programs should be composed of pure functions, which take input and produce output without modifying the state of the program. This approach is fundamentally different from procedural programming, which is based on the idea of modifying state and using side effects to achieve a goal.
+
+Functional programming has several key features that distinguish it from procedural programming. One of the most important is immutability, which means that data is never changed in place. Instead, new data is created each time the program is run, and the old data is discarded. This approach makes it much easier to reason about the behavior of the program, as the state of the program is always predictable.
+
+Another key feature of functional programming is the use of higher-order functions, which are functions that take other functions as arguments or return functions as output. This allows for a much more flexible and expressive way of writing code, as functions can be composed together in a variety of ways to achieve complex tasks.
+
+Functional programming also emphasizes the use of recursion, which is a way of solving problems by breaking them down into smaller sub-problems and solving those sub-problems in a similar way. This approach is particularly well-suited to problems that have a recursive structure, such as tree traversals or graph algorithms.
+
+In recent years, functional programming has become increasingly popular, particularly with the rise of languages such as Haskell and Scala. These languages are designed to support functional programming principles, and they have been widely adopted in industries such as finance and data analysis.
+
+In conclusion, the evolution of programming paradigms from procedural to functional has been a significant development in the history of computer science. Procedural programming, which emerged in the 1950s and 1960s, was limited by its focus on procedures and functions that modified state. The limitations of procedural programming led to the development of object-oriented programming, which introduced the concept of objects and classes. However, OOP was still based on the same procedural paradigm, and it had its own set of limitations. The emergence of functional programming in the 1990s and 2000s has provided a new way of writing code that is more expressive, flexible, and predictable.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+The evolution of programming paradigms has been a gradual process, with each paradigm building upon the previous one to create a more efficient and effective way of writing software. The earliest programming paradigm was procedural programming, which emerged in the 1950s and 1960s. Procedural programming focused on procedures and functions that performed specific tasks, with a strong emphasis on control flow and data manipulation.
+
+The procedural programming paradigm was dominant for many years, but it had its limitations. It was prone to errors, difficult to maintain, and often led to tight coupling between different parts of the program. In the 1970s and 1980s, the object-oriented programming (OOP) paradigm emerged as a response to these limitations. OOP introduced the concept of objects, which encapsulated data and behavior, and promoted modularity, reusability, and abstraction.
+
+However, OOP also had its own set of limitations. It was often criticized for being too focused on objects and classes, which could lead to complex and rigid code. Additionally, OOP did not provide a clear way to handle concurrency, which was becoming increasingly important with the rise of multi-core processors and distributed systems.
+
+In the 1990s and 2000s, the functional programming paradigm began to gain popularity. Functional programming emphasizes the use of pure functions, immutability, and recursion, which allows for more predictable and composable code. Functional programming also provides a natural way to handle concurrency, as functions can be easily parallelized and composed together.
+
+One of the key benefits of functional programming is its ability to reduce bugs and errors. By avoiding mutable state and side effects, functional programs are less prone to errors and easier to reason about. Additionally, functional programming allows for more modular and reusable code, as functions can be easily composed together to create new functionality.
+
+Another important aspect of functional programming is its ability to handle concurrency. Functional programming languages such as Haskell and Erlang provide built-in support for concurrency, making it easy to write programs that can take advantage of multiple cores and distributed systems.
+
+In recent years, the functional programming paradigm has continued to evolve and improve. The rise of languages such as Scala, F#, and Rust has brought functional programming to a wider audience, and the development of frameworks such as Akka and Reactive Extensions has made it easier to write concurrent and reactive programs.
+
+In conclusion, the evolution of programming paradigms has been a gradual process, with each paradigm building upon the previous one to create a more efficient and effective way of writing software. From procedural programming to object-oriented programming, and finally to functional programming, each paradigm has its own strengths and weaknesses. However, functional programming has emerged as a dominant paradigm in recent years, offering a way to write more predictable, composable, and concurrent code. As programming continues to evolve, it is likely that functional programming will continue to play a central role in the development of software.
+```
+</details>
+
+---
+
+### `essays_008` (idx: 8)
+> Write an essay on space exploration’s economic and cultural impacts beyond scientific
+discovery (400–600 words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 590 | 596 | 6 | 1.0% |
+| Wall time (s)  | 79.863 | 73.362 | -6.501 | -8.1% |
+| Avg entropy    | 0.566 | 0.431 | -0.135 | -23.8% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Space exploration has long been touted as a pursuit driven solely by scientific discovery and the quest for knowledge. However, beyond the scientific benefits, space exploration has far-reaching economic and cultural impacts that have transformed the way we live, work, and interact with each other.
+
+Economically, space exploration has sparked significant investments and innovations that have trickled down to various industries. The development of satellite technology, for instance, has enabled global communication, navigation, and weather forecasting, generating billions of dollars in revenue each year. The satellite industry alone is projected to reach $1.4 trillion by 2027. Moreover, space-based solar power, a technology still in its infancy, has the potential to become a clean and sustainable source of energy, potentially worth trillions of dollars.
+
+The economic benefits of space exploration also extend to the development of new materials and technologies. Materials used in space exploration, such as Kevlar and memory foam, have found their way into everyday products, from body armor to mattresses. Similarly, the development of advanced life support systems, such as those used in space stations, has led to the creation of more efficient and sustainable solutions for industries like agriculture and healthcare.
+
+Beyond economic benefits, space exploration has had a profound impact on our culture. Space has captured the imagination of people worldwide, inspiring generations of scientists, engineers, and explorers. The Apollo 11 moon landing in 1969, for example, was watched by an estimated 600 million people worldwide, a testament to the power of space exploration to unite humanity. The iconic images of the Earth from space, captured by the Apollo astronauts, have also become a symbol of our planet's fragility and beauty, inspiring a new era of environmental awareness and conservation.
+
+Space exploration has also driven innovation in education and technology. The development of space-based educational programs, such as the International Space Station's EarthKAM, has enabled students to participate in hands-on, real-world scientific research, fostering a new generation of STEM leaders. Furthermore, the need for space exploration has driven the development of new technologies, such as 3D printing and virtual reality, which have transformed industries like healthcare, manufacturing, and entertainment.
+
+Lastly, space exploration has also had a profound impact on our sense of identity and purpose. The exploration of space has challenged our understanding of our place in the universe, inspiring new philosophical and spiritual perspectives. The discovery of exoplanets and the search for extraterrestrial life have also raised fundamental questions about the nature of humanity and our existence.
+
+In conclusion, space exploration has far-reaching economic and cultural impacts that extend beyond scientific discovery. From driving innovation and investment to inspiring new generations and challenging our understanding of the universe, space exploration has transformed the way we live, work, and interact with each other. As we continue to push the boundaries of space exploration, it is essential that we recognize and appreciate the many ways in which this pursuit has enriched our lives and our world.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Space exploration has long been a topic of fascination for humans, with many believing that it holds the key to unlocking new scientific discoveries and pushing the boundaries of human knowledge. While the scientific benefits of space exploration are undeniable, the economic and cultural impacts of this endeavor extend far beyond the realm of scientific discovery.
+
+One of the most significant economic impacts of space exploration is the creation of new industries and job opportunities. The space industry has grown exponentially in recent years, with companies like SpaceX, Blue Origin, and Virgin Galactic leading the charge. These companies are not only creating new jobs in the traditional aerospace sector but also spurring innovation in adjacent industries such as materials science, robotics, and artificial intelligence. In fact, a study by the Space Foundation found that the global space industry is projected to reach $1 trillion in value by 2040, creating millions of new jobs and driving economic growth.
+
+Beyond the creation of new industries, space exploration is also having a profound impact on our daily lives. For example, many of the technologies developed for space exploration, such as GPS and satellite communications, have become essential components of modern life. GPS technology, for instance, is used in everything from navigation systems to financial transactions, while satellite communications enable global connectivity and access to information. These technologies have had a significant impact on our daily lives, making it easier to communicate, navigate, and access information.
+
+In addition to its economic and practical impacts, space exploration is also having a profound cultural impact. Space exploration has captured the imagination of people around the world, inspiring generations to pursue careers in science, technology, engineering, and mathematics (STEM). The Apollo 11 moon landing, for instance, was watched by an estimated 600 million people worldwide, making it one of the most-watched events in human history. The sense of wonder and awe inspired by space exploration has also led to a renewed interest in science and technology, with many people seeking to learn more about the universe and our place within it.
+
+Furthermore, space exploration is also having a profound impact on our understanding of humanity and our place in the universe. The discovery of exoplanets and the search for extraterrestrial life has led to a reevaluation of our understanding of the universe and our place within it. The search for life beyond Earth has also raised profound questions about the nature of existence and our purpose in the universe. These existential questions have sparked a renewed interest in philosophy, ethics, and spirituality, as people seek to understand the meaning and significance of human existence.
+
+In conclusion, the economic and cultural impacts of space exploration extend far beyond the realm of scientific discovery. The creation of new industries and job opportunities, the development of new technologies, and the inspiration of future generations are just a few examples of the many ways in which space exploration is shaping our world. As we continue to explore the vast expanse of space, we can expect these impacts to grow and evolve, shaping the course of human history in profound and far-reaching ways.
+```
+</details>
+
+---
+
+### `essays_009` (idx: 9)
+> Write an essay explaining cognitive biases that affect decision‑making at work (400–600
+words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 732 | 615 | -117 | -16.0% |
+| Wall time (s)  | 107.769 | 79.852 | -27.917 | -25.9% |
+| Avg entropy    | 0.471 | 0.434 | -0.038 | -8.0% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Cognitive biases are mental shortcuts or habits that influence our perception, thinking, and decision-making processes. In the workplace, cognitive biases can have a significant impact on our professional decisions, often leading to suboptimal outcomes. In this essay, we will explore some of the most common cognitive biases that affect decision-making at work and discuss strategies for mitigating their effects.
+
+One of the most pervasive cognitive biases is confirmation bias. This bias occurs when we selectively seek out information that confirms our existing beliefs or opinions, while ignoring or discounting contradictory evidence. In the workplace, confirmation bias can lead to poor decision-making, as we may overlook alternative perspectives or miss important information. For example, a manager may only consider data that supports their initial idea, rather than seeking out diverse opinions and considering alternative solutions.
+
+Another common cognitive bias is the availability heuristic. This bias occurs when we judge the likelihood or importance of an event based on how easily examples come to mind. In the workplace, this bias can lead to overestimating the likelihood of rare events or underestimating the impact of common events. For instance, a marketing team may overemphasize the potential risks of a new product launch based on a single negative review, rather than considering the overall market trends and customer feedback.
+
+The sunk cost fallacy is another cognitive bias that can affect decision-making at work. This bias occurs when we continue to invest time, money, or resources in a project or initiative because of the resources already committed, rather than considering the potential returns or outcomes. In the workplace, this bias can lead to wasting resources on projects that are no longer viable or effective. For example, a team may continue to pour resources into a failing project because of the time and money already invested, rather than cutting their losses and redirecting resources to more promising initiatives.
+
+Anchoring bias is another cognitive bias that can influence decision-making at work. This bias occurs when we rely too heavily on the first piece of information we receive, rather than considering all relevant information. In the workplace, anchoring bias can lead to poor negotiations, as we may accept a lower offer or compromise due to an initial anchor point. For instance, a sales team may anchor on an initial price point offered by a competitor, rather than considering the true value of their own product or service.
+
+Finally, the sunk cost fallacy's cousin, loss aversion, can also affect decision-making at work. This bias occurs when we are more motivated by the fear of loss than the potential for gain. In the workplace, loss aversion can lead to risk aversion, as we may avoid taking calculated risks due to the fear of potential losses. For instance, a manager may be hesitant to restructure a department due to the fear of losing valuable employees, rather than considering the potential benefits of the restructuring.
+
+To mitigate the effects of these cognitive biases, it is essential to develop strategies that promote critical thinking and decision-making. One approach is to encourage diverse perspectives and opinions, ensuring that all voices are heard and considered. Another approach is to seek out objective data and information, rather than relying on anecdotal evidence or personal opinions. Additionally, it is crucial to consider alternative solutions and scenarios, rather than anchoring on a single perspective or idea.
+
+In conclusion, cognitive biases can significantly impact decision-making at work, leading to suboptimal outcomes and poor performance. By understanding these biases and developing strategies to mitigate their effects, individuals and organizations can make more informed, data-driven decisions that drive success. By promoting critical thinking, diverse perspectives, and objective information, we can overcome the limitations of cognitive biases and make better decisions that drive business results.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Cognitive biases are mental shortcuts that influence our thinking and decision-making processes, often leading to errors or suboptimal choices. In the workplace, these biases can have significant consequences, impacting our ability to make informed decisions, manage risk, and achieve our goals. In this essay, we will explore some of the most common cognitive biases that affect decision-making at work and provide strategies for mitigating their impact.
+
+One of the most pervasive biases is confirmation bias, which occurs when we selectively seek out information that confirms our existing beliefs or hypotheses, while ignoring or dismissing contradictory evidence. This bias can lead to poor decision-making, as we may overlook alternative perspectives or underestimate the risks associated with a particular course of action. To combat confirmation bias, it's essential to actively seek out diverse perspectives, engage in open-minded discussion, and consider alternative viewpoints.
+
+Another significant bias is the availability heuristic, which occurs when we overestimate the importance or likelihood of an event based on how easily examples come to mind. For instance, if a company experiences a high-profile data breach, employees may overestimate the likelihood of similar breaches occurring in the future, leading to unnecessary security measures. To mitigate this bias, it's crucial to gather and consider objective data, rather than relying on anecdotal evidence or personal experiences.
+
+The anchoring bias is another common cognitive bias that can influence decision-making. This occurs when we rely too heavily on the first piece of information we receive, even if it's incomplete or inaccurate. For example, if a salesperson provides an initial price quote that is higher than expected, we may anchor on that price and be less likely to consider alternative options. To overcome this bias, it's essential to gather multiple sources of information and consider a range of perspectives before making a decision.
+
+The sunk cost fallacy is another bias that can affect decision-making at work. This occurs when we continue to invest time, money, or resources in a project or initiative because of the resources already committed, even if it no longer makes sense to do so. To avoid this bias, it's essential to regularly reassess the value and feasibility of a project, and be willing to pivot or terminate it if necessary.
+
+Finally, the sunk cost fallacy is closely related to the loss aversion bias, which occurs when we fear losses more than we value gains. This can lead to risk aversion and a reluctance to take calculated risks, which can stifle innovation and progress. To overcome this bias, it's essential to focus on the potential benefits and opportunities, rather than the potential risks and losses.
+
+In conclusion, cognitive biases can have a significant impact on decision-making at work, leading to errors, inefficiencies, and suboptimal outcomes. By recognizing and understanding these biases, we can take steps to mitigate their effects and make more informed, objective decisions. This includes seeking diverse perspectives, gathering objective data, considering alternative viewpoints, and avoiding the pitfalls of sunk costs and loss aversion. By doing so, we can improve our decision-making processes, achieve our goals, and drive success in the workplace.
+```
+</details>
+
+---
+
+### `essays_010` (idx: 10)
+> Write an essay on how open‑source communities sustain long‑term projects (400–600 words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 600 | 609 | 9 | 1.5% |
+| Wall time (s)  | 82.556 | 80.062 | -2.495 | -3.0% |
+| Avg entropy    | 0.577 | 0.589 | 0.012 | 2.0% |
+| Stop reason    | eos_token | eos_patience_fallback | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Open-source communities have revolutionized the way software is developed and maintained, enabling long-term projects to thrive through collaboration, transparency, and shared responsibility. Unlike traditional proprietary software development, open-source projects rely on a community of volunteers and contributors to sustain and evolve over time. This essay will explore the ways in which open-source communities sustain long-term projects, highlighting the key factors that contribute to their success.
+
+One of the primary reasons open-source communities are able to sustain long-term projects is the collective ownership and responsibility that comes with open-source development. In traditional proprietary software development, a single company or individual owns the intellectual property and has complete control over the project. In contrast, open-source projects are owned by the community as a whole, with contributors working together to maintain and evolve the project. This shared ownership fosters a sense of accountability and responsibility, as each contributor feels invested in the project's success.
+
+Another crucial factor in sustaining long-term open-source projects is the transparency and visibility that comes with open-source development. Open-source projects are typically developed on public repositories, allowing anyone to view the code, contribute to the project, and track changes. This transparency enables the community to monitor the project's progress, identify issues, and provide feedback, which in turn drives continuous improvement. Additionally, transparency allows for collaboration and knowledge-sharing among contributors, as they can learn from each other's expertise and experience.
+
+Open-source communities also rely on a network of contributors, each bringing their unique skills and expertise to the project. This diverse range of contributors ensures that the project remains adaptable and resilient, as different individuals can take on different roles and responsibilities. Moreover, the collective knowledge and experience of the community allows for a more comprehensive understanding of the project, enabling the identification of potential issues and the development of effective solutions.
+
+The open-source model also fosters a sense of community and camaraderie among contributors, which is essential for sustaining long-term projects. Contributors often develop strong relationships with one another, built on shared passion and dedication to the project. This sense of community and shared purpose encourages contributors to continue working together, even in the face of challenges and setbacks.
+
+Finally, the open-source model allows for the creation of a community-driven governance structure, which helps to ensure the long-term sustainability of the project. This governance structure can take many forms, including decision-making processes, community-elected leaders, and clear guidelines for contribution and participation. This structure provides a framework for resolving conflicts, making decisions, and allocating resources, ensuring that the project remains stable and focused.
+
+In conclusion, open-source communities are uniquely positioned to sustain long-term projects through their collective ownership, transparency, diversity of contributors, community-driven governance, and sense of shared purpose. By leveraging these factors, open-source projects can overcome the challenges of maintaining a large and complex codebase, ensuring that they continue to evolve and thrive over time. As the technology landscape continues to evolve, the importance of open-source communities and their ability to sustain long-term projects will only continue to grow.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Open-source communities have been instrumental in sustaining long-term projects, often with remarkable success. These communities, characterized by voluntary collaboration and shared ownership, have enabled the development and maintenance of complex software and infrastructure projects that would be impossible for a single individual or organization to accomplish alone. In this essay, we will explore the key factors that contribute to the sustainability of open-source communities and their ability to sustain long-term projects.
+
+One of the primary reasons open-source communities are able to sustain long-term projects is the diversity of contributors. By attracting a large and diverse group of individuals, open-source projects can tap into a wide range of skills, expertise, and perspectives. This diversity allows for the identification and addressing of issues that might have been overlooked by a single individual or group. Moreover, the collective nature of open-source development enables the sharing of knowledge and expertise, fostering a culture of collaboration and innovation.
+
+Another crucial factor in the sustainability of open-source communities is the absence of a single point of failure. In traditional proprietary projects, the loss of a key team member or leader can be devastating, as they often hold critical knowledge and expertise. In contrast, open-source projects are designed to be decentralized, with multiple individuals and groups contributing to different aspects of the project. This decentralized structure ensures that the project can continue to evolve and thrive even if one or more contributors leave or become unavailable.
+
+Open-source communities also rely on a culture of reciprocity and mutual support. Contributors are often motivated by a desire to give back to the community, rather than seeking personal gain. This sense of community and shared purpose fosters a culture of cooperation and collaboration, where individuals are willing to invest time and effort to ensure the long-term success of the project. Additionally, the open-source model allows for the sharing of resources, such as code, documentation, and expertise, which reduces the burden on individual contributors and enables the project to scale more efficiently.
+
+The open-source model also enables the creation of a sense of ownership and belonging among contributors. When individuals contribute to an open-source project, they are not simply working for a company or organization; they are part of a community that is working towards a shared goal. This sense of ownership and belonging motivates contributors to continue working on the project, even in the face of challenges and setbacks.
+
+Finally, the open-source model allows for the creation of a transparent and accountable development process. With open-source projects, the code and decision-making processes are transparent, allowing contributors to track progress, identify issues, and provide feedback. This transparency and accountability help to build trust among contributors and stakeholders, ensuring that the project remains stable and reliable over the long term.
+
+In conclusion, open-source communities have proven to be highly effective at sustaining long-term projects. The diversity of contributors, decentralized structure, culture of reciprocity, sense of ownership, and transparent development process all contribute to the success of these communities. By leveraging these factors, open-source projects are able to overcome the challenges and obstacles that often plague traditional proprietary projects, and continue to thrive and evolve over time.
+```
+</details>
+
+---
+
+### `essays_011` (idx: 11)
+> Write an essay on the future of work in an era of automation and AI augmentation (400–600
+words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 648 | 608 | -40 | -6.2% |
+| Wall time (s)  | 93.250 | 77.972 | -15.278 | -16.4% |
+| Avg entropy    | 0.452 | 0.571 | 0.120 | 26.5% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+As we stand at the threshold of the fourth industrial revolution, the future of work is being reshaped by the rapid advancements in automation and artificial intelligence (AI) augmentation. The rise of machines and algorithms is transforming the way we live, work, and interact with each other. While some predict a dystopian future where humans are replaced by machines, others envision a world where AI and humans collaborate to create a more efficient, productive, and fulfilling work environment. In this essay, we will explore the future of work in an era of automation and AI augmentation, highlighting the opportunities and challenges that lie ahead.
+
+One of the most significant implications of automation and AI augmentation is the potential for job displacement. As machines and algorithms take over routine and repetitive tasks, many jobs may become obsolete, leading to widespread unemployment and social unrest. However, this is not necessarily a foregone conclusion. According to a report by the McKinsey Global Institute, up to 800 million jobs could be lost worldwide due to automation by 2030, but this could also create up to 140 million new jobs that do not yet exist. The key to mitigating the negative effects of job displacement is to upskill and reskill the workforce, enabling humans to work alongside machines and focus on tasks that require creativity, empathy, and complex problem-solving.
+
+Another significant impact of automation and AI augmentation is the transformation of work itself. As machines take over routine tasks, humans will have more time to focus on higher-value activities such as strategy, creativity, and innovation. This could lead to a more fulfilling and meaningful work experience, as humans are able to focus on tasks that bring them joy and satisfaction. Additionally, the rise of remote work and virtual collaboration enabled by AI and automation could lead to a more flexible and autonomous work environment, allowing people to work from anywhere and at any time.
+
+However, the future of work in an era of automation and AI augmentation is not without its challenges. One of the most significant concerns is the issue of job displacement and income inequality. As machines and algorithms take over jobs, those who are already struggling to make ends meet may be disproportionately affected, leading to increased social and economic inequality. Additionally, the rise of automation and AI could exacerbate existing biases and discrimination, perpetuating systemic inequalities and injustices.
+
+To address these challenges, policymakers, educators, and business leaders must work together to develop strategies that ensure a smooth transition to an automated workforce. This could involve investing in education and training programs that focus on developing skills that are complementary to AI, such as critical thinking, creativity, and emotional intelligence. Additionally, policymakers could implement policies that support workers who are displaced by automation, such as universal basic income or retraining programs.
+
+In conclusion, the future of work in an era of automation and AI augmentation is both exciting and uncertain. While machines and algorithms have the potential to transform the way we work, they also pose significant challenges and risks. To mitigate these risks, we must work together to develop strategies that ensure a smooth transition to an automated workforce, and that prioritize the well-being and prosperity of all individuals. By doing so, we can create a future where humans and machines work together to create a more efficient, productive, and fulfilling work environment.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+The advent of automation and artificial intelligence (AI) is transforming the world of work at an unprecedented pace. As machines and algorithms take over routine and repetitive tasks, the future of work is likely to be shaped by the intersection of technology and human capabilities. While some may view this shift as a threat to jobs and the economy, others see it as an opportunity to augment human potential and create new industries and roles.
+
+One of the most significant implications of automation and AI is the rise of the gig economy. With the ability to outsource tasks to machines, companies can streamline their operations, reduce costs, and increase efficiency. This, in turn, has given rise to a new breed of workers who are freelancers, consultants, and entrepreneurs. These individuals are equipped with the skills to adapt to changing circumstances and capitalize on new opportunities.
+
+Another consequence of automation and AI is the emergence of new industries and job roles. As machines take over routine tasks, humans are free to focus on high-value tasks that require creativity, empathy, and critical thinking. This has given rise to new professions such as data scientists, AI ethicists, and digital human-centered designers. These roles require a deep understanding of human behavior, psychology, and sociology, as well as technical skills in areas such as machine learning and data analysis.
+
+However, the future of work also poses significant challenges. Many jobs that are at risk of automation are those that are repetitive, routine, or can be easily codified. This includes tasks such as data entry, bookkeeping, and customer service. While some argue that these jobs will disappear, others believe that they will evolve into new roles that require more human interaction and creativity.
+
+To mitigate the impact of automation and AI on employment, governments and businesses must invest in education and retraining programs. This includes teaching skills such as critical thinking, problem-solving, and communication, as well as providing training in emerging technologies such as AI, blockchain, and cybersecurity. Additionally, companies must prioritize employee development and upskilling, providing opportunities for workers to adapt to changing circumstances and take on new roles.
+
+Furthermore, the future of work also requires a shift in our mindset and values. As machines take over routine tasks, we must focus on what makes us human – our creativity, empathy, and ability to connect with others. This means prioritizing jobs that require human interaction, such as healthcare, education, and social work. It also means recognizing the value of unpaid work, such as caregiving and volunteering, and providing support and resources to those who perform these roles.
+
+In conclusion, the future of work in an era of automation and AI is complex and multifaceted. While some jobs will disappear, others will emerge, and new industries and roles will be created. To thrive in this new landscape, we must prioritize education, retraining, and employee development, as well as shift our focus to what makes us human. By doing so, we can create a future where humans and machines work together to create a more equitable, sustainable, and prosperous society.
+```
+</details>
+
+---
+
+### `essays_012` (idx: 12)
+> Write an essay on biodiversity loss and the concept of planetary boundaries (400–600
+words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 559 | 593 | 34 | 6.1% |
+| Wall time (s)  | 76.025 | 73.065 | -2.960 | -3.9% |
+| Avg entropy    | 0.426 | 0.436 | 0.009 | 2.2% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Biodiversity loss is one of the most pressing environmental issues of our time, with far-reaching consequences for the health of our planet and human well-being. The concept of planetary boundaries provides a framework for understanding the delicate balance of our planet's ecosystems and the devastating impact of human activities on the natural world.
+
+The concept of planetary boundaries was first introduced by the Stockholm Resilience Centre in 2009. It posits that there are nine key areas where human activities are pushing the Earth's systems beyond their safe operating space, including climate change, biodiversity loss, and the degradation of air and water quality. These boundaries are critical to maintaining the health and resilience of the planet, and their crossing can have catastrophic consequences.
+
+Biodiversity loss is a key area where human activities are pushing the planet beyond its boundaries. The current rate of species extinction is estimated to be 100 to 1,000 times higher than the natural rate, with many species disappearing before they are even discovered. The main drivers of biodiversity loss are habitat destruction, pollution, climate change, and overexploitation of natural resources. These pressures are particularly severe in areas with high levels of human population density, such as tropical forests and coral reefs.
+
+The consequences of biodiversity loss are far-reaching and devastating. Ecosystems that are rich in biodiversity are more resilient and better equipped to provide essential services such as pollination, pest control, and climate regulation. The loss of biodiversity can also have cascading effects throughout entire ecosystems, leading to the collapse of food chains and the loss of ecosystem function. For example, the decline of pollinator species such as bees and butterflies can have significant impacts on food production and human nutrition.
+
+The loss of biodiversity also has important implications for human health. Many medicines are derived from plants and animals, and the loss of these species can make it more difficult to develop new treatments for diseases. Additionally, the decline of pollinators and other beneficial insects can have significant impacts on food production and human nutrition.
+
+The concept of planetary boundaries provides a framework for understanding the interconnectedness of these issues and the need for a holistic approach to conservation and sustainability. It highlights the need for policymakers and individuals to work together to address the root causes of biodiversity loss, including habitat destruction, pollution, and climate change.
+
+In conclusion, biodiversity loss is a critical issue that requires immediate attention and action. The concept of planetary boundaries provides a framework for understanding the delicate balance of our planet's ecosystems and the devastating impact of human activities on the natural world. It is essential that we work together to address the root causes of biodiversity loss and protect the natural world for future generations. This requires a holistic approach that incorporates conservation, sustainability, and climate action, and it is critical that policymakers, individuals, and businesses work together to achieve this goal.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Biodiversity loss is a pressing global issue that has severe consequences for the health of our planet. The loss of species, ecosystems, and genetic diversity can have far-reaching impacts on the environment, human well-being, and the economy. One concept that has gained significant attention in recent years is the idea of planetary boundaries, which refers to the critical thresholds beyond which the Earth's systems can no longer sustain life as we know it.
+
+The concept of planetary boundaries was first introduced by a team of scientists in 2009, who identified nine critical boundaries that, if crossed, could have catastrophic consequences for the planet. These boundaries include climate change, ocean acidification, ozone depletion, and the loss of biodiversity, among others. The idea is that if we exceed these boundaries, we risk triggering a cascade of unintended consequences that could lead to a tipping point, beyond which it becomes difficult or impossible to restore the planet's natural systems.
+
+Biodiversity loss is a key component of the planetary boundaries framework. The current rate of species extinction is estimated to be 100 to 1,000 times higher than the natural rate, with many species disappearing before they are even discovered. This loss of biodiversity has severe consequences for ecosystems, as species play critical roles in maintaining the health and resilience of ecosystems. For example, pollinators like bees and butterflies are essential for plant reproduction, while predators like wolves and lions regulate prey populations and maintain ecosystem balance.
+
+The loss of biodiversity also has significant impacts on human well-being. Ecosystems provide essential services like clean air and water, soil formation, and climate regulation, which are critical for human health and livelihoods. The degradation of ecosystems can lead to reduced crop yields, increased disease transmission, and decreased water quality, among other negative consequences.
+
+The main drivers of biodiversity loss are habitat destruction, overexploitation of resources, climate change, and pollution. Human activities like deforestation, land conversion, and infrastructure development have led to the destruction of habitats and the fragmentation of ecosystems, making it difficult for species to survive. Overfishing, overhunting, and overharvesting of resources have also contributed to the decline of many species.
+
+To address the biodiversity crisis, it is essential to adopt a multifaceted approach that involves reducing the main drivers of biodiversity loss. This can be achieved through sustainable land-use planning, conservation efforts, and the development of sustainable agriculture and fishing practices. Additionally, it is crucial to address climate change, which is a major driver of biodiversity loss, by reducing greenhouse gas emissions and transitioning to renewable energy sources.
+
+In conclusion, biodiversity loss is a critical issue that requires immediate attention and action. The concept of planetary boundaries highlights the critical thresholds beyond which the Earth's systems can no longer sustain life as we know it. By understanding the drivers of biodiversity loss and adopting a comprehensive approach to conservation and sustainability, we can work towards preserving the health and resilience of ecosystems and ensuring a livable future for all.
+```
+</details>
+
+---
+
+### `essays_013` (idx: 13)
+> Write an essay about the art and science of data visualization (400–600 words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 626 | 606 | -20 | -3.2% |
+| Wall time (s)  | 86.181 | 78.138 | -8.043 | -9.3% |
+| Avg entropy    | 0.423 | 0.484 | 0.060 | 14.2% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The art and science of data visualization is a rapidly evolving field that combines the principles of art, design, and computer science to effectively communicate complex data insights to a wide range of audiences. Data visualization is the process of transforming raw data into a visual representation that can be easily understood and interpreted by humans. This field has become increasingly important in today's data-driven world, as it enables individuals and organizations to extract valuable insights from large datasets and make informed decisions.
+
+From an artistic perspective, data visualization is a creative process that requires a deep understanding of human perception, cognition, and behavior. Effective data visualization designers must consider the emotional and psychological impact of their visualizations on the viewer, as well as the message they want to convey. This involves using a range of visual elements, such as color, shape, size, and texture, to create a visually appealing and engaging representation of the data. Data visualization artists must also be skilled in the use of visual metaphors and storytelling techniques to convey complex ideas and themes.
+
+From a scientific perspective, data visualization is a technical process that requires a strong understanding of computer science, mathematics, and statistics. Data visualization software and tools, such as Tableau, Power BI, and D3.js, use algorithms and machine learning techniques to transform raw data into interactive and dynamic visualizations. These tools enable users to explore and analyze large datasets, identify patterns and trends, and make predictions about future behavior.
+
+The intersection of art and science in data visualization is what makes this field so powerful. By combining the creative and technical aspects of data visualization, designers and developers can create visualizations that are both beautiful and informative. For example, a well-designed heatmap can reveal hidden patterns and correlations in a dataset, while a interactive dashboard can allow users to explore and analyze the data in real-time.
+
+Data visualization has numerous applications across various industries, including business, healthcare, education, and government. In the business world, data visualization can be used to track sales trends, monitor customer behavior, and identify areas for improvement. In healthcare, data visualization can be used to analyze patient outcomes, track disease spread, and identify patterns in medical research. In education, data visualization can be used to track student performance, identify learning gaps, and inform curriculum development.
+
+Despite the many benefits of data visualization, there are also some challenges and limitations. One of the biggest challenges is ensuring that the visualization is accurate and reliable, as incorrect or misleading visualizations can lead to incorrect conclusions. Another challenge is ensuring that the visualization is accessible and understandable to a wide range of audiences, including those with varying levels of technical expertise.
+
+In conclusion, the art and science of data visualization is a rapidly evolving field that combines the principles of art, design, and computer science to effectively communicate complex data insights. By combining the creative and technical aspects of data visualization, designers and developers can create visualizations that are both beautiful and informative. As the amount of data continues to grow, the importance of data visualization will only continue to increase, and it is essential that individuals and organizations develop the skills and expertise needed to effectively communicate data insights in a clear and compelling way.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Data visualization is the art and science of communicating complex information through visual representations. It is a powerful tool that has revolutionized the way we understand and interact with data, making it possible to extract insights, identify patterns, and make informed decisions. The art of data visualization combines creative design principles with scientific methods to create effective and engaging visualizations that convey complex information in a clear and concise manner.
+
+On the scientific side, data visualization relies on statistical and computational techniques to transform raw data into visual representations. This involves selecting the most relevant data, cleaning and preprocessing it, and applying various algorithms to extract meaningful patterns and relationships. The resulting visualizations can take many forms, including charts, graphs, maps, and networks, each designed to convey specific types of information.
+
+The art of data visualization, on the other hand, involves the creative process of designing and presenting the visualizations in a way that is both aesthetically pleasing and effective at communicating the message. This requires a deep understanding of human perception, cognition, and behavior, as well as a keen sense of design principles and best practices. Effective data visualization designers must consider factors such as color, typography, and layout to create visualizations that are easy to read, understand, and interpret.
+
+One of the key challenges in data visualization is the need to balance the scientific and artistic aspects. On one hand, the scientific approach requires attention to detail, precision, and accuracy, while the artistic approach demands creativity, intuition, and emotional resonance. A good data visualization designer must be able to strike a balance between these two extremes, using their knowledge of statistics and design principles to create visualizations that are both informative and engaging.
+
+Data visualization has many practical applications across various fields, including business, healthcare, education, and environmental science. In business, data visualization can be used to analyze customer behavior, track market trends, and optimize supply chain operations. In healthcare, it can be used to track patient outcomes, monitor disease spread, and identify patterns in medical data. In education, it can be used to visualize student performance, track learning outcomes, and identify areas for improvement.
+
+In addition to its practical applications, data visualization has also had a profound impact on our understanding of the world. By visualizing complex data, we can gain new insights into the world around us, from the behavior of economies and societies to the behavior of cells and molecules. Data visualization has the power to reveal patterns and relationships that would be difficult or impossible to discern through traditional methods, allowing us to better understand the world and make more informed decisions.
+
+In conclusion, data visualization is both an art and a science that combines creative design principles with scientific methods to communicate complex information. It requires a deep understanding of human perception, cognition, and behavior, as well as a keen sense of design principles and best practices. By striking a balance between the scientific and artistic aspects, data visualization designers can create visualizations that are both informative and engaging, with the power to reveal new insights and inform decision-making across a wide range of fields.
+```
+</details>
+
+---
+
+### `essays_014` (idx: 14)
+> Write an essay on the history of cryptography from Caesar cipher to public‑key crypto
+(400–600 words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 649 | 719 | 70 | 10.8% |
+| Wall time (s)  | 93.345 | 97.209 | 3.863 | 4.1% |
+| Avg entropy    | 0.381 | 0.405 | 0.025 | 6.4% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Cryptography, the art of secure communication through secret writing, has a rich and fascinating history that spans thousands of years. From the earliest forms of cryptography, such as the Caesar cipher, to the modern era of public-key cryptography, this field has undergone significant transformations, driven by technological advancements and the need for secure communication.
+
+One of the earliest forms of cryptography is the Caesar cipher, attributed to Julius Caesar. This simple substitution cipher replaces each letter with a letter a fixed number of positions down the alphabet. For example, if the shift is 3, the letter "a" becomes "d", "b" becomes "e", and so on. This method was used by Caesar and other ancient civilizations, including the Greeks and Egyptians, to send secret messages.
+
+As civilizations evolved, so did cryptography. In the 15th century, the Vigenère cipher was invented by Blaise de Vigenère, a French cryptographer. This polyalphabetic cipher uses a keyword to encrypt and decrypt messages, making it more secure than the Caesar cipher. The Vigenère cipher remained a widely used method for centuries, until it was finally broken in the 19th century.
+
+The Industrial Revolution brought significant advancements in cryptography. In the 19th century, the development of the telegraph and telephone led to a need for more secure methods of communication. The invention of the Enigma machine by the Germans during World War I and World War II marked a significant milestone in cryptography. The Enigma machine used a complex system of rotors and substitution tables to encrypt messages, making it nearly impossible to decipher without the correct settings.
+
+The 20th century saw the development of modern cryptography, driven by the need for secure communication in the digital age. In the 1970s, the Data Encryption Standard (DES) was introduced, a symmetric-key block cipher that used a single key for both encryption and decryption. However, the limitations of DES, including its relatively short key size and vulnerability to attacks, led to the development of more secure algorithms.
+
+The introduction of public-key cryptography in the 1970s revolutionized the field. Public-key cryptography uses a pair of keys: a public key for encryption and a private key for decryption. This allows for secure communication between parties who have never met before, without the need for a shared secret key. The most widely used public-key algorithm is the RSA algorithm, developed by Ron Rivest, Adi Shamir, and Leonard Adleman in the 1970s.
+
+The widespread adoption of the internet and the rise of e-commerce in the 1990s further accelerated the development of cryptography. The need for secure online transactions and communication led to the development of protocols such as Secure Sockets Layer (SSL) and Transport Layer Security (TLS), which use public-key cryptography to encrypt data in transit.
+
+In conclusion, the history of cryptography is a rich and fascinating story that spans thousands of years. From the simple Caesar cipher to the complex public-key algorithms of today, cryptography has evolved significantly over time, driven by technological advancements and the need for secure communication. As the world becomes increasingly dependent on digital communication, the importance of cryptography will only continue to grow, ensuring that our secrets remain safe and secure.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Cryptography, the practice of secure communication through the use of secret codes and algorithms, has a rich and fascinating history that spans thousands of years. From the earliest recorded forms of cryptography to the modern public-key systems used today, the field has evolved significantly over time, driven by the need for secure communication and the ingenuity of mathematicians and cryptographers.
+
+One of the earliest forms of cryptography is the Caesar cipher, which dates back to ancient Rome. This simple substitution cipher replaces each letter with a letter a fixed number of positions down the alphabet. For example, a Caesar cipher with a shift of 3 would replace the letter "a" with "d", "b" with "e", and so on. While this cipher is easily broken by frequency analysis, it was still an effective way to send secret messages during the Roman Empire.
+
+In the Middle Ages, cryptography continued to evolve with the development of more complex ciphers. The Vigenère cipher, invented by Blaise de Vigenère in the 16th century, is a polyalphabetic substitution cipher that uses a keyword to determine the substitution pattern. This cipher was considered unbreakable for many years and was used by governments and military organizations for secure communication.
+
+However, in the 19th century, the development of frequency analysis and cryptanalysis by mathematicians such as Charles Babbage and Auguste Kerckhoffs led to the breaking of many ciphers, including the Vigenère cipher. This led to the development of more secure ciphers, such as the one-time pad, which uses a random key that is used only once.
+
+The 20th century saw the development of modern cryptography, with the invention of the computer and the creation of the first public-key cryptosystems. The most famous of these is the RSA algorithm, developed in the 1970s by Ron Rivest, Adi Shamir, and Leonard Adleman. RSA uses a pair of keys, a public key for encryption and a private key for decryption, to ensure secure communication.
+
+The RSA algorithm is based on the difficulty of factoring large numbers, which is a problem that has yet to be solved. This makes it virtually impossible to break the cipher without knowing the private key. The public key is used to encrypt the message, while the private key is used to decrypt it. This system has become the foundation of modern cryptography and is used in many applications, including secure web browsing and online transactions.
+
+In the 1990s, the development of the internet and the widespread use of email and online communication led to the need for more secure methods of encryption. This led to the development of public-key infrastructure (PKI), which allows for the creation and management of digital certificates and keys. PKI is used to establish trust between parties and ensure the authenticity of digital identities.
+
+In recent years, the development of quantum computing has raised concerns about the security of classical cryptography. Quantum computers can potentially break many classical encryption algorithms, including RSA, by using quantum algorithms such as Shor's algorithm. This has led to the development of quantum-resistant cryptography, which uses algorithms that are resistant to quantum attacks.
+
+In conclusion, the history of cryptography is a rich and fascinating story that spans thousands of years. From the simple Caesar cipher to the complex public-key systems used today, cryptography has evolved significantly over time, driven by the need for secure communication and the ingenuity of mathematicians and cryptographers. As technology continues to evolve, it is likely that cryptography will continue to play a critical role in ensuring the security of our digital communications.
+```
+</details>
+
+---
+
+### `essays_015` (idx: 15)
+> Write an essay on urban design principles that make streets safer for pedestrians (400–600
+words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 567 | 570 | 3 | 0.5% |
+| Wall time (s)  | 80.047 | 69.252 | -10.795 | -13.5% |
+| Avg entropy    | 0.563 | 0.483 | -0.080 | -14.2% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Urban design plays a crucial role in shaping the character and functionality of cities, and one of the most critical aspects of urban design is the creation of streets that prioritize pedestrian safety. A well-designed street can greatly reduce the risk of accidents and promote a sense of community, while a poorly designed street can be a recipe for disaster. In this essay, we will explore the urban design principles that make streets safer for pedestrians.
+
+First and foremost, streets that prioritize pedestrian safety should be designed with clear and consistent signage and markings. This includes clear signage indicating pedestrian crossings, traffic signals, and pedestrian-only zones. Additionally, consistent and well-maintained markings such as crosswalks, bike lanes, and traffic lanes help to guide pedestrians and vehicles through the street, reducing confusion and ambiguity.
+
+Another key principle of pedestrian-friendly streets is the creation of a clear and unobstructed pedestrian path. This can be achieved by removing obstacles such as parked cars, construction equipment, and street furniture, and by ensuring that sidewalks are wide and well-maintained. A clear path allows pedestrians to move safely and confidently through the street, reducing the risk of accidents and near-misses.
+
+Another important aspect of pedestrian safety is the reduction of speed limits. Streets that are designed with pedestrian safety in mind should have speed limits that are low enough to allow pedestrians to cross the street safely. This can be achieved by implementing speed bumps, speed cameras, and other traffic calming measures. Additionally, streets that are designed with pedestrian priority in mind should also be designed with features such as pedestrian-only zones, which can be implemented through the use of physical barriers or traffic signals.
+
+Another key principle of pedestrian-friendly streets is the creation of a sense of community. This can be achieved by incorporating public art, landscaping, and other amenities that encourage people to linger and interact with one another. A sense of community helps to build trust and social connections among residents, which can help to reduce the risk of crime and other negative behaviors.
+
+Finally, streets that prioritize pedestrian safety should be designed with accessibility in mind. This includes ensuring that sidewalks are wide and well-maintained, and that pedestrian crossings are easily accessible for people with disabilities. Additionally, streets that are designed with pedestrian safety in mind should also be designed with features such as curb cuts, ramps, and audio signals to assist people with visual impairments.
+
+In conclusion, designing streets that prioritize pedestrian safety requires a thoughtful and comprehensive approach. By incorporating clear signage and markings, creating a clear and unobstructed pedestrian path, reducing speed limits, creating a sense of community, and prioritizing accessibility, cities can create streets that are safe and enjoyable for pedestrians of all ages and abilities. By prioritizing pedestrian safety, cities can also promote a sense of community and social connection, which can have a range of benefits for residents and visitors alike.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Urban design plays a crucial role in shaping the safety and livability of cities. One of the most critical aspects of urban design is the design of streets, which can either promote or hinder pedestrian safety. As cities continue to grow and evolve, it is essential to incorporate urban design principles that prioritize pedestrian safety. In this essay, we will explore the key urban design principles that make streets safer for pedestrians.
+
+First and foremost, streets should be designed with pedestrian-friendly infrastructure. This includes features such as wide sidewalks, pedestrian-only zones, and adequate lighting. Wide sidewalks provide ample space for pedestrians to walk comfortably, reducing the risk of collisions with vehicles. Pedestrian-only zones, on the other hand, eliminate the risk of conflicts between pedestrians and vehicles, creating a safer and more enjoyable walking experience. Adequate lighting is also essential, as it helps to reduce the risk of accidents by improving visibility and reducing the likelihood of collisions.
+
+Another critical urban design principle is the creation of clear and consistent traffic flow. This can be achieved through the use of traffic calming measures such as speed bumps, chicanes, and narrowed traffic lanes. These measures slow down traffic, reducing the risk of accidents and making streets safer for pedestrians. Additionally, clear signage and markings can help to guide pedestrians and drivers, reducing confusion and potential conflicts.
+
+Urban design principles can also prioritize pedestrian safety by incorporating features that reduce the risk of collisions. For example, the use of raised crosswalks and pedestrian bridges can help to separate pedestrians from vehicular traffic, reducing the risk of accidents. Similarly, the incorporation of pedestrian-friendly features such as benches, planters, and public art can create a welcoming and inviting atmosphere, encouraging pedestrians to linger and reducing the risk of accidents.
+
+Another important urban design principle is the creation of pedestrian-friendly intersections. This can be achieved through the use of features such as pedestrian-activated signals, leading pedestrian intervals, and pedestrian-only phases. These features give pedestrians priority at intersections, reducing the risk of accidents and making it easier for pedestrians to navigate the street.
+
+Finally, urban design principles can prioritize pedestrian safety by incorporating features that promote a sense of community and social interaction. This can be achieved through the creation of public spaces such as plazas, parks, and street festivals. These spaces encourage social interaction and community engagement, reducing the risk of accidents and making streets safer for pedestrians.
+
+In conclusion, urban design principles play a critical role in shaping the safety and livability of cities. By incorporating features such as pedestrian-friendly infrastructure, clear and consistent traffic flow, collision-reducing measures, pedestrian-friendly intersections, and community-promoting public spaces, cities can create streets that are safer and more enjoyable for pedestrians. As cities continue to grow and evolve, it is essential to prioritize pedestrian safety and incorporate urban design principles that promote a safe and welcoming environment for all users.
+```
+</details>
+
+---
+
+### `essays_016` (idx: 16)
+> Write an essay about the ethics of gene editing in humans (400–600 words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 630 | 565 | -65 | -10.3% |
+| Wall time (s)  | 86.553 | 71.666 | -14.887 | -17.2% |
+| Avg entropy    | 0.430 | 0.562 | 0.132 | 30.7% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The ethics of gene editing in humans is a complex and controversial topic that has sparked intense debate among scientists, ethicists, and policymakers. Gene editing, which involves making precise changes to an individual's DNA, has the potential to revolutionize the treatment of genetic diseases and improve human health. However, it also raises significant ethical concerns about the potential consequences of altering the human genome.
+
+One of the primary ethical concerns surrounding gene editing is the potential for unintended consequences. Gene editing technology is still in its infancy, and scientists are not yet fully understood the long-term effects of altering the human genome. There is a risk that changes made to an individual's DNA could have unforeseen effects on their health, or even on future generations. This raises concerns about the potential for gene editing to create unintended and potentially harmful consequences.
+
+Another ethical concern is the potential for gene editing to be used for non-therapeutic purposes, such as to enhance physical or cognitive abilities. This raises concerns about the potential for gene editing to be used to create a "designer baby" or to give certain individuals an unfair advantage over others. This could potentially exacerbate existing social and economic inequalities, and could also raise concerns about the dignity and autonomy of individuals who are not able to make choices about their own genetic makeup.
+
+Furthermore, there are concerns about the potential for gene editing to be used to discriminate against individuals who have genetic disorders or conditions. Gene editing could potentially be used to eliminate certain traits or characteristics that are seen as undesirable, which could lead to discrimination against individuals who possess those traits. This could also raise concerns about the potential for eugenics, or the use of genetic engineering to improve the human species.
+
+Despite these concerns, many scientists and ethicists argue that gene editing has the potential to revolutionize the treatment of genetic diseases and improve human health. Gene editing could potentially be used to treat a wide range of genetic disorders, from sickle cell anemia to muscular dystrophy. It could also be used to prevent genetic disorders from occurring in the first place, by editing genes before they are passed on to future generations.
+
+To address these ethical concerns, many experts recommend that gene editing be subject to strict regulation and oversight. This could include requiring rigorous testing and evaluation of gene editing technologies before they are used in humans, as well as establishing clear guidelines and regulations for the use of gene editing in medicine. It could also involve educating the public about the potential benefits and risks of gene editing, and involving patients and families in the decision-making process.
+
+In conclusion, the ethics of gene editing in humans is a complex and multifaceted issue. While gene editing has the potential to revolutionize the treatment of genetic diseases and improve human health, it also raises significant ethical concerns about the potential consequences of altering the human genome. To address these concerns, it is essential that gene editing be subject to strict regulation and oversight, and that the public be educated about the potential benefits and risks of this technology. Ultimately, the responsible use of gene editing will require a careful balancing of the potential benefits and risks, and a commitment to protecting the dignity and autonomy of individuals who are affected by this technology.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+The rapid advancements in gene editing technology have opened up new possibilities for treating genetic diseases and improving human health. However, the ethics of gene editing in humans are a topic of intense debate among scientists, ethicists, and policymakers. The use of gene editing techniques, such as CRISPR-Cas9, raises important questions about the potential risks and benefits, as well as the moral implications of altering the human genome.
+
+One of the primary concerns surrounding gene editing is the potential for unintended consequences. When editing genes, there is a risk of introducing off-target effects, where the edited gene is not the intended target, or of disrupting other genes that are essential for normal cellular function. This could lead to unforeseen health problems or even death. Additionally, gene editing could potentially introduce new mutations that are passed on to future generations, potentially altering the course of human evolution.
+
+Another ethical concern is the potential for selective breeding or eugenics. Gene editing could be used to select for desirable traits, such as intelligence, athleticism, or physical appearance, leading to a form of social engineering. This raises concerns about the potential for discrimination and inequality, as well as the moral implications of playing God.
+
+Furthermore, the use of gene editing in humans raises questions about the boundaries between therapy and enhancement. Gene editing could be used to treat genetic diseases, but it could also be used to enhance physical or cognitive abilities beyond what is considered normal. This blurs the line between treating a medical condition and enhancing a person's abilities, leading to concerns about the potential for abuse and the unequal distribution of benefits.
+
+The ethics of gene editing are also closely tied to issues of consent and autonomy. Who should have the right to make decisions about gene editing, and who should be held accountable for any potential consequences? Should individuals have the right to choose to edit their own genes, or should this decision be left to parents or policymakers?
+
+Finally, the use of gene editing raises questions about the potential impact on society and future generations. If gene editing becomes widespread, it could lead to a new form of social hierarchy, where those with edited genes have an advantage over those without. This could lead to social and economic inequality, as well as a loss of diversity and individuality.
+
+In conclusion, the ethics of gene editing in humans are complex and multifaceted. While the potential benefits of gene editing are significant, the potential risks and consequences are also substantial. It is essential that we approach this technology with caution and careful consideration, weighing the potential benefits against the potential harms. We must also ensure that any decisions about gene editing are made with the utmost respect for human dignity, autonomy, and the potential consequences for future generations. Ultimately, the ethics of gene editing will require a nuanced and ongoing conversation about the values and principles that guide our actions in this rapidly evolving field.
+```
+</details>
+
+---
+
+### `essays_017` (idx: 17)
+> Write an essay on memory and learning strategies supported by cognitive science (400–600
+words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 768 | 768 | 0 | 0.0% |
+| Wall time (s)  | 122.740 | 105.688 | -17.052 | -13.9% |
+| Avg entropy    | 0.387 | 0.370 | -0.017 | -4.4% |
+| Stop reason    | max_tokens | cap_safety | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Memory and learning are two of the most fundamental cognitive processes that enable us to acquire knowledge and skills. Cognitive science, the interdisciplinary study of the mind and its processes, has shed light on various strategies that can enhance memory and learning. In this essay, we will explore some of the most effective memory and learning strategies supported by cognitive science.
+
+One of the most well-established strategies is the use of spaced repetition. Research has shown that when information is reviewed at increasingly longer intervals, it becomes more difficult to forget and more likely to be retained in long-term memory (Eichenbaum et al., 2007). This is because spaced repetition allows the brain to re-consolidate memories, strengthening the connections between neurons and making them more resistant to interference from other information. This technique is particularly useful for learning new vocabulary, historical dates, and other types of factual information.
+
+Another effective strategy is the use of chunking, which involves breaking down complex information into smaller, more manageable units. This can help to reduce cognitive overload and make information more memorable (Miller, 1956). For example, a phone number can be broken down into smaller groups of numbers, making it easier to recall. Chunking can also be applied to more abstract concepts, such as breaking down a complex problem into smaller, more manageable parts.
+
+Working memory plays a critical role in learning and memory, and strategies that improve working memory capacity can also enhance learning. One such strategy is the use of mnemonics, which involve creating associations between new information and something already familiar, such as a word or image (Roediger & McDermott, 1993). For example, a person might use the acronym "ROY G BIV" to remember the colors of the rainbow (Red, Orange, Yellow, Green, Blue, Indigo, Violet). Mnemonics can be particularly effective for remembering lists, sequences, and other types of information that require recall.
+
+Another strategy that has been shown to improve learning and memory is the use of retrieval practice. This involves actively recalling information from memory rather than simply re-reading or re-studying it (Roediger & Karpicke, 2006). Retrieval practice has been shown to strengthen the connection between neurons and improve the consolidation of memories, making them more resistant to forgetting.
+
+Finally, the use of retrieval cues can also enhance memory and learning. Retrieval cues are stimuli that trigger the recall of a particular memory or piece of information. For example, a person might use a specific location or object as a retrieval cue to remember a particular event or piece of information. Research has shown that retrieval cues can improve memory by providing a context that helps to trigger the recall of information (Tulving & Thomson, 1973).
+
+In conclusion, cognitive science has identified several strategies that can enhance memory and learning. These strategies, including spaced repetition, chunking, mnemonics, retrieval practice, and retrieval cues, can be applied to a wide range of learning tasks and can help to improve memory and retention. By incorporating these strategies into our learning routines, we can optimize our ability to acquire new knowledge and skills, and improve our overall cognitive performance.
+
+References:
+
+Eichenbaum, H., Yonelinas, A. P., & Ranganath, C. (2007). The medial temporal lobe and the hippocampus. In M. S. Gazzaniga (Ed.), The new cognitive neurosciences (3rd ed., pp. 847-863). Cambridge, MA: MIT Press.
+
+Miller, G. A. (1956). The magical number seven, plus or minus two: Some limits on our capacity for processing information. Psychological Review, 63(2), 81-97.
+
+Roediger, H. L., & Karpicke,
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Memory and learning are two fundamental aspects of human cognition that have been extensively studied in the field of cognitive science. Cognitive scientists have identified various strategies that can enhance memory and learning, which are crucial for effective knowledge acquisition and retention. In this essay, we will explore some of the most effective memory and learning strategies supported by cognitive science.
+
+One of the most well-known memory strategies is the spacing effect, which suggests that information learned in multiple, spaced-out sessions is retained better than information learned in a single, massed session. This is because the brain consolidates information during sleep, and spaced repetition allows for optimal consolidation (Roediger & Karpicke, 2006). For example, a student who reviews a concept every day for a week will retain it better than a student who reviews it all at once.
+
+Another effective learning strategy is the use of retrieval practice, which involves actively recalling information from memory rather than simply re-reading it. Research has shown that retrieval practice strengthens the connection between neurons in the brain, making it easier to retrieve the information in the future (Roediger & Karpicke, 2006). This is why flashcards, quizzes, and tests are effective learning tools.
+
+Chunking is another important strategy for improving memory and learning. This involves breaking down complex information into smaller, more manageable chunks, which can be processed and stored more efficiently (Miller, 1956). For example, a student who breaks down a complex math problem into smaller steps will be able to solve it more easily than a student who tries to tackle it all at once.
+
+The use of visual aids is also a powerful learning strategy. Visual information is processed more quickly and efficiently than text-based information, and images can be more memorable than words (Paivio, 1986). For example, a student who uses diagrams and illustrations to learn a new concept will retain it better than a student who only reads about it.
+
+Another strategy that has been shown to be effective is the use of elaboration, which involves creating associations between new information and existing knowledge (Bui, Myerson, & Hale, 2016). For example, a student who relates a new concept to something they already know will be able to remember it better than a student who simply reads about it.
+
+Finally, the use of retrieval cues is a critical component of effective memory and learning. Retrieval cues are external or internal cues that help trigger the recall of information from memory (Tulving & Thomson, 1973). For example, a student who uses a specific location or object as a retrieval cue for a piece of information will be able to recall it more easily than a student who does not use a retrieval cue.
+
+In conclusion, cognitive science has identified several effective memory and learning strategies that can be used to improve knowledge acquisition and retention. These strategies include the use of spaced repetition, retrieval practice, chunking, visual aids, elaboration, and retrieval cues. By incorporating these strategies into their learning routine, students can improve their ability to learn and remember new information, and achieve academic success.
+
+References:
+
+Bui, D. C., Myerson, J., & Hale, S. (2016). The role of elaboration in the formation of episodic memories. Journal of Experimental Psychology: Learning, Memory, and Cognition, 42(5), 831-844.
+
+Miller, G. A. (1956). The magical number seven, plus or minus two: Some limits on our capacity for processing information. Psychological Review, 63(2), 81-97.
+
+Paivio, A. (1986). Mental representations: A dual coding approach. New York: Oxford University Press.
+
+Roediger, H. L., & Karpicke, J. D. (2006).
+```
+</details>
+
+---
+
+### `essays_018` (idx: 18)
+> Write an essay explaining how supply chains adapt to shocks and shortages (400–600 words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 647 | 624 | -23 | -3.6% |
+| Wall time (s)  | 85.615 | 81.390 | -4.225 | -4.9% |
+| Avg entropy    | 0.550 | 0.448 | -0.102 | -18.6% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Supply chains are complex networks of organizations, people, activities, and resources involved in producing and delivering a product or service from raw materials to end customers. In today's globalized economy, supply chains are constantly facing disruptions and shocks that can have significant impacts on their operations. Shocks can range from natural disasters, pandemics, political unrest, and economic downturns to sudden changes in consumer demand or raw material prices. To adapt to these shocks and shortages, supply chains employ various strategies to minimize the impact on their operations and ensure continued delivery of products and services.
+
+One of the primary ways supply chains adapt to shocks and shortages is by implementing risk management strategies. This involves identifying potential risks and developing contingency plans to mitigate their effects. For instance, companies may diversify their suppliers to reduce dependence on a single source, or they may maintain inventory buffers to absorb unexpected changes in demand or supply. Supply chains may also use hedging strategies, such as forward contracts or options, to manage price risks associated with raw materials or energy.
+
+Another way supply chains adapt is by reconfiguring their operations to respond to changes in demand or supply. This may involve adjusting production levels, altering production schedules, or switching to alternative suppliers or production methods. For example, a company may temporarily shut down non-essential production lines to focus on producing critical products or components that are in short supply. Supply chains may also use data analytics and machine learning to optimize their operations in real-time, making adjustments to production and inventory levels based on changing demand patterns and supply chain disruptions.
+
+Supply chains also rely on collaboration and communication to adapt to shocks and shortages. This may involve working closely with suppliers, customers, and other stakeholders to share information and coordinate responses to disruptions. For instance, a company may work with its suppliers to prioritize production of critical components or raw materials, or it may collaborate with customers to adjust delivery schedules or product offerings. Effective communication is critical in these situations, as it enables supply chains to quickly respond to changes and make informed decisions about how to adapt.
+
+In addition, supply chains are increasingly using digital technologies to enhance their resilience and adaptability. For example, the use of blockchain technology can help track and verify the origin and quality of raw materials, reducing the risk of counterfeiting and enabling more effective supply chain management. The use of artificial intelligence and machine learning can also help predict and prevent supply chain disruptions, as well as optimize logistics and inventory management.
+
+Finally, supply chains are also adapting to shocks and shortages by investing in sustainability and resilience. This may involve implementing sustainable practices, such as reducing energy consumption or waste, or investing in renewable energy sources. Supply chains may also invest in redundancy and backup systems, such as redundant manufacturing facilities or alternative transportation routes, to reduce the impact of disruptions.
+
+In conclusion, supply chains are constantly adapting to shocks and shortages through a range of strategies, including risk management, reconfiguration, collaboration, digitalization, and sustainability. By implementing these strategies, supply chains can minimize the impact of disruptions and ensure continued delivery of products and services to customers. As the global economy continues to evolve, it is essential that supply chains remain agile and adaptable to changing circumstances, ensuring that they remain resilient and competitive in the face of uncertainty.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Supply chains are complex networks of organizations, people, activities, and resources that work together to produce and deliver products or services to customers. They are designed to be efficient and reliable, but even the most well-planned supply chains can be disrupted by shocks and shortages. When a shock or shortage occurs, supply chains must adapt quickly to minimize the impact on customers and maintain business continuity.
+
+One way supply chains adapt to shocks and shortages is by identifying and prioritizing critical components and products. This involves analyzing the supply chain network to determine which components or products are most critical to the overall operation and which can be compromised if they are delayed or disrupted. By prioritizing these critical components and products, supply chain managers can focus their efforts on ensuring their timely delivery and minimize the impact of the shock or shortage.
+
+Another way supply chains adapt to shocks and shortages is by diversifying their supplier base. This involves identifying multiple suppliers for critical components or products and establishing relationships with them. This diversification can help to reduce the risk of supply chain disruption by providing a backup plan if one supplier is unable to meet demand. Additionally, it can also help to negotiate better prices and terms with suppliers, as buyers have more bargaining power when they have multiple options.
+
+Supply chains also adapt to shocks and shortages by implementing contingency planning and crisis management strategies. This involves identifying potential risks and developing plans to mitigate them. For example, a company may have a plan in place for what to do if a key supplier is unable to deliver on time or if a natural disaster affects a critical production facility. By having a plan in place, supply chain managers can quickly respond to a shock or shortage and minimize its impact on the business.
+
+Technology also plays a critical role in helping supply chains adapt to shocks and shortages. For example, advanced analytics and data analytics can help supply chain managers identify potential risks and opportunities for improvement. They can also help to track and monitor the supply chain in real-time, allowing for quick responses to disruptions. Additionally, cloud-based platforms and mobile apps can enable real-time communication and collaboration between different stakeholders in the supply chain, helping to speed up decision-making and response times.
+
+Finally, supply chains adapt to shocks and shortages by being agile and flexible. This involves being able to quickly adjust to changes in demand or supply and being willing to make changes to the supply chain network as needed. For example, a company may need to shift production to a different facility or adjust its inventory levels in response to a shock or shortage. By being agile and flexible, supply chain managers can minimize the impact of a shock or shortage and ensure business continuity.
+
+In conclusion, supply chains are complex systems that are designed to be efficient and reliable. However, they can be disrupted by shocks and shortages, which can have significant impacts on businesses and customers. To adapt to these disruptions, supply chains must be able to identify and prioritize critical components and products, diversify their supplier base, implement contingency planning and crisis management strategies, leverage technology, and be agile and flexible. By taking these steps, supply chain managers can minimize the impact of shocks and shortages and ensure business continuity.
+```
+</details>
+
+---
+
+### `essays_019` (idx: 19)
+> Write an essay on climate adaptation for coastal cities (400–600 words).
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 567 | 589 | 22 | 3.9% |
+| Wall time (s)  | 76.430 | 71.572 | -4.857 | -6.4% |
+| Avg entropy    | 0.456 | 0.471 | 0.015 | 3.2% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Climate change is one of the most pressing issues of our time, and its impact on coastal cities is particularly significant. Rising sea levels, more frequent and intense storms, and changing precipitation patterns are all taking a toll on coastal cities around the world. As a result, it is essential for these cities to adapt to the changing climate and develop strategies to mitigate its effects.
+
+One of the primary ways that coastal cities can adapt to climate change is by implementing sea walls and other coastal protection measures. Sea walls can help to protect against storm surges and flooding, while also providing a barrier against erosion. However, these structures can also have negative impacts, such as altering the natural habitat of local wildlife and affecting the aesthetic appeal of the coastline. Therefore, it is essential to carefully consider the design and placement of these structures to minimize their negative impacts.
+
+Another important adaptation strategy is to enhance flood resilience through green infrastructure. Green infrastructure refers to the use of natural or semi-natural systems, such as wetlands, mangroves, and dunes, to manage floodwaters. These systems can help to slow the flow of water, reduce the risk of erosion, and provide habitat for local wildlife. Additionally, green infrastructure can also help to improve air quality, reduce the urban heat island effect, and enhance the aesthetic appeal of the city.
+
+Coastal cities can also adapt to climate change by implementing smart urban planning and design. This can include designing buildings and infrastructure to be more resilient to flooding, such as by elevating structures or using flood-resistant materials. It can also involve designing public spaces to be more resilient, such as by creating green spaces that can absorb floodwaters or by using permeable materials that allow water to drain easily.
+
+In addition to these physical adaptations, coastal cities can also adapt to climate change by developing early warning systems and emergency preparedness plans. These systems can help to alert residents and emergency responders in the event of a flood or storm, allowing them to take necessary precautions and minimize the risk of harm. Preparedness plans can also help to ensure that emergency services are able to respond quickly and effectively in the event of a disaster.
+
+Finally, coastal cities can adapt to climate change by promoting sustainable and resilient economic development. This can involve supporting businesses and industries that are resilient to climate change, such as those that focus on sustainable tourism or renewable energy. It can also involve investing in education and training programs that help residents develop the skills they need to adapt to a changing climate.
+
+In conclusion, climate adaptation is essential for coastal cities to thrive in a changing climate. By implementing sea walls and green infrastructure, designing buildings and public spaces to be more resilient, developing early warning systems and emergency preparedness plans, and promoting sustainable and resilient economic development, coastal cities can reduce their vulnerability to climate-related hazards and create a more sustainable and resilient future.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Climate adaptation is a critical concern for coastal cities, which are increasingly vulnerable to the impacts of climate change. Rising sea levels, more frequent and intense storms, and changing weather patterns are all posing significant threats to the safety, economy, and well-being of coastal communities. As the effects of climate change continue to intensify, it is essential for coastal cities to develop effective adaptation strategies to mitigate the risks and protect their residents.
+
+One of the most pressing concerns for coastal cities is sea-level rise. As the planet warms, the oceans are expanding and melting glaciers and ice sheets, causing sea levels to rise. This is leading to more frequent and severe flooding, erosion, and saltwater intrusion into freshwater sources. To adapt to this threat, coastal cities must invest in sea walls, dunes, and other coastal protection structures to prevent flooding and erosion. They must also consider relocating critical infrastructure, such as power plants and hospitals, to higher ground.
+
+Another critical adaptation strategy for coastal cities is to improve storm resilience. As the frequency and intensity of storms increase, cities must be prepared to respond quickly and effectively to minimize damage and disruption. This can be achieved through the development of early warning systems, storm surge barriers, and flood-control gates. Cities can also implement green infrastructure, such as green roofs and green spaces, to help absorb stormwater runoff and reduce the risk of flooding.
+
+In addition to physical infrastructure, coastal cities must also adapt their planning and management practices to address the impacts of climate change. This includes developing climate-resilient land-use plans, which prioritize flood-prone areas and ensure that new development is located in safer zones. Cities must also invest in climate-resilient infrastructure, such as roads, bridges, and buildings, that can withstand extreme weather events.
+
+Another important aspect of climate adaptation is community engagement and education. Coastal cities must work closely with residents, businesses, and other stakeholders to raise awareness about the risks and impacts of climate change and to develop a shared understanding of the need for adaptation. This can be achieved through public outreach campaigns, community meetings, and educational programs that provide information on climate risks and adaptation strategies.
+
+Finally, coastal cities must also consider the social and economic impacts of climate adaptation. Climate change is disproportionately affecting vulnerable populations, including low-income communities, indigenous communities, and small businesses. Cities must prioritize equity and justice in their adaptation efforts, ensuring that all residents have access to the resources and services they need to adapt to climate change.
+
+In conclusion, climate adaptation is a critical concern for coastal cities, which are increasingly vulnerable to the impacts of climate change. To adapt to these threats, cities must invest in physical infrastructure, improve storm resilience, develop climate-resilient planning and management practices, engage with communities, and prioritize equity and justice. By taking a proactive and comprehensive approach to climate adaptation, coastal cities can reduce the risks and impacts of climate change and ensure a safer, more sustainable future for their residents.
+```
+</details>
+
+---
+
+
+## procedures
+
+### `procedures_000` (idx: 0)
+> Explain step‑by‑step how to bake a sourdough loaf at home, including starter maintenance.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 768 | 768 | 0 | 0.0% |
+| Wall time (s)  | 123.726 | 106.741 | -16.985 | -13.7% |
+| Avg entropy    | 0.184 | 0.159 | -0.025 | -13.6% |
+| Stop reason    | max_tokens | cap_safety | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The art of baking sourdough! It's a journey that requires patience, dedication, and a little bit of magic. But don't worry, I'm here to guide you through the process, step by step. We'll cover the basics of creating and maintaining your sourdough starter, as well as the recipe for a delicious sourdough loaf.
+
+**Step 1: Create Your Sourdough Starter**
+
+To start, you'll need to create your sourdough starter. A sourdough starter is a natural yeast culture that's the foundation of your sourdough bread. It's a mixture of flour and water that's allowed to ferment, creating a natural yeast culture.
+
+To create your starter:
+
+1. In a clean glass or ceramic container, mix 1/2 cup of warm water (around 90°F to 100°F) with 1/2 cup of flour.
+2. Mix the ingredients until they form a smooth, thick batter.
+3. Cover the container with a cloth or plastic wrap and let it rest at room temperature (around 70°F to 75°F) for 24 to 48 hours. This is the beginning of the fermentation process.
+4. After 24 to 48 hours, your starter should be bubbly, frothy, and slightly expanded. This is a sign that the wild yeast and bacteria are starting to activate.
+5. Discard half of the starter and add another 1/2 cup of flour and 1/2 cup of water. Mix well and cover the container again.
+6. Repeat the process of discarding half of the starter and feeding it fresh flour and water every 24 hours for the next 7 to 10 days. This is called "feeding" your starter and will help it become more active and robust.
+
+**Step 2: Mix the Dough**
+
+Once your starter is active and bubbly, it's time to mix the dough for your sourdough loaf.
+
+1. In a large mixing bowl, combine 1 cup of warm water, 1/4 cup of active sourdough starter, and 3 cups of bread flour.
+2. Mix the ingredients together until they form a shaggy dough.
+3. Cover the bowl with a damp cloth and let it rest for 20 to 30 minutes, known as the "autolyse" phase. This allows the flour to absorb the water and the starter to start breaking down the flour.
+4. After the autolyse, add 1 teaspoon of salt and mix the dough until it comes together in a sticky ball.
+5. Knead the dough on a floured surface for 5 to 10 minutes, until it becomes smooth and elastic.
+
+**Step 3: Ferment the Dough**
+
+Once the dough is mixed and kneaded, it's time to let it ferment.
+
+1. Place the dough in a lightly oiled bowl, cover it with plastic wrap or a damp towel, and let it ferment at room temperature (around 70°F to 75°F) for 4 to 6 hours.
+2. During this time, the dough will start to rise and develop a sour aroma. You can check on it every hour or so to see if it's risen to your liking.
+3. After 4 to 6 hours, the dough should have doubled in size and have a few large bubbles on the surface.
+
+**Step 4: Shape the Dough**
+
+Once the dough has fermented, it's time to shape it into a loaf.
+
+1. Gently deflate the dough by pressing down on it with your fingers or a spatula.
+2. Shape the dough into a round or oblong loaf, depending on your preference.
+3. Place the shaped dough onto a baking sheet or proofing basket lined
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Baking a sourdough loaf at home can be a rewarding and delicious experience! With a little patience and practice, you can create a crusty, tangy loaf that's all your own. Here's a step-by-step guide to help you get started:
+
+**Step 1: Create Your Sourdough Starter**
+
+A sourdough starter is a natural yeast culture that's the foundation of your bread. To create one, you'll need:
+
+* 1/2 cup of warm water (around 90°F to 100°F)
+* 1/2 cup of flour
+
+Mix the water and flour in a clean glass or ceramic container until it forms a smooth, thick batter. Cover the container with a cloth or plastic wrap and let it sit in a warm, draft-free place for 24 to 48 hours. This is the beginning of your sourdough starter's life!
+
+**Step 2: Feed Your Sourdough Starter**
+
+After 24 to 48 hours, your starter should be bubbly, frothy, and slightly expanded. It's time to feed it! Discard half of the starter and add:
+
+* 1/2 cup of flour
+* 1/2 cup of water
+
+Mix well and cover the container again. Repeat this feeding process every 24 hours for the next 5-7 days. This will help your starter become more active and robust.
+
+**Step 3: Mix the Dough**
+
+Once your starter is active and bubbly, it's time to mix the dough. You'll need:
+
+* 1 cup of warm water
+* 1/4 cup of active sourdough starter ( discard the rest or store it in the fridge for later use)
+* 3-4 cups of bread flour
+* 1 teaspoon of salt
+
+Mix the water, starter, and flour in a large bowl until it forms a shaggy dough. Add the salt and mix until it's fully incorporated.
+
+**Step 4: Knead the Dough**
+
+Turn the dough out onto a floured surface and knead for 10-15 minutes, until the dough becomes smooth and elastic. You can also use a stand mixer with a dough hook attachment.
+
+**Step 5: Ferment the Dough**
+
+Place the dough in a lightly oiled bowl, cover it with plastic wrap or a damp towel, and let it ferment in a warm, draft-free place for 4-6 hours, or until it's nearly double in size.
+
+**Step 6: Shape the Dough**
+
+Gently deflate the dough and shape it into a round or oblong loaf. Place the dough onto a baking sheet or proofing basket lined with parchment paper, cover it with plastic wrap or a clean towel, and let it proof for 2-4 hours, or until it's nearly double in size again.
+
+**Step 7: Score the Bread**
+
+Just before baking, use a sharp knife or razor blade to make 2-3 diagonal cuts on the surface of the bread. This will help the bread expand during baking.
+
+**Step 8: Bake the Bread**
+
+Preheat your oven to 450°F (230°C) with a Dutch oven or a stone inside. Place the bread on the preheated stone or in the Dutch oven and bake for 25-35 minutes, or until the bread is golden brown and sounds hollow when tapped on the bottom.
+
+**Step 9: Cool the Bread**
+
+Remove the bread from the oven and let it cool on a wire rack for at least 1 hour before slicing. This will help the bread develop its flavor and texture.
+
+**Tips and Maintenance**
+
+* Feed your sourdough starter regularly to keep it healthy and active. You can store it in the fridge and feed it once a week,
+```
+</details>
+
+---
+
+### `procedures_001` (idx: 1)
+> Explain how to migrate a small website from a shared host to a cloud VM with minimal
+downtime.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 695 | 737 | 42 | 6.0% |
+| Wall time (s)  | 94.265 | 101.260 | 6.994 | 7.4% |
+| Avg entropy    | 0.433 | 0.396 | -0.037 | -8.5% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Migrating a small website from a shared host to a cloud VM can be a relatively straightforward process, but it does require some planning and execution. Here's a step-by-step guide to help you achieve a smooth migration with minimal downtime:
+
+**Pre-migration preparation**
+
+1. **Backup your website**: Make sure to backup your website, including your files, database, and any other important data, to a safe location such as an external hard drive or cloud storage service like Google Drive or Dropbox.
+2. **Choose a cloud provider**: Select a cloud provider that meets your needs, such as Amazon Web Services (AWS), Microsoft Azure, or Google Cloud Platform (GCP).
+3. **Create a new VM**: Set up a new virtual machine (VM) on the cloud provider's platform. Choose a suitable instance type based on your website's requirements.
+4. **Configure the VM**: Install an operating system (e.g., Ubuntu, CentOS, or Windows Server) and configure the VM with the necessary settings, such as networking, firewall rules, and security groups.
+
+**Migration steps**
+
+1. **Transfer files**: Transfer your website files from the shared host to the new VM using an SFTP client or a file transfer protocol like Rsync.
+2. **Update DNS**: Update your DNS settings to point to the new VM's IP address. You can do this by updating the name servers (NS records) or by updating the A records to point to the new IP address.
+3. **Update database**: Export your database from the shared host and import it into the new VM. You can use phpMyAdmin or other tools to manage your database.
+4. **Update configuration files**: Update your website's configuration files (e.g., Apache, Nginx, or IIS) to point to the new VM's IP address and database settings.
+5. **Test the website**: Test your website on the new VM to ensure everything is working correctly.
+
+**Downtime minimization**
+
+To minimize downtime, you can use the following strategies:
+
+1. **Use a load balancer**: Set up a load balancer to distribute traffic between the old and new servers. This allows you to gradually redirect traffic to the new server while the old server is still active.
+2. **Use a DNS propagation delay**: Update your DNS settings to point to the new VM, but delay the propagation by 24-48 hours. This allows you to test the new server before switching over.
+3. **Use a maintenance page**: Set up a maintenance page on the old server to inform visitors that the site is being migrated. You can also use a redirect page to point visitors to the new server.
+
+**Post-migration steps**
+
+1. **Verify everything is working**: Verify that your website is working correctly on the new VM and that all features are functioning as expected.
+2. **Update your DNS**: Once you're satisfied that the new server is working correctly, update your DNS settings to point to the new VM's IP address.
+3. **Monitor performance**: Monitor your website's performance on the new VM to ensure it's meeting your expectations.
+4. **Dispose of the old server**: Dispose of the old shared host and any related services.
+
+By following these steps, you can migrate your small website from a shared host to a cloud VM with minimal downtime. Remember to test thoroughly and monitor your website's performance after the migration to ensure everything is working as expected.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Migrating a small website from a shared host to a cloud VM can be a relatively straightforward process, but it requires careful planning and execution to minimize downtime. Here's a step-by-step guide to help you achieve a smooth migration:
+
+**Pre-migration steps:**
+
+1. **Backup your website**: Create a complete backup of your website, including the database, files, and any necessary configurations. This will ensure that you can restore your website in case something goes wrong during the migration process.
+2. **Choose a cloud provider**: Select a cloud provider that meets your needs, such as AWS, Google Cloud, or Microsoft Azure. Create a new virtual machine (VM) with the desired operating system, CPU, memory, and storage.
+3. **Plan your IP address**: Decide how you'll handle IP addresses during the migration. You can either:
+	* Use a new, static IP address assigned by the cloud provider.
+	* Use a dynamic IP address and update your DNS records accordingly.
+	* Use a load balancer to route traffic to both the old and new servers.
+4. **Update your DNS records**: Update your DNS records to point to the new IP address or the load balancer's IP address.
+
+**Migration steps:**
+
+1. **Create a new VM**: Provision the new VM with the desired operating system, CPU, memory, and storage.
+2. **Install the necessary software**: Install the necessary software, such as a web server (e.g., Apache or Nginx), PHP, and a database management system (e.g., MySQL or PostgreSQL).
+3. **Transfer files**: Transfer your website files from the shared host to the new VM using FTP, SFTP, or rsync. You can also use a migration tool like Duplicator or UpdraftPlus.
+4. **Transfer the database**: Export the database from the shared host and import it into the new VM. You can use phpMyAdmin or a similar tool to manage the database.
+5. **Update configurations**: Update your website's configurations, such as the web server, PHP, and database settings, to match the new environment.
+6. **Test the website**: Test your website thoroughly to ensure it's functioning correctly and all links and images are working as expected.
+
+**Downtime minimization strategies:**
+
+1. **Use a load balancer**: Set up a load balancer to distribute traffic between the old and new servers. This will allow you to gradually shift traffic to the new server and minimize downtime.
+2. **Use a DNS propagation delay**: Update your DNS records to point to the new IP address, but set the TTL (time to live) to a higher value (e.g., 300 seconds). This will allow traffic to continue flowing to the old server for a short period while the DNS propagation takes effect.
+3. **Use a temporary redirect**: Set up a temporary redirect on the old server to redirect traffic to the new server. This can be done using a rewrite rule or a temporary redirect plugin.
+
+**Post-migration steps:**
+
+1. **Monitor the website**: Monitor your website's performance and functionality to ensure everything is working as expected.
+2. **Update DNS records**: Once you've verified that the new server is working correctly, update your DNS records to point to the new IP address.
+3. **Shut down the old server**: Shut down the old server to ensure you're not paying for unnecessary resources.
+
+By following these steps and strategies, you can migrate your small website from a shared host to a cloud VM with minimal downtime. Remember to test your website thoroughly and monitor its performance to ensure a smooth transition.
+```
+</details>
+
+---
+
+### `procedures_002` (idx: 2)
+> Explain how to set up a home Wi‑Fi network securely for a non‑technical person.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 611 | 620 | 9 | 1.5% |
+| Wall time (s)  | 84.587 | 76.249 | -8.338 | -9.9% |
+| Avg entropy    | 0.372 | 0.384 | 0.012 | 3.2% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Setting up a home Wi-Fi network can seem overwhelming, but don't worry, I'm here to guide you through it in a way that's easy to understand. Here's a step-by-step guide on how to set up a home Wi-Fi network securely:
+
+**Step 1: Choose a Router**
+
+Before you start, you'll need a router. A router is a device that connects all your devices to the internet. You can purchase a router from a electronics store or online. Make sure it's a wireless router (also known as a Wi-Fi router) that supports the latest wireless standard, 802.11ac or 802.11ax.
+
+**Step 2: Connect the Router**
+
+Plug in the router and turn it on. Connect it to your modem using an Ethernet cable. The modem is usually provided by your internet service provider (ISP). If you're not sure how to connect the modem, consult your ISP's documentation or contact their support.
+
+**Step 3: Set Up the Router**
+
+Open a web browser on a device connected to the router via Ethernet cable (e.g., a laptop or desktop). Type the router's IP address in the address bar (usually 192.168.0.1 or 192.168.1.1). Log in to the router using the default admin username and password (usually printed on the router's underside or in the documentation).
+
+**Step 4: Change the Admin Password**
+
+Change the admin username and password to secure your router. Make sure they're strong and unique. You can use a password manager to generate and store complex passwords.
+
+**Step 5: Set Up Wi-Fi Network Name (SSID) and Password**
+
+Give your Wi-Fi network a unique name (SSID) and password. This will help you identify your network and prevent unauthorized access. Make sure the password is strong and unique.
+
+**Step 6: Set Up Wi-Fi Security**
+
+Enable WPA2 (or WPA3 if your router supports it) as the encryption protocol. This will encrypt your Wi-Fi traffic, making it difficult for hackers to intercept your data.
+
+**Step 7: Set Up Guest Network**
+
+Consider setting up a guest network to isolate visitors from your main network. This will prevent them from accessing your personal devices and data.
+
+**Step 8: Update the Router's Firmware**
+
+Regularly update the router's firmware to ensure you have the latest security patches and features.
+
+**Step 9: Secure Your Devices**
+
+Make sure all devices connected to your network are up-to-date with the latest security patches and antivirus software.
+
+**Additional Tips:**
+
+* Use a strong and unique password for each device.
+* Enable firewalls on your devices and router.
+* Limit access to certain devices or applications on your network.
+* Regularly monitor your network for suspicious activity.
+
+By following these steps, you'll have a secure home Wi-Fi network that will keep your devices and data safe. Remember to regularly update your router's firmware and monitor your network for any suspicious activity. Happy networking!
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Setting up a home Wi-Fi network can seem daunting, but don't worry, I'm here to guide you through it in a way that's easy to understand. Here's a step-by-step guide to help you set up a secure home Wi-Fi network:
+
+**Step 1: Choose a Router**
+
+A router is the device that connects your devices to the internet. You can choose from a variety of routers, but make sure it's compatible with your internet service provider (ISP). You can also consider factors like range, speed, and number of devices you want to connect.
+
+**Step 2: Set Up Your Router**
+
+1. Unbox your router and connect it to a power source.
+2. Connect an Ethernet cable from the router to your modem (the device provided by your ISP).
+3. Open a web browser and type the router's IP address (usually 192.168.0.1 or 192.168.1.1). Log in using the default admin username and password (usually printed on the router or in the manual).
+4. Change the admin username and password to something unique and strong.
+
+**Step 3: Set Up Wi-Fi Network Name (SSID) and Password**
+
+1. Go to the Wireless Settings or Wireless Network Settings section.
+2. Set a unique Wi-Fi Network Name (SSID) that's easy to remember.
+3. Set a strong Wi-Fi Password (WPA2 or WPA3) that's at least 12 characters long and includes a mix of letters, numbers, and special characters.
+
+**Step 4: Set Up Security Settings**
+
+1. Enable WPA2 or WPA3 encryption (the most secure option).
+2. Set the Wi-Fi Channel to Auto or a specific channel to minimize interference.
+3. Enable Firewall and Network Address Translation (NAT) to protect your devices from external threats.
+
+**Step 5: Set Up Guest Network**
+
+1. Enable the Guest Network feature (if available).
+2. Set a separate Wi-Fi Network Name and Password for guests.
+3. Limit the guest network's access to specific devices or websites to prevent unauthorized access.
+
+**Step 6: Update Your Router's Firmware**
+
+1. Check the router's manufacturer website for firmware updates.
+2. Follow the instructions to update your router's firmware to ensure you have the latest security patches and features.
+
+**Step 7: Secure Your Devices**
+
+1. Make sure all devices connected to your network have up-to-date antivirus software and operating systems.
+2. Use strong passwords for all devices and accounts.
+3. Enable two-factor authentication (2FA) whenever possible.
+
+**Step 8: Monitor Your Network**
+
+1. Regularly check your router's logs for suspicious activity.
+2. Use a network monitoring tool to detect and block unauthorized devices.
+3. Update your router's firmware and security settings regularly.
+
+By following these steps, you'll have a secure and stable home Wi-Fi network that protects your devices and data. Remember to always keep your router's firmware up-to-date and monitor your network for any suspicious activity.
+```
+</details>
+
+---
+
+### `procedures_003` (idx: 3)
+> Explain how to prepare for a long‑distance hike: gear, training, nutrition, and safety.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 768 | 768 | 0 | 0.0% |
+| Wall time (s)  | 115.581 | 103.601 | -11.980 | -10.4% |
+| Avg entropy    | 0.372 | 0.374 | 0.002 | 0.5% |
+| Stop reason    | max_tokens | cap_safety | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Preparing for a long-distance hike requires careful planning, preparation, and attention to detail. Here's a comprehensive guide to help you prepare for a successful and enjoyable long-distance hike:
+
+**Gear:**
+
+1. **Backpack:** Choose a comfortable, durable backpack with multiple compartments and pockets to organize your gear. Look for a pack with a capacity of at least 30 liters.
+2. **Hiking boots/shoes:** Invest in a good pair of hiking boots or shoes that provide ankle support, waterproofing, and traction. Break them in before your trip.
+3. **Clothing:** Pack layers of breathable, moisture-wicking clothing for varying weather conditions. Include a waterproof jacket and pants, as well as a warm hat and gloves.
+4. **Sleeping gear:** Bring a lightweight sleeping bag, sleeping pad, and tent that can withstand wind and rain.
+5. **Cooking gear:** Pack a portable stove, fuel, and cooking pot. Don't forget utensils, a water filter or treatment, and a water bottle or hydration bladder.
+6. **First aid kit:** Assemble a comprehensive first aid kit with essentials like bandages, antiseptic wipes, pain relievers, and any personal medications.
+7. **Navigation tools:** Bring a map, compass, GPS device, and/or a personal locator beacon (PLB) or satellite phone.
+8. **Personal hygiene items:** Pack biodegradable soap, toilet paper, hand sanitizer, and any other personal hygiene items you may need.
+
+**Training:**
+
+1. **Build up your endurance:** Gradually increase your hiking distance and intensity over several months to build up your endurance.
+2. **Practice backpacking:** Get used to carrying a loaded backpack and practice hiking with it.
+3. **Strengthen your core and legs:** Incorporate exercises like squats, lunges, and leg press to strengthen your core and leg muscles.
+4. **Train in varying terrain:** Practice hiking on different terrain, such as hills, mountains, and trails with varying surfaces.
+5. **Get comfortable with your gear:** Practice setting up and using your camping gear, cooking equipment, and other gear before your trip.
+
+**Nutrition:**
+
+1. **Hydrate adequately:** Drink plenty of water before, during, and after your hike to stay hydrated.
+2. **Pack high-calorie snacks:** Bring energy-rich snacks like nuts, dried fruits, and jerky to keep your energy levels up.
+3. **Plan your meals:** Pack lightweight, high-calorie meals that can be easily prepared on the trail. Include a water filter or treatment to ensure access to safe drinking water.
+4. **Consider a food dehydrator:** Dehydrate your own meals to save weight and money.
+5. **Bring a water filter or treatment:** Make sure you have a reliable way to purify water on the trail.
+
+**Safety:**
+
+1. **Check the weather forecast:** Monitor weather conditions before and during your trip and be prepared for changing weather.
+2. **Let someone know your itinerary:** Share your itinerary with a friend or family member and let them know when you expect to arrive at each campsite.
+3. **Carry a personal locator beacon (PLB) or satellite phone:** In case of an emergency, a PLB or satellite phone can help you send a distress signal.
+4. **Be prepared for emergencies:** Bring a first aid kit and know basic first aid techniques.
+5. **Stay alert and aware:** Pay attention to your surroundings, including wildlife, other hikers, and potential hazards like steep drop-offs and fast-moving water.
+6. **Carry a repair kit:** Bring a small kit with basic repair items like duct tape, safety pins, and a multi-tool.
+7. **Bring a headlamp or flashlight:** In
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Preparing for a long-distance hike requires careful planning, preparation, and attention to detail. Here's a comprehensive guide to help you prepare for a successful and enjoyable long-distance hike:
+
+**Gear:**
+
+1. Backpack: Choose a comfortable, sturdy backpack with multiple compartments and pockets to keep your gear organized.
+2. Hiking boots/shoes: Select waterproof, breathable, and comfortable footwear with good ankle support.
+3. Clothing: Pack layers of breathable, moisture-wicking clothing for varying weather conditions.
+4. Sleeping bag and pad: Bring a lightweight, insulated sleeping bag and a comfortable sleeping pad for a good night's sleep.
+5. Tent: Choose a waterproof, spacious, and easy-to-assemble tent.
+6. Navigation tools: Bring a map, compass, GPS device, and/or a smartphone with a GPS app.
+7. First aid kit: Assemble a kit with essentials like bandages, antiseptic wipes, pain relievers, and any personal medications.
+8. Water bottle or hydration bladder: Bring a water bottle or hydration bladder to stay hydrated.
+9. Water treatment: Bring a water filter, purification tablets, or UV light to ensure access to safe drinking water.
+10. Food and cooking gear: Pack lightweight, high-calorie food and a portable stove or camping cookware.
+11. Headlamp and extra batteries: Bring a reliable headlamp and extra batteries for nighttime activities.
+12. Personal hygiene items: Pack toilet paper, hand sanitizer, and biodegradable soap for personal hygiene.
+13. Sun protection: Bring sunscreen, sunglasses, and a hat to protect yourself from the sun.
+14. Insect repellent: Pack insect repellent to protect against mosquitoes, ticks, and other biting insects.
+15. Emergency shelter and warmth: Bring a lightweight emergency shelter and a warm hat and gloves in case of unexpected weather changes.
+
+**Training:**
+
+1. Build up your endurance: Gradually increase your hiking distance and intensity over several weeks or months to build up your endurance.
+2. Practice with a heavy pack: Wear your backpack with a heavy load to get used to the weight and discomfort.
+3. Train in varying terrain: Practice hiking in different terrain, such as hills, mountains, and trails, to prepare for varied conditions.
+4. Incorporate strength training: Incorporate strength training exercises to build up your leg and core muscles.
+5. Practice navigation: Practice using your navigation tools, such as a map and compass, to ensure you can find your way in the wilderness.
+
+**Nutrition:**
+
+1. Pack high-calorie food: Bring lightweight, high-calorie food that is easy to prepare and won't spoil easily.
+2. Hydrate regularly: Drink plenty of water throughout the day to stay hydrated.
+3. Bring snacks: Pack snacks like nuts, dried fruits, and energy bars to keep your energy levels up.
+4. Plan your meals: Plan your meals in advance to ensure you have the right food for the right occasion.
+5. Consider a food dehydrator: Dehydrate your own food to reduce weight and save space in your backpack.
+
+**Safety:**
+
+1. Plan your route: Plan your route in advance, considering factors like weather, terrain, and potential hazards.
+2. Check the weather: Check the weather forecast before and during your hike to prepare for changing conditions.
+3. Bring a personal locator beacon (PLB): Consider bringing a PLB in case of an emergency.
+4. Bring a repair kit: Bring a repair kit with basic tools and supplies to fix any gear issues.
+5. Let someone know your itinerary: Let someone know your itinerary, including your planned route and expected return time.
+6. Bring a first aid kit: Bring a first aid kit with essentials like bandages, antiseptic wipes, and pain relievers.
+7.
+```
+</details>
+
+---
+
+### `procedures_004` (idx: 4)
+> Explain how to safely jump‑start a car and what common mistakes to avoid.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 742 | 754 | 12 | 1.6% |
+| Wall time (s)  | 104.592 | 103.647 | -0.946 | -0.9% |
+| Avg entropy    | 0.306 | 0.313 | 0.008 | 2.5% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Jump-starting a car can be a bit intimidating, but with the right steps and precautions, it can be a relatively safe and effective way to get your vehicle back on the road. Here's a step-by-step guide on how to safely jump-start a car and what common mistakes to avoid:
+
+**Preparation:**
+
+1. **Make sure you have the necessary equipment:**
+	* A set of jumper cables (also known as booster cables)
+	* A working vehicle with a fully charged battery (donor car)
+	* The keys to both vehicles
+2. **Choose a safe location:**
+	* Move both vehicles to a flat, level surface, away from traffic and any hazards.
+	* Turn off the engine and all accessories (radio, lights, etc.) in both vehicles.
+	* Engage the parking brake on both vehicles.
+
+**Jump-Starting Procedure:**
+
+1. **Connect the jumper cables:**
+	* Attach one end of the positive (red) jumper cable to the positive terminal of the dead battery (the one in your car).
+	* Attach the other end of the positive jumper cable to the positive terminal of the working battery (the one in the donor car).
+	* Attach one end of the negative (black) jumper cable to the negative terminal of the working battery.
+	* Attach the other end of the negative jumper cable to a metal surface on the dead battery or the car's frame, away from the dead battery.
+2. **Start the working car:**
+	* Turn the key to start the engine of the working car. Let it run for a few minutes to charge the dead battery.
+3. **Start the dead car:**
+	* Once the dead car's battery has been charged a bit, try to start the engine. If it doesn't start right away, let the working car's engine run for a few more minutes and try again.
+4. **Remove the jumper cables:**
+	* Once the dead car's engine is running, remove the jumper cables in the reverse order that they were attached:
+		+ Disconnect the negative cable from the dead battery or the car's frame.
+		+ Disconnect the positive cable from the working battery.
+		+ Disconnect the positive cable from the dead battery.
+
+**Common Mistakes to Avoid:**
+
+1. **Incorrectly attaching the jumper cables:** Make sure to attach the cables to the correct terminals and surfaces to avoid a short circuit or damage to the batteries or electrical systems.
+2. **Not letting the working car's engine run long enough:** If the dead car's battery doesn't have enough charge, it may not start. Let the working car's engine run for a few minutes to give the dead battery a chance to charge.
+3. **Jump-starting a car with a faulty or damaged battery:** If the battery is damaged or faulty, it may not hold a charge or may even cause further damage to the electrical system. Have the battery checked or replaced if necessary.
+4. **Not following proper safety precautions:** Always wear protective gloves and safety glasses when jump-starting a car, and make sure the vehicles are in a safe location and the parking brake is engaged.
+5. **Not checking the battery's charge:** After jump-starting, check the battery's charge by turning off the engine and using a multimeter to check the voltage. If the voltage is still low, the battery may need to be replaced.
+
+By following these steps and avoiding common mistakes, you can safely jump-start a car and get back on the road. If you're still unsure or uncomfortable jump-starting a car, consider seeking assistance from a professional mechanic or roadside assistance service.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Jump-starting a car can be a bit intimidating, but with the right steps and precautions, it's a relatively simple process. Here's a step-by-step guide on how to safely jump-start a car and common mistakes to avoid:
+
+**Preparation:**
+
+1. **Make sure you have the necessary equipment:**
+	* A set of jumper cables (also known as booster cables)
+	* Another vehicle with a working battery (the "donor" vehicle)
+	* Both vehicles parked close enough to each other, with the engines turned off
+2. **Turn off both vehicles and engage the parking brakes:**
+	* Ensure both vehicles are in park (automatic) or neutral (manual) gear
+	* Engage the parking brake on both vehicles
+3. **Put on protective gear:**
+	* Wear gloves to protect your hands from electrical shock
+	* Avoid touching any metal parts of the vehicles or the jumper cables
+
+**Jump-Starting:**
+
+1. **Locate the batteries:**
+	* Identify the batteries in both vehicles and make sure they are in good condition
+	* Make sure the batteries are not damaged, corroded, or leaking acid
+2. **Connect the jumper cables:**
+	* Attach one end of the positive (red) jumper cable to the positive terminal of the dead battery (the one you're trying to jump-start)
+	* Attach the other end of the positive (red) jumper cable to the positive terminal of the donor vehicle's battery
+	* Attach one end of the negative (black) jumper cable to the negative terminal of the donor vehicle's battery
+	* Attach the other end of the negative (black) jumper cable to a metal surface on the dead vehicle's engine or frame, away from the dead battery
+3. **Start the donor vehicle:**
+	* Turn the key to start the engine of the donor vehicle
+	* Let it run for a few minutes to charge the dead battery
+4. **Start the dead vehicle:**
+	* Try to start the engine of the dead vehicle
+	* If it doesn't start immediately, let the donor vehicle's engine run for a few more minutes and try again
+
+**Common Mistakes to Avoid:**
+
+1. **Don't touch any metal parts:** Avoid touching any metal parts of the vehicles or the jumper cables to prevent electrical shock.
+2. **Don't cross the cables:** Make sure the positive (red) cable is attached to the positive terminal of both batteries and the negative (black) cable is attached to the negative terminal of both batteries.
+3. **Don't let the engines run for too long:** Keep the engines running for only as long as necessary to jump-start the dead vehicle. Prolonged engine running can cause overheating or damage to the batteries.
+4. **Don't drive the dead vehicle immediately:** After jump-starting, let the dead vehicle's engine run for a few minutes to recharge the battery before driving it.
+5. **Don't leave the jumper cables connected:** Remove the jumper cables as soon as the dead vehicle's engine is running to prevent any accidental short circuits.
+
+**Additional Tips:**
+
+* If the dead vehicle's battery is old or damaged, it may not hold a charge. Consider replacing it if it's more than three years old or has been damaged.
+* If you're not comfortable jump-starting a car, consider seeking assistance from a professional mechanic or roadside assistance service.
+* Always follow proper safety precautions when working with batteries and electrical systems.
+
+Remember to stay calm and patient when jump-starting a car. If you're unsure about any part of the process, it's always better to err on the side of caution and seek help.
+```
+</details>
+
+---
+
+### `procedures_005` (idx: 5)
+> Explain how to create and follow a monthly personal budget with simple categories.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 576 | 638 | 62 | 10.8% |
+| Wall time (s)  | 78.924 | 81.082 | 2.157 | 2.7% |
+| Avg entropy    | 0.251 | 0.230 | -0.021 | -8.4% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Creating and following a monthly personal budget can help you manage your finances effectively, achieve your financial goals, and reduce financial stress. Here's a step-by-step guide to creating and following a simple monthly personal budget with categories:
+
+**Step 1: Identify Your Income**
+
+* Start by calculating your total monthly income from all sources, including your salary, investments, and any other regular income.
+
+**Step 2: Categorize Your Expenses**
+
+* Divide your expenses into the following simple categories:
+	1. **Essential Expenses** (50-60% of your income):
+		* Housing (rent/mortgage, utilities, insurance)
+		* Food and groceries
+		* Transportation (car loan/insurance, gas, maintenance)
+		* Minimum payments on debts (credit cards, loans)
+		* Insurance (health, life, disability)
+	2. **Savings and Debt Repayment** (10-20% of your income):
+		* Emergency fund contributions
+		* Debt repayment (above minimum payments)
+		* Retirement savings
+	3. **Non-Essential Expenses** (10-20% of your income):
+		* Entertainment (dining out, movies, hobbies)
+		* Travel
+		* Gifts
+		* Personal care and wellness
+		* Miscellaneous (pet expenses, home maintenance, etc.)
+
+**Step 3: Assign Dollar Amounts**
+
+* Based on your income and expenses, assign a specific dollar amount to each category. Be realistic and consider your financial goals and priorities.
+* Make sure to include a buffer for unexpected expenses in your essential expenses category.
+
+**Step 4: Track Your Expenses**
+
+* Use a budgeting app, spreadsheet, or planner to track your expenses throughout the month. Monitor your spending and make adjustments as needed to stay on track.
+* Review your budget regularly to ensure you're staying within your assigned dollar amounts.
+
+**Step 5: Adjust and Refine**
+
+* As you track your expenses, you may need to adjust your budget to reflect changes in your income or expenses.
+* Refine your budget categories and dollar amounts as needed to ensure they align with your financial goals and priorities.
+
+**Tips and Reminders**
+
+* Start small and be patient. It may take some time to adjust to a new budgeting system.
+* Prioritize needs over wants. Make sure to allocate funds for essential expenses first.
+* Review and adjust your budget regularly to stay on track and make progress towards your financial goals.
+* Consider using the 50/30/20 rule as a guideline: 50% for essential expenses, 30% for non-essential expenses, and 20% for savings and debt repayment.
+
+By following these simple steps and categories, you can create a personalized budget that helps you manage your finances effectively and achieve your financial goals.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Creating and following a monthly personal budget can help you manage your finances effectively, achieve your financial goals, and reduce stress. Here's a simple step-by-step guide to create and follow a monthly personal budget with simple categories:
+
+**Step 1: Identify Your Income**
+
+* Start by calculating your total monthly income from all sources, including your salary, investments, and any other regular income.
+
+**Step 2: Categorize Your Expenses**
+
+* Divide your expenses into the following simple categories:
+	1. **Essential Expenses** (50-60% of your income):
+		* Housing (rent/mortgage, utilities, insurance)
+		* Food and groceries
+		* Transportation (car loan/insurance, gas, maintenance)
+		* Minimum payments on debts (credit cards, loans)
+		* Insurance (health, life, disability)
+	2. **Savings** (10-20% of your income):
+		* Emergency fund
+		* Retirement savings
+		* Other savings goals (college fund, down payment on a house)
+	3. **Discretionary Expenses** (10-20% of your income):
+		* Entertainment (dining out, movies, hobbies)
+		* Travel
+		* Gifts
+		* Personal spending (clothing, accessories, gadgets)
+	4. **Debt Repayment** (5-10% of your income):
+		* Paying off high-interest debts (credit cards, personal loans)
+		* Paying off low-interest debts (student loans, mortgages)
+
+**Step 3: Assign Amounts to Each Category**
+
+* Based on your income and expenses, assign a specific amount to each category. Be realistic and take into account any fluctuations in expenses.
+* For example:
+	+ Essential Expenses: $3,000
+	+ Savings: $800
+	+ Discretionary Expenses: $1,200
+	+ Debt Repayment: $500
+
+**Step 4: Track Your Expenses**
+
+* Use a budgeting app, spreadsheet, or simply a notebook to track your expenses throughout the month.
+* Categorize each expense as it occurs, and update your totals regularly.
+* Review your expenses regularly to ensure you're staying on track and make adjustments as needed.
+
+**Step 5: Review and Adjust**
+
+* Review your budget regularly (e.g., every 3-6 months) to:
+	+ Track your progress
+	+ Identify areas for improvement
+	+ Adjust your budget as needed
+
+**Tips and Reminders**
+
+* Start small and be patient. It may take some time to adjust to a new budgeting routine.
+* Prioritize your goals and focus on the most important categories first.
+* Consider using the 50/30/20 rule as a guideline: 50% for essential expenses, 30% for discretionary expenses, and 20% for savings and debt repayment.
+* Automate your savings and bill payments to make it easier to stick to your budget.
+
+By following these simple steps, you can create a personalized budget that helps you manage your finances effectively and achieve your financial goals.
+```
+</details>
+
+---
+
+### `procedures_006` (idx: 6)
+> Explain how to back up family photos reliably across devices and cloud services.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 634 | 719 | 85 | 13.4% |
+| Wall time (s)  | 88.264 | 94.289 | 6.025 | 6.8% |
+| Avg entropy    | 0.432 | 0.360 | -0.073 | -16.8% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Backing up your family photos is an essential task to ensure that your cherished memories are safe and accessible across devices and cloud services. Here's a step-by-step guide to help you back up your family photos reliably:
+
+**Local Backup**
+
+1. **External Hard Drive**: Invest in an external hard drive specifically designed for data backup. Choose one with a large capacity (at least 1TB) and a USB 3.0 or faster connection. Connect it to your computer and set it up according to the manufacturer's instructions.
+2. **Backup Software**: Use backup software like Time Machine (for Mac) or Backblaze (for Windows) to automatically backup your photos to the external hard drive. Set the software to backup your photos at regular intervals (e.g., daily, weekly, or monthly).
+3. **Cloud Backup**: Consider using a cloud backup service like Google Photos, Amazon Prime Photos, or Microsoft OneDrive to store your photos. These services often offer automatic backup options and can be accessed from any device with an internet connection.
+
+**Cloud Services**
+
+1. **Google Photos**: Set up Google Photos on your devices and enable automatic backup. You can choose to backup photos from specific folders, devices, or even set a specific backup schedule.
+2. **Amazon Prime Photos**: If you have an Amazon Prime membership, you can enable automatic photo backup on your devices. Prime Photos offers unlimited photo storage for Prime members.
+3. **Microsoft OneDrive**: Set up OneDrive on your devices and enable automatic photo backup. You can choose to backup photos from specific folders or set a specific backup schedule.
+
+**Syncing Across Devices**
+
+1. **Google Photos**: Use Google Photos' "Sync" feature to access your backed-up photos across devices. You can also use the Google Photos app on your devices to upload and access your photos.
+2. **Amazon Prime Photos**: Use the Amazon Photos app on your devices to access and upload your backed-up photos.
+3. **Microsoft OneDrive**: Use the OneDrive app on your devices to access and upload your backed-up photos.
+
+**Tips and Best Practices**
+
+1. **Use multiple backup methods**: Don't rely on a single backup method. Use a combination of local and cloud backup methods to ensure your photos are safe.
+2. **Use different storage locations**: Store your backups in different locations, such as an external hard drive and a cloud service, to ensure that your photos are safe in case of a disaster.
+3. **Set reminders**: Set reminders to check your backups regularly to ensure they're working correctly and that you're not missing any important files.
+4. **Organize your photos**: Organize your photos in a logical manner, using folders, tags, or albums, to make them easy to find and access.
+5. **Consider a backup schedule**: Set a regular schedule for backing up your photos, such as daily, weekly, or monthly, to ensure that your photos are consistently backed up.
+
+By following these steps and best practices, you'll be able to back up your family photos reliably across devices and cloud services, ensuring that your cherished memories are safe and accessible for years to come.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Backing up your family photos is an essential task to ensure they are safe and secure. Here's a step-by-step guide on how to back up your family photos reliably across devices and cloud services:
+
+**Step 1: Organize Your Photos**
+
+Before backing up your photos, organize them into folders or albums on your computer or mobile device. This will make it easier to identify and locate specific photos. You can also use tags or keywords to categorize your photos.
+
+**Step 2: Choose a Backup Method**
+
+You can use a combination of methods to back up your photos, including:
+
+1. **External Hard Drive**: Connect an external hard drive to your computer and use software like Time Machine (for Mac) or Backup and Restore (for Windows) to back up your photos.
+2. **Cloud Storage**: Use cloud storage services like Google Photos, Amazon Prime Photos, or Microsoft OneDrive to store your photos online.
+3. **Cloud Syncing**: Use cloud syncing services like iCloud Photo Library (for iOS devices) or Google Photos' sync feature to automatically back up your photos across devices.
+
+**Step 3: Set Up Your Backup**
+
+1. **External Hard Drive**:
+	* Connect the external hard drive to your computer.
+	* Use software like Time Machine (for Mac) or Backup and Restore (for Windows) to set up a backup schedule.
+	* Choose the folders or albums you want to back up and set the backup frequency (e.g., daily, weekly, or monthly).
+2. **Cloud Storage**:
+	* Sign up for a cloud storage service and create an account.
+	* Upload your photos to the cloud storage service using the service's desktop app or mobile app.
+	* Set the upload frequency (e.g., automatic, manual, or scheduled).
+3. **Cloud Syncing**:
+	* Enable cloud syncing on your devices (e.g., iPhone, iPad, or Android device).
+	* Make sure your devices are connected to the same cloud account.
+	* Set the syncing frequency (e.g., automatic, manual, or scheduled).
+
+**Step 4: Verify Your Backup**
+
+1. **External Hard Drive**:
+	* Check the external hard drive regularly to ensure it's functioning properly.
+	* Verify that your photos are being backed up correctly by checking the backup logs or reports.
+2. **Cloud Storage**:
+	* Check your cloud storage account regularly to ensure your photos are being uploaded correctly.
+	* Verify that your photos are accessible across devices by logging in to your cloud account on different devices.
+3. **Cloud Syncing**:
+	* Check your devices regularly to ensure they're syncing correctly.
+	* Verify that your photos are being synced across devices by checking the synced folders or albums.
+
+**Additional Tips**
+
+1. **Use Multiple Backup Methods**: Use a combination of methods to ensure your photos are backed up in multiple places.
+2. **Store Backups Offsite**: Store your external hard drive or cloud storage backup in a different location to protect against physical damage or loss.
+3. **Set Reminders**: Set reminders to check your backups regularly to ensure they're functioning correctly.
+4. **Use Encryption**: Consider using encryption to protect your backed-up photos from unauthorized access.
+5. **Keep Multiple Copies**: Keep multiple copies of your backed-up photos in different locations to ensure they're safe in case of a disaster.
+
+By following these steps and tips, you'll be able to back up your family photos reliably across devices and cloud services, ensuring they're safe and secure for years to come.
+```
+</details>
+
+---
+
+### `procedures_007` (idx: 7)
+> Explain how to host a small community event: planning, permits, logistics, and
+accessibility.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 675 | 665 | -10 | -1.5% |
+| Wall time (s)  | 92.986 | 85.837 | -7.150 | -7.7% |
+| Avg entropy    | 0.384 | 0.415 | 0.031 | 8.0% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Hosting a small community event can be a wonderful way to bring people together and foster a sense of community. Here's a comprehensive guide to help you plan, organize, and execute a successful event:
+
+**Planning:**
+
+1. **Define the purpose and scope of the event**: Determine the reason for the event, the target audience, and the expected number of attendees.
+2. **Set a date and time**: Choose a date and time that works for the majority of your target audience. Avoid conflicting with other local events or holidays.
+3. **Create a budget**: Establish a realistic budget and stick to it. Consider costs for venue rental, catering, decorations, entertainment, and marketing.
+4. **Form a planning committee**: Assemble a team of volunteers or stakeholders to help with planning, promotion, and execution.
+5. **Research local regulations**: Familiarize yourself with local laws and regulations regarding events, such as noise ordinances, parking restrictions, and permits required.
+
+**Permits:**
+
+1. **Check with local authorities**: Obtain necessary permits and licenses from the city or county government, such as:
+	* Business license
+	* Special event permit
+	* Noise permit (if applicable)
+	* Parking permit (if applicable)
+2. **Notify local authorities**: Inform the police department, fire department, and other relevant agencies about your event.
+3. **Comply with accessibility regulations**: Ensure that your event is accessible to people with disabilities by providing:
+	* Ramps or elevators
+	* Accessible restrooms
+	* Sign language interpreters or audio descriptions (if requested)
+
+**Logistics:**
+
+1. **Choose a venue**: Select a venue that fits your event's purpose and size. Ensure it's accessible and has necessary amenities (e.g., restrooms, parking, power outlets).
+2. **Plan for amenities**: Arrange for necessary amenities, such as:
+	* Catering and beverages
+	* Tables, chairs, and linens
+	* Sound and audio equipment
+	* Trash and recycling services
+3. **Coordinate logistics**: Arrange for:
+	* Parking and traffic management
+	* Crowd control and security
+	* First aid and emergency services (if necessary)
+
+**Accessibility:**
+
+1. **Inclusive marketing**: Promote your event through various channels, including social media, flyers, and local newspapers, to reach a diverse audience.
+2. **Accessible event space**: Ensure the event space is:
+	* Wheelchair accessible
+	* Has accessible restrooms
+	* Has clear signage and Braille or large-print materials
+3. **Accommodate special needs**: Provide accommodations for attendees with disabilities, such as:
+	* Sign language interpreters
+	* Audio descriptions
+	* Assistive listening devices
+	* Wheelchair-accessible seating
+
+**Additional Tips:**
+
+1. **Create a contingency plan**: Prepare for unexpected situations, such as inclement weather or last-minute cancellations.
+2. **Evaluate and improve**: After the event, gather feedback from attendees and make improvements for future events.
+3. **Follow up**: Send a thank-you note or survey to attendees to show appreciation for their participation and gather feedback.
+
+By following these steps, you'll be well-prepared to host a successful and accessible small community event that brings people together and fosters a sense of community.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Hosting a small community event can be a wonderful way to bring people together and create a sense of community. Here's a comprehensive guide to help you plan, organize, and execute a successful event:
+
+**Planning:**
+
+1. **Define the purpose and scope**: Determine the reason for the event, its goals, and the target audience. This will help you tailor the event to the community's needs and interests.
+2. **Set a date and time**: Choose a date and time that works best for the majority of your target audience. Be mindful of conflicting events and holidays.
+3. **Create a budget**: Establish a realistic budget and stick to it. Consider costs for venue rental, supplies, food, entertainment, and marketing.
+4. **Form a planning committee**: Gather a team of dedicated volunteers or community members to help with planning, execution, and promotion.
+5. **Research local regulations**: Familiarize yourself with local laws, permits, and regulations regarding events in your area.
+
+**Permits:**
+
+1. **Obtain necessary permits**: Depending on the type and size of your event, you may need to obtain permits from local authorities, such as:
+	* Business license
+	* Health department permit (if serving food)
+	* Noise permit (if music or loud activities are involved)
+	* Parking permit (if you'll be blocking streets or parking areas)
+2. **Check with local authorities**: Contact your local government or event coordinator to determine the specific permits required for your event.
+
+**Logistics:**
+
+1. **Choose a venue**: Select a venue that suits your event's purpose and size. Consider factors like accessibility, parking, and amenities.
+2. **Plan the layout**: Determine the layout of the event space, including seating, tables, and restrooms.
+3. **Arrange for amenities**: Ensure you have necessary amenities, such as:
+	* Restrooms
+	* Food and beverage options
+	* Audio-visual equipment (if needed)
+	* Parking and shuttle services (if necessary)
+4. **Plan for waste management**: Arrange for proper waste disposal and recycling services.
+5. **Coordinate with vendors**: Hire vendors, such as caterers, entertainers, or equipment rental companies, to ensure they understand your event's needs and schedule.
+
+**Accessibility:**
+
+1. **Ensure physical accessibility**: Choose a venue with wheelchair ramps, elevators, and accessible restrooms.
+2. **Provide accommodations for people with disabilities**: Offer accommodations like sign language interpreters, audio descriptions, or wheelchair-accessible seating.
+3. **Communicate accessibility information**: Clearly communicate accessibility information on your event's website, social media, and promotional materials.
+4. **Train staff and volunteers**: Educate staff and volunteers on how to assist attendees with disabilities and provide necessary accommodations.
+
+**Additional Tips:**
+
+1. **Promote your event**: Utilize social media, flyers, and local newspapers to promote your event.
+2. **Create a contingency plan**: Prepare for unexpected situations, such as inclement weather or last-minute cancellations.
+3. **Evaluate the event**: Gather feedback from attendees and assess the event's success to improve future events.
+
+By following these steps, you'll be well-prepared to host a successful and enjoyable community event that brings people together and creates lasting memories.
+```
+</details>
+
+---
+
+### `procedures_008` (idx: 8)
+> Explain how to start a small vegetable garden on a balcony: soil, containers, and
+watering.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 564 | 538 | -26 | -4.6% |
+| Wall time (s)  | 79.782 | 63.500 | -16.282 | -20.4% |
+| Avg entropy    | 0.341 | 0.274 | -0.067 | -19.8% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Starting a small vegetable garden on a balcony is a great way to grow your own fresh produce, even with limited space! Here's a step-by-step guide to help you get started:
+
+**Choosing the Right Soil:**
+
+1. Select a high-quality potting mix specifically designed for containers. This type of soil will retain moisture but also drain excess water to prevent waterlogged soil.
+2. Consider a self-watering potting mix, which can help reduce watering frequency.
+3. If you're using a balcony with a trellis or planter box, you may want to opt for a mix with added perlite or vermiculite for better drainage.
+
+**Selecting Containers:**
+
+1. Choose containers with good drainage holes to prevent waterlogged soil. You can use plastic or clay pots, planters, or even wooden boxes.
+2. Consider the size of your balcony and the amount of space you have available. Small containers (around 6-8 inches deep) are ideal for balconies with limited space.
+3. Make sure the containers are clean and sanitized before filling them with soil.
+
+**Watering Tips:**
+
+1. Water your plants when the top 1-2 inches of soil feel dry to the touch. Overwatering can lead to root rot and other issues.
+2. Water at the base of the plants to avoid getting water on the leaves, which can lead to fungal diseases.
+3. Use a watering can or a gentle spray nozzle to water your plants. Avoid using a hose, as it can damage the plants or dislodge the soil.
+4. Check the weather forecast and adjust your watering schedule accordingly. If it's going to be a hot or dry day, you may need to water more frequently.
+5. Mulch around the plants to help retain moisture and reduce evaporation.
+
+**Additional Tips:**
+
+1. Choose compact or dwarf varieties of vegetables, such as cherry tomatoes, leafy greens, or herbs, which are well-suited for small spaces.
+2. Provide support for climbing plants like peas, beans, or cucumbers using trellises or cages.
+3. Keep your balcony garden in a spot that receives at least 4-6 hours of direct sunlight per day.
+4. Fertilize your plants regularly using a balanced fertilizer, following the instructions on the label.
+5. Monitor your plants for pests and diseases, and take action promptly if you notice any issues.
+
+Some popular balcony-friendly vegetables include:
+
+* Leafy greens (lettuce, kale, spinach)
+* Cherry tomatoes
+* Radishes
+* Green beans
+* Peppers
+* Herbs (basil, cilantro, parsley)
+
+By following these steps and tips, you'll be well on your way to growing a thriving and productive vegetable garden on your balcony!
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Starting a small vegetable garden on a balcony can be a wonderful way to grow your own fresh produce, even with limited space. Here's a step-by-step guide to help you get started:
+
+**Soil:**
+
+1. Choose a high-quality potting mix specifically designed for containers. Avoid using soil from your backyard as it may compact and prevent proper drainage.
+2. Select a mix that is well-draining and has a pH between 6.0 and 7.0, which is suitable for most vegetables.
+3. Consider using a mix that contains perlite or vermiculite to improve drainage and aeration.
+
+**Containers:**
+
+1. Select containers that are at least 6-8 inches deep and have drainage holes in the bottom. This will prevent waterlogged soil and root rot.
+2. Choose containers that are made of a durable material, such as plastic, ceramic, or wood. Avoid using metal containers as they can conduct heat and harm your plants.
+3. Consider using self-watering containers or containers with built-in water reservoirs to reduce watering frequency.
+4. Make sure the containers are clean and sanitized before use.
+
+**Watering:**
+
+1. Water your plants when the top 1-2 inches of soil feels dry to the touch. Avoid overwatering, which can lead to root rot and other problems.
+2. Water your plants in the morning, so the plants have the entire day to dry out slightly. This will help prevent fungal diseases.
+3. Use a watering can or a soaker hose to deliver water directly to the soil, reducing evaporation and runoff.
+4. Avoid getting water on the leaves or stems of your plants to prevent fungal diseases. Instead, water at the soil level.
+5. Mulch around the plants to retain moisture, suppress weeds, and regulate soil temperature.
+
+**Additional Tips:**
+
+1. Choose compact or dwarf varieties of vegetables that are specifically bred for container growing.
+2. Plant a mix of vegetables that have similar growing requirements and space needs.
+3. Provide support for plants that need it, such as tomatoes and peas.
+4. Keep your balcony garden in a spot that receives at least 6 hours of direct sunlight a day.
+5. Monitor your plants regularly for pests and diseases, and take action promptly if you notice any issues.
+
+Some popular vegetables for balcony gardens include:
+
+* Leafy greens (lettuce, kale, spinach)
+* Cherry tomatoes
+* Peppers
+* Cucumbers
+* Carrots
+* Radishes
+* Herbs (basil, cilantro, parsley)
+
+Remember to follow the specific growing instructions for each plant variety, and happy gardening!
+```
+</details>
+
+---
+
+### `procedures_009` (idx: 9)
+> Explain how to negotiate a job offer: salary, benefits, and growth opportunities.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 697 | 729 | 32 | 4.6% |
+| Wall time (s)  | 100.861 | 98.684 | -2.176 | -2.2% |
+| Avg entropy    | 0.460 | 0.428 | -0.032 | -7.0% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Congratulations on receiving a job offer! Negotiating a job offer can be a crucial step in ensuring you get a compensation package that aligns with your worth and expectations. Here's a step-by-step guide on how to negotiate a job offer, covering salary, benefits, and growth opportunities:
+
+**Preparation is key**
+
+Before negotiating, make sure you:
+
+1. Research the market: Look up the average salary range for your position in your location using websites like Glassdoor, Payscale, or the Bureau of Labor Statistics.
+2. Know your worth: Make a list of your skills, qualifications, and achievements to demonstrate your value to the employer.
+3. Set your goals: Decide on your minimum requirements and ideal outcomes for salary, benefits, and growth opportunities.
+
+**Salary Negotiation**
+
+1. Review the offer: Carefully review the job offer letter or email to understand the terms, including the salary, bonuses, and benefits.
+2. Identify the negotiation scope: Determine what you're willing to negotiate on. For most people, it's the salary, but you can also discuss other benefits or perks.
+3. Make a strong case: Prepare a concise, data-driven argument for why you deserve a higher salary. Highlight your achievements, skills, and qualifications.
+4. Make a specific request: State your desired salary range, based on your research and preparation. Be specific, e.g., "I was hoping for a salary between $X and $Y, considering my skills and experience."
+5. Be flexible: Be open to compromise and willing to discuss alternatives, such as a performance-based raise or additional benefits.
+
+**Benefits Negotiation**
+
+1. Review the benefits package: Carefully review the benefits offered, including health insurance, retirement plans, paid time off, and other perks.
+2. Identify what's important to you: Prioritize the benefits that matter most to you, such as flexible work arrangements, professional development opportunities, or wellness programs.
+3. Ask questions: Clarify any questions or concerns you have about the benefits package, and ask for more information or clarification.
+4. Negotiate benefits: If you're not satisfied with the standard benefits package, propose alternative solutions or request additional benefits that align with your priorities.
+
+**Growth Opportunities Negotiation**
+
+1. Discuss career development: Express your interest in growing with the company and discuss opportunities for professional development, mentorship, and training.
+2. Explore advancement opportunities: Ask about potential career paths, promotions, and opportunities for advancement within the company.
+3. Request a clear plan: Ask for a clear plan or timeline for career development and advancement, including specific goals and milestones.
+4. Be prepared to commit: Demonstrate your commitment to the company and the role, and be willing to discuss how you can contribute to the organization's growth and success.
+
+**Additional Tips**
+
+1. Be respectful and professional: Remember to maintain a professional tone and demeanor throughout the negotiation process.
+2. Be prepared to walk away: If the negotiation doesn't meet your expectations, be prepared to walk away from the offer. This shows that you're willing to stand up for your worth and may prompt the employer to reconsider.
+3. Follow up: After the negotiation, ensure that any agreements or changes are documented and included in the employment contract or offer letter.
+
+Remember, negotiation is a conversation, not a confrontation. Approach it with confidence, preparation, and an open mind, and you'll be more likely to get the compensation package you deserve.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Congratulations on receiving a job offer! Negotiating a job offer can be a daunting task, but it's a crucial step in ensuring you get a fair and competitive compensation package. Here's a step-by-step guide on how to negotiate a job offer, covering salary, benefits, and growth opportunities:
+
+**Before the Negotiation:**
+
+1. Research the market: Look up the average salary range for your position in your location to determine a fair starting point for your negotiation.
+2. Know your worth: Make a list of your skills, qualifications, and achievements to demonstrate your value to the employer.
+3. Identify your non-negotiables: Determine what aspects of the job offer are essential to you, such as work-life balance, flexible hours, or specific benefits.
+
+**Salary Negotiation:**
+
+1. Acknowledge the offer: Express gratitude for the offer and acknowledge the employer's confidence in your abilities.
+2. Research-based approach: Share your research on the market average salary range and explain why you believe your requested salary is reasonable.
+3. Targeted ask: Make a specific salary request, based on your research, and explain how it aligns with your skills and experience.
+4. Be flexible: Be open to negotiation and willing to consider alternative solutions, such as a performance-based raise or additional benefits.
+
+Example script:
+"I'm excited about the opportunity to join the team and appreciate the offer. Based on my research, I believe the market average salary for this position is between $X and $Y. Considering my skills and experience, I was hoping we could discuss a salary closer to the higher end of that range. Would that be possible?"
+
+**Benefits Negotiation:**
+
+1. Identify benefits: Make a list of the benefits that are important to you, such as health insurance, retirement plan, or paid time off.
+2. Prioritize benefits: Rank your benefits in order of importance to you.
+3. Ask about benefits: Inquire about the benefits package and ask if there's any flexibility to improve it.
+4. Negotiate benefits: If the employer is unwilling to budge on salary, focus on benefits that are important to you.
+
+Example script:
+"I'm impressed with the company's benefits package, but I was hoping to discuss a few areas where I could see some improvement. Specifically, I'm interested in [insert specific benefit, e.g., additional vacation days or a better health insurance plan]. Would it be possible to revisit those benefits and see if there's any flexibility?"
+
+**Growth Opportunities:**
+
+1. Discuss career goals: Share your long-term career goals and aspirations with the employer.
+2. Ask about growth opportunities: Inquire about opportunities for professional development, mentorship, and career advancement.
+3. Negotiate growth opportunities: Request specific opportunities, such as training programs, conferences, or mentorship assignments.
+
+Example script:
+"I'm excited about the opportunity to join the team and contribute to the company's success. I'm also interested in discussing growth opportunities and how I can continue to develop my skills and expertise. Are there any training programs or mentorship opportunities available that could help me achieve my long-term career goals?"
+
+**After the Negotiation:**
+
+1. Confirm the agreement: Ensure that you and the employer agree on the terms of the negotiation.
+2. Put it in writing: Request that the employer put the agreed-upon terms in writing, including any changes to the original offer.
+3. Review and sign: Carefully review the updated offer and sign the agreement once you're satisfied with the terms.
+
+Remember to stay calm, professional, and respectful during the negotiation process. Good luck!
+```
+</details>
+
+---
+
+### `procedures_010` (idx: 10)
+> Explain how to assemble a basic emergency kit for a household of two for 72 hours.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 530 | 650 | 120 | 22.6% |
+| Wall time (s)  | 72.207 | 81.989 | 9.782 | 13.5% |
+| Avg entropy    | 0.260 | 0.329 | 0.069 | 26.5% |
+| Stop reason    | eos_token | eos_patience_fallback | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Assembling a basic emergency kit for a household of two for 72 hours can help you and your family stay safe and comfortable during unexpected situations like power outages, natural disasters, or other emergencies. Here's a list of essential items to include in your kit:
+
+**Water and Food:**
+
+* 1 gallon of water per person per day for 3 days (6 gallons total)
+* Non-perishable, high-calorie food such as:
+	+ Canned goods (vegetables, fruits, meats, and soups)
+	+ Energy bars
+	+ Dried fruits and nuts
+	+ MREs (Meals Ready to Eat) or dehydrated meals
+* Manual can opener
+
+**First Aid Kit:**
+
+* Bandages and band-aids
+* Gauze pads and rolls
+* Antiseptic wipes and spray
+* Pain relievers (e.g., acetaminophen or ibuprofen)
+* Antihistamines (for allergic reactions)
+* Prescription medications and essential medical equipment
+
+**Lighting and Communication:**
+
+* Flashlights and extra batteries
+* Battery-powered or hand-crank radio
+* Whistle to signal for help if needed
+* Cell phone with charger and back-up power source (e.g., portable charger or car charger)
+
+**Shelter and Warmth:**
+
+* Sleeping bag or blankets
+* Tent or tarpaulin
+* Space blanket or emergency bivvy sack
+* Fire starting equipment (e.g., matches, lighters, firestarters)
+* Extra clothing and layers for cold weather
+
+**Personal Hygiene:**
+
+* Toothbrush and toothpaste
+* Soap and toilet paper
+* Feminine hygiene products (if applicable)
+* Moist towelettes, garbage bags, and plastic ties for personal sanitation
+
+**Tools and Miscellaneous:**
+
+* Multi-tool or pocket knife
+* Duct tape
+* Rope or twine
+* Local maps
+* Cash and important documents (e.g., insurance policies, identification)
+* Change of clothes and undergarments
+
+**Additional Tips:**
+
+* Check your kit regularly to ensure all items are still usable and not expired.
+* Consider adding a small pet emergency kit with food, water, and any necessary medication for your furry friends.
+* Make sure all family members know where the emergency kit is located and what to do in case of an emergency.
+* Practice using the items in your kit to ensure you're prepared and confident in your ability to respond to an emergency.
+
+Remember to review and update your emergency kit every 6 months to ensure it remains relevant and effective. Stay safe and prepared!
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Assembling a basic emergency kit for a household of two for 72 hours is a great step in being prepared for unexpected situations. Here's a step-by-step guide to help you get started:
+
+**Step 1: Gather Essential Items**
+
+1. Water: Store at least 1 gallon of water per person per day for 3 days (2 people x 1 gallon/day x 3 days = 6 gallons)
+2. Non-perishable food:
+	* Canned goods (vegetables, fruits, meats, and soups)
+	* Energy bars
+	* Dried fruits and nuts
+	* Ready-to-eat meals (e.g., MREs or dehydrated meals)
+3. First aid kit:
+	* Bandages and band-aids
+	* Antiseptic wipes and spray
+	* Pain relievers (e.g., acetaminophen or ibuprofen)
+	* Antihistamines (for allergic reactions)
+	* Prescription medications and essential medical equipment
+4. Shelter and warmth:
+	* Tent or tarpaulin
+	* Sleeping bag or blankets
+	* Flashlights or headlamps
+	* Extra batteries
+	* Fire starting equipment (e.g., matches, lighters, or a fire starter)
+5. Personal hygiene items:
+	* Toilet paper and paper towels
+	* Hand sanitizer
+	* Moist towelettes or baby wipes
+	* Feminine hygiene products (if applicable)
+6. Communication and tools:
+	* Cell phone with charger and back-up battery
+	* Two-way radio or walkie-talkie
+	* Whistle
+	* Multi-tool or pocket knife
+	* Duct tape
+7. Important documents:
+	* Copies of identification (e.g., driver's license, passport)
+	* Insurance cards and medical information
+	* Emergency contact information
+	* Cash and credit cards
+
+**Step 2: Organize and Store the Kit**
+
+1. Choose a convenient and accessible location for the kit, such as a closet or shelf.
+2. Use a sturdy, easy-to-carry container (e.g., backpack, duffel bag, or plastic bin) to store the kit.
+3. Label the kit with its contents and the date it was assembled.
+4. Check the kit regularly to ensure all items are still usable and not expired.
+
+**Step 3: Review and Update the Kit**
+
+1. Review the kit regularly to ensure everything is still relevant and up-to-date.
+2. Update the kit as needed to reflect changes in your household, such as new medications or allergies.
+3. Consider adding any specific items for your household, such as pet supplies or baby essentials.
+
+**Additional Tips**
+
+1. Make sure all family members know where the emergency kit is located and what it contains.
+2. Practice using the kit by simulating a 72-hour emergency scenario to ensure you're prepared.
+3. Consider creating a family emergency plan, including a communication plan and a meeting point in case you get separated.
+
+By following these steps, you'll have a basic emergency kit assembled for your household of two that will help you survive for 72 hours in case of an unexpected situation.
+```
+</details>
+
+---
+
+### `procedures_011` (idx: 11)
+> Explain how to set up two‑factor authentication across common services and why it matters.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 614 | 676 | 62 | 10.1% |
+| Wall time (s)  | 85.559 | 83.922 | -1.637 | -1.9% |
+| Avg entropy    | 0.372 | 0.368 | -0.004 | -1.2% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Two-factor authentication (2FA) is a security process that requires a user to provide two different authentication factors to access a system, network, or application. This adds an extra layer of security to the traditional username and password combination, making it much more difficult for hackers to gain unauthorized access.
+
+Here's a step-by-step guide on how to set up 2FA across common services:
+
+**Why 2FA matters:**
+
+1. **Stronger security**: 2FA makes it much harder for attackers to gain access to your accounts, even if they have your password.
+2. **Protection against phishing**: 2FA helps prevent phishing attacks, where attackers try to trick you into revealing your password.
+3. **Compliance**: Many organizations require 2FA to meet regulatory compliance requirements, such as PCI-DSS for credit card transactions.
+4. **Reduced risk of data breaches**: 2FA reduces the risk of data breaches, as even if an attacker gains access to your password, they won't be able to access your account without the second factor.
+
+**Common services that support 2FA:**
+
+1. **Google**: Enable 2-Step Verification on Google Account settings.
+2. **Facebook**: Go to Settings > Security and Login > Two-Factor Authentication.
+3. **Microsoft**: Enable 2-Step Verification on Microsoft Account settings.
+4. **Banking and financial institutions**: Most banks and financial institutions offer 2FA options, such as SMS or authenticator apps.
+5. **Email services**: Many email providers, like Gmail, Outlook, and Yahoo, offer 2FA options.
+6. **Social media**: Twitter, Instagram, and other social media platforms offer 2FA options.
+7. **Cloud storage**: Dropbox, Google Drive, and Microsoft OneDrive offer 2FA options.
+
+**How to set up 2FA:**
+
+1. **Authenticator apps**: Use authenticator apps like Google Authenticator, Microsoft Authenticator, or Authy to generate time-based one-time passwords (TOTPs) or HMAC-based one-time passwords (HOTPs).
+2. **SMS or voice calls**: Receive a one-time code via SMS or voice call to authenticate.
+3. **Biometric authentication**: Use fingerprint or facial recognition to authenticate.
+4. **Physical tokens**: Use physical tokens, such as smart cards or USB tokens, to generate one-time passwords.
+
+**Steps to set up 2FA:**
+
+1. Go to the service's settings or account page.
+2. Look for the 2FA or security settings section.
+3. Enable 2FA and select your preferred authentication method.
+4. Follow the prompts to set up the 2FA method.
+5. Store your recovery codes or backup options, in case you lose access to your 2FA method.
+6. Test your 2FA setup to ensure it's working correctly.
+
+Remember to enable 2FA on all your accounts that offer it, and consider using a password manager to generate and store unique, complex passwords for each account.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Two-factor authentication (2FA) is an essential security measure that adds an extra layer of protection to your online accounts by requiring two forms of verification to access your account. This is especially important in today's digital age, where hacking and data breaches are becoming increasingly common.
+
+Here's a step-by-step guide on how to set up 2FA across common services:
+
+**Why 2FA matters:**
+
+1. **Added security**: 2FA makes it much harder for hackers to gain access to your accounts, even if they have your password.
+2. **Protection against phishing**: 2FA ensures that even if a hacker gets your password through phishing, they won't be able to access your account without the second factor.
+3. **Compliance**: Many organizations and governments require 2FA for security and compliance reasons.
+
+**Common services that support 2FA:**
+
+1. **Google**: Go to your Google Account settings, click on "Sign-in & security," and enable 2-Step Verification.
+2. **Facebook**: Go to your Facebook settings, click on "Security and Login," and enable two-factor authentication.
+3. **Twitter**: Go to your Twitter settings, click on "Account," and enable two-factor authentication.
+4. **Email providers**: Most email providers, such as Gmail, Outlook, and Yahoo, offer 2FA. Check your account settings to enable it.
+5. **Banking and financial institutions**: Many banks and financial institutions offer 2FA. Check with your bank to see if they offer this service.
+6. **Cloud storage services**: Services like Dropbox, Microsoft OneDrive, and iCloud offer 2FA. Check your account settings to enable it.
+7. **Password managers**: Many password managers, such as LastPass and 1Password, offer 2FA.
+
+**How to set up 2FA:**
+
+1. Log in to your account and go to the settings or security section.
+2. Look for the 2FA option and click on it.
+3. Choose your preferred 2FA method:
+	* SMS or text message: Receive a code via SMS and enter it to verify.
+	* Authenticator app: Use an app like Google Authenticator, Microsoft Authenticator, or Authy to generate a code.
+	* U2F key: Use a physical key, like a YubiKey, to authenticate.
+	* Biometric authentication: Use your fingerprint, face, or voice to authenticate.
+4. Follow the prompts to set up your 2FA method.
+5. Test your 2FA setup by logging out and logging back in to ensure it works correctly.
+
+**Tips and best practices:**
+
+1. **Use a different 2FA method for each account**: This makes it harder for hackers to access multiple accounts with a single exploit.
+2. **Use a 2FA app**: Authenticator apps are more secure than SMS-based 2FA.
+3. **Keep your 2FA devices and apps up to date**: Regularly update your devices and apps to ensure you have the latest security patches.
+4. **Use a password manager**: A password manager can help you generate and store unique, strong passwords for each account.
+
+By setting up 2FA across your common services, you'll significantly reduce the risk of account compromise and protect your online identity.
+```
+</details>
+
+---
+
+### `procedures_012` (idx: 12)
+> Explain how to plan an affordable international trip: flights, lodging, phones, and money.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 712 | 723 | 11 | 1.5% |
+| Wall time (s)  | 102.731 | 97.153 | -5.578 | -5.4% |
+| Avg entropy    | 0.330 | 0.347 | 0.017 | 5.2% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Planning an affordable international trip requires some research, flexibility, and strategic planning. Here's a comprehensive guide to help you plan an affordable international trip:
+
+**Flights:**
+
+1. **Be flexible with your travel dates:** Prices for flights vary depending on the day of the week and time of year. Consider traveling during the off-season or during shoulder season (the period between peak and off-peak seasons) for cheaper fares.
+2. **Compare prices:** Use flight comparison websites like Skyscanner, Kayak, or Google Flights to compare prices across different airlines, airports, and dates.
+3. **Consider budget airlines:** Low-cost carriers can offer significant savings, but be aware of any additional fees for checked bags, food, or seat selection.
+4. **Book in advance:** The earlier you book, the better your chances of getting a cheaper fare. Aim to book at least 2-3 months in advance.
+5. **Look for error fares:** Keep an eye out for mistake fares, which can be significantly cheaper than usual. These fares are usually only available for a short period, so act fast!
+
+**Lodging:**
+
+1. **Hostels:** Consider staying in hostels, which are often affordable and offer a social atmosphere. You can find hostels through websites like Hostelworld or Booking.com.
+2. **Budget hotels:** Look for budget hotels or guesthouses that offer affordable rates. You can find these through websites like Booking.com or Hotels.com.
+3. **Airbnb:** Renting an apartment or room through Airbnb can be a cost-effective option, especially for longer stays.
+4. **Couchsurfing:** If you're feeling adventurous, consider couchsurfing with locals, which is a great way to experience the culture and save money.
+
+**Phones:**
+
+1. **International data plan:** Check with your phone provider to see if they offer an international data plan. This can be a cost-effective option, especially if you plan to stay connected with family or friends back home.
+2. **Local SIM card:** Purchase a local SIM card or a portable Wi-Fi hotspot for affordable data and calls.
+3. **Free Wi-Fi:** Many cafes, restaurants, and public spaces offer free Wi-Fi. Take advantage of these to stay connected without breaking the bank.
+
+**Money:**
+
+1. **Currency exchange:** Avoid exchanging currency at airports or tourist areas, where rates are often unfavorable. Instead, use an ATM or currency exchange office in a local area.
+2. **Credit cards:** Inform your bank of your travel plans to avoid any issues with your credit card. Consider using a credit card with no foreign transaction fees.
+3. **Cash:** Carry some local currency for small purchases and tips. You can exchange a small amount at the airport or withdraw cash from an ATM.
+4. **Travel money cards:** Consider using a travel money card, which can be loaded with local currency and used for purchases.
+
+**Additional Tips:**
+
+1. **Pack smart:** Pack light to avoid checked baggage fees and save on transportation costs.
+2. **Research:** Research your destination to avoid any unnecessary expenses or surprises.
+3. **Budget:** Create a budget and track your expenses to ensure you stay on track.
+4. **Be flexible:** Be prepared for changes in your itinerary and be flexible with your plans.
+5. **Travel insurance:** Consider purchasing travel insurance to cover unexpected medical or travel-related expenses.
+
+By following these tips, you can plan an affordable international trip and enjoy your travels without breaking the bank!
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Planning an affordable international trip requires some research and planning, but with these tips, you can save money and have a great time. Here's a comprehensive guide to help you plan an affordable international trip:
+
+**Flights:**
+
+1. **Be flexible with your travel dates**: Prices for flights can vary greatly depending on the day of the week and time of year. Consider traveling during the off-season or during the week instead of on weekends.
+2. **Use flight comparison websites**: Websites like Skyscanner, Kayak, and Google Flights allow you to compare prices across different airlines and find the best deals.
+3. **Sign up for flight alerts**: Many airlines and flight comparison websites offer email alerts when prices drop or error fares become available.
+4. **Consider budget airlines**: Low-cost carriers like Spirit, Ryanair, and AirAsia can offer significant savings, but be mindful of additional fees for things like checked bags and food.
+5. **Book in advance**: The earlier you book, the better your chances of getting a cheaper flight.
+
+**Lodging:**
+
+1. **Hostels and guesthouses**: Consider staying in hostels or guesthouses, which are often cheaper than hotels and offer a more social atmosphere.
+2. **Book in advance**: Booking your accommodations in advance can help you save money and ensure availability.
+3. **Use booking websites**: Websites like Booking.com, Hostelworld, and Airbnb offer a wide range of options and often have discounts and promotions.
+4. **Consider alternative neighborhoods**: Neighborhoods that are a bit further from the city center may be cheaper and still offer easy access to public transportation.
+5. **Look for package deals**: Some hotels and resorts offer package deals that include flights and accommodations, which can be a cost-effective option.
+
+**Phones:**
+
+1. **Use a local SIM card**: Purchasing a local SIM card or a prepaid phone plan can be a cost-effective way to stay connected while abroad.
+2. **Use Wi-Fi**: Many cafes, restaurants, and hotels offer free Wi-Fi, which can help you stay connected without incurring roaming charges.
+3. **Turn off data roaming**: If you're not using a local SIM card, turn off data roaming on your phone to avoid surprise charges.
+4. **Use a portable Wi-Fi hotspot**: If you need to stay connected, consider purchasing a portable Wi-Fi hotspot, which can provide a secure and affordable internet connection.
+
+**Money:**
+
+1. **Use a debit or credit card with no foreign transaction fees**: Many credit cards and debit cards offer no foreign transaction fees, which can save you money on transactions.
+2. **Use an ATM**: Withdrawing cash from an ATM using your debit or credit card can be a cost-effective way to access local currency.
+3. **Exchange currency**: If you need to exchange currency, do so at a reputable exchange office or bank, rather than at an airport or hotel.
+4. **Use a money belt or secure wallet**: Keep your valuables safe and secure with a money belt or a secure wallet.
+5. **Budget your expenses**: Set a daily budget and track your expenses to avoid overspending and stay on track.
+
+Additional tips:
+
+* Research your destination and plan ahead to avoid last-minute expenses.
+* Pack smart and avoid checking bags to save on fees.
+* Consider purchasing travel insurance to protect yourself against unexpected events.
+* Be mindful of local customs and laws, and respect the local culture.
+
+By following these tips, you can plan an affordable international trip and have a great time exploring new destinations without breaking the bank!
+```
+</details>
+
+---
+
+### `procedures_013` (idx: 13)
+> Explain how to build a weekly meal plan and grocery list for a family of four.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 768 | 768 | 0 | 0.0% |
+| Wall time (s)  | 115.829 | 105.091 | -10.738 | -9.3% |
+| Avg entropy    | 0.314 | 0.354 | 0.040 | 12.7% |
+| Stop reason    | max_tokens | cap_safety | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Building a weekly meal plan and grocery list can help you save time, reduce food waste, and ensure that your family is eating healthy, balanced meals. Here's a step-by-step guide to help you create a weekly meal plan and grocery list for a family of four:
+
+**Step 1: Plan Your Meals**
+
+1. Decide on a budget: Determine how much you want to spend on groceries each week.
+2. Consider your family's preferences: Think about the types of meals your family likes and dislikes.
+3. Plan around leftovers: Try to plan meals that use leftovers to reduce food waste and save money.
+4. Plan for breakfast, lunch, and dinner: Decide on three meals per day for seven days, for a total of 21 meals.
+5. Consider dietary restrictions: If anyone in your family has dietary restrictions or preferences (e.g., vegetarian, gluten-free), plan accordingly.
+
+**Step 2: Create a Grocery List**
+
+1. Write down the ingredients needed for each meal: Using your meal plan, write down the ingredients needed for each meal.
+2. Categorize ingredients: Group similar ingredients together (e.g., produce, meat, dairy, grains, etc.).
+3. Add pantry staples: Don't forget to include pantry staples like spices, oils, and condiments.
+4. Check what you already have: Before you head to the store, check what ingredients you already have at home to avoid duplicate purchases.
+
+**Step 3: Organize Your List**
+
+1. Prioritize: Prioritize the most essential items on your list, such as meat, dairy, and produce.
+2. Use a list format: Write down each item on a separate line, and consider using a format like this:
+	* Produce:
+		+ Apples (3)
+		+ Carrots (1 bunch)
+		+ Bananas (6)
+	* Meat:
+		+ Chicken breasts (4 lbs)
+		+ Ground beef (1 lb)
+		+ Salmon fillets (2)
+	* Dairy:
+		+ Milk (gallon)
+		+ Yogurt (2 cups)
+		+ Cheese (block or shredded)
+3. Consider online shopping: Many grocery stores now offer online shopping with curbside pickup or delivery. This can be a convenient option if you're short on time.
+
+**Step 4: Review and Adjust**
+
+1. Review your list: Before you head to the store, review your list to ensure you haven't forgotten anything.
+2. Adjust as needed: If you realize you need to make any changes, adjust your list accordingly.
+3. Consider sales and coupons: Check the weekly ads for your local grocery stores and plan your meals around the items that are on sale. Look for digital coupons or apps that can help you save money.
+
+**Sample Meal Plan and Grocery List**
+
+Here's a sample meal plan and grocery list for a family of four:
+
+**Monday**
+
+* Breakfast: Overnight oats with banana and peanut butter
+* Lunch: Grilled cheese sandwiches and carrot sticks
+* Dinner: Spaghetti with meatballs and a green salad
+
+**Grocery List:**
+
+* Produce:
+	+ Bananas (6)
+	+ Carrots (1 bunch)
+	+ Apples (3)
+* Meat:
+	+ Ground beef (1 lb)
+	+ Chicken breasts (4 lbs)
+* Dairy:
+	+ Milk (gallon)
+	+ Yogurt (2 cups)
+	+ Cheese (block or shredded)
+* Pantry:
+	+ Pasta (1 box)
+	+ Spaghetti sauce (1 jar)
+	+ Peanut butter (1 jar)
+
+**Tuesday**
+
+* Breakfast: Scrambled eggs and whole wheat toast
+* Lunch: Turkey sandwiches and fruit
+* Dinner: Baked chicken and roasted vegetables
+
+**Gro
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Building a weekly meal plan and grocery list for a family of four can help you save time, reduce food waste, and ensure that everyone gets the nutrients they need. Here's a step-by-step guide to help you create a meal plan and grocery list that works for your family:
+
+**Step 1: Determine Your Family's Dietary Needs and Preferences**
+
+* Consider any dietary restrictions or allergies in your family, such as vegetarian, gluten-free, or dairy-free.
+* Think about your family's food preferences, such as favorite meals, cuisines, and ingredients.
+* Make a list of any health goals or nutritional needs, such as increasing protein intake or reducing sugar consumption.
+
+**Step 2: Plan Your Meals**
+
+* Decide on a meal plan format that works for you, such as:
+	+ Breakfast, lunch, and dinner for each day
+	+ A list of meals to cook throughout the week, with ingredients and portion sizes
+	+ A meal rotation plan, where you cook a few meals on the weekend and reheat throughout the week
+* Choose 7-10 meals that fit your family's dietary needs and preferences. You can use a meal planning app, cookbook, or online recipe resource for inspiration.
+* Consider planning meals around sales and seasonal ingredients to save money and reduce food waste.
+
+**Step 3: Create a Grocery List**
+
+* Write down all the ingredients needed for each meal, including pantry staples, fresh produce, meats, dairy products, and condiments.
+* Organize your list by store section or aisle to make shopping easier.
+* Add any necessary household items, such as paper products, cleaning supplies, and personal care items.
+* Consider using a grocery list app or printable template to help you stay organized.
+
+**Step 4: Shop and Cook**
+
+* Stick to your meal plan and grocery list when you're at the store to avoid impulse purchases and reduce food waste.
+* Shop for fresh produce and meats in bulk if possible, and consider buying in season to save money.
+* Cook meals according to your plan, and consider prep-cooking or meal prepping to save time during the week.
+
+**Example Meal Plan and Grocery List for a Family of Four**
+
+Here's an example meal plan and grocery list for a family of four:
+
+**Monday**
+
+* Breakfast: Scrambled eggs with whole wheat toast and fresh berries
+* Lunch: Grilled chicken sandwiches with carrot sticks and hummus
+* Dinner: Spaghetti with meatballs, steamed broccoli, and garlic bread
+
+Grocery list:
+
+* Eggs
+* Whole wheat bread
+* Fresh berries
+* Chicken breasts
+* Carrots
+* Hummus
+* Spaghetti
+* Ground beef
+* Broccoli
+* Garlic
+* Bread
+
+**Tuesday**
+
+* Breakfast: Overnight oats with banana and almond milk
+* Lunch: Turkey and cheese wraps with apple slices
+* Dinner: Baked chicken with roasted sweet potatoes and green beans
+
+Grocery list:
+
+* Oats
+* Bananas
+* Almond milk
+* Turkey breast
+* Cheese
+* Apples
+* Chicken breasts
+* Sweet potatoes
+* Green beans
+
+**Wednesday**
+
+* Breakfast: Yogurt parfait with granola and berries
+* Lunch: Grilled cheese and tomato soup
+* Dinner: Beef tacos with lettuce, tomatoes, and avocado
+
+Grocery list:
+
+* Yogurt
+* Granola
+* Berries
+* Cheese
+* Tomatoes
+* Lettuce
+* Avocado
+* Ground beef
+* Tortillas
+
+**Thursday**
+
+* Breakfast: Smoothies with banana, spinach, and almond milk
+* Lunch: Chicken Caesar salad
+* Dinner: Baked salmon with roasted asparagus and quinoa
+
+Grocery list:
+
+* Bananas
+* Spinach
+* Almond milk
+* Chicken breasts
+*
+```
+</details>
+
+---
+
+### `procedures_014` (idx: 14)
+> Explain how to troubleshoot a slow laptop: diagnostics, cleanup, and upgrades.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 632 | 768 | 136 | 21.5% |
+| Wall time (s)  | 86.701 | 103.833 | 17.132 | 19.8% |
+| Avg entropy    | 0.414 | 0.330 | -0.085 | -20.4% |
+| Stop reason    | eos_token | cap_safety | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Troubleshooting a slow laptop can be a frustrating experience, but it's often a solvable problem. Here's a step-by-step guide to help you diagnose, clean up, and upgrade your slow laptop to get it running smoothly again:
+
+**Diagnostics:**
+
+1. **Run a System Update**: Ensure your laptop is running the latest operating system updates, drivers, and software patches. This can help resolve any compatibility issues or bugs that might be causing the slow performance.
+2. **Check for Malware**: Run a full scan with your antivirus software to detect and remove any malware, viruses, or spyware that might be slowing down your laptop.
+3. **System Information**: Use the Task Manager (Windows) or Activity Monitor (Mac) to monitor your laptop's system resources, such as CPU, memory, and disk usage. Identify any processes or programs consuming excessive resources.
+4. **Check Disk Space**: Ensure you have enough free disk space. Low disk space can cause slow performance. Delete unnecessary files, empty the recycle bin, and consider uninstalling unused programs or cleaning up temporary files.
+5. **Check for Overheating**: If your laptop is overheating, it can slow down performance. Clean out dust from the vents, fans, and heat sinks, and ensure proper airflow around the laptop.
+
+**Cleanup:**
+
+1. **Uninstall Unused Programs**: Remove any unused or unnecessary programs, apps, or software to free up disk space and reduce clutter.
+2. **Disable Startup Programs**: Disable any programs or services that start automatically at boot time, as they can consume system resources. Use the Task Manager (Windows) or System Preferences (Mac) to manage startup programs.
+3. **Clear Browser Cache and Cookies**: Clear your web browser's cache, cookies, and history to free up disk space and improve browsing performance.
+4. **Update Browser**: Ensure your web browser is up-to-date, as outdated versions can cause slow performance.
+5. **Disable Resource-Intensive Add-ons**: Disable any resource-intensive add-ons, such as plugins or extensions, that might be slowing down your browser.
+
+**Upgrades:**
+
+1. **Upgrade RAM**: Adding more RAM can significantly improve performance, especially if your laptop has limited RAM (4GB or less).
+2. **Upgrade Storage**: Consider upgrading to a faster storage drive, such as an SSD (solid-state drive), to improve boot times, loading speeds, and overall performance.
+3. **Update Graphics Drivers**: Ensure your graphics drivers are up-to-date, as outdated drivers can cause performance issues.
+4. **Consider Reinstalling the OS**: If your laptop is several years old and has become severely slow, it might be time to consider reinstalling the operating system or performing a system restore to a previous point when the laptop was running faster.
+5. **Consider Professional Help**: If none of the above steps resolve the issue, it may be worth seeking professional help from a computer technician or the manufacturer's support team.
+
+By following these steps, you should be able to diagnose, clean up, and upgrade your slow laptop to improve its performance and get it running smoothly again.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Troubleshooting a slow laptop can be a frustrating experience, but with a step-by-step approach, you can identify and fix the issues to get your laptop running smoothly again. Here's a comprehensive guide on how to troubleshoot a slow laptop, including diagnostics, cleanup, and upgrades:
+
+**Diagnostics:**
+
+1. **Run a System File Checker (SFC) scan**: This scan checks for corrupted system files and replaces them if necessary. Press the Windows key + R, type "cmd" and press Enter. Type "sfc /scannow" and press Enter.
+2. **Check for malware**: Run a full scan with your antivirus software to detect and remove any malware.
+3. **Check for Windows updates**: Ensure your Windows operating system is up-to-date by going to Settings > Update & Security > Windows Update.
+4. **Check for driver updates**: Outdated drivers can cause slow performance. Go to Device Manager (Press the Windows key + X and select Device Manager), expand each category, and look for devices with a yellow exclamation mark or a red X. Update drivers as needed.
+5. **Check for disk errors**: Run the Check Disk (chkdsk) utility to identify and fix disk errors. Open Command Prompt as an administrator (right-click on the Start button and select "Command Prompt (Admin)"), type "chkdsk C:" (replace C: with the drive letter of your system drive), and press Enter.
+
+**Cleanup:**
+
+1. **Uninstall unnecessary programs**: Remove any unused or unnecessary programs to free up disk space and reduce clutter. Go to Control Panel > Programs and Features (in Windows 10) or Add or Remove Programs (in Windows 7).
+2. **Clear browser cache and cookies**: Clear your browser's cache and cookies to improve performance. Go to your browser's settings and look for the "Clear browsing data" or "Clear cache" option.
+3. **Disable startup programs**: Some programs may be running in the background and consuming resources. Go to Task Manager (Press the Ctrl + Shift + Esc keys), click on the "Startup" tab, and disable any unnecessary programs.
+4. **Delete temporary files**: Remove temporary files and system files to free up disk space. Go to File Explorer, navigate to the "This PC" or "Computer" section, right-click on the drive you want to clean, and select "Properties". Click on the "Disk Cleanup" button and follow the prompts.
+5. **Empty the Recycle Bin**: Regularly empty the Recycle Bin to free up disk space.
+
+**Upgrades:**
+
+1. **Upgrade your RAM**: Adding more RAM can significantly improve performance, especially if your laptop is running low on memory. Check your laptop's specifications to see if it can be upgraded.
+2. **Upgrade your hard drive**: Consider replacing your traditional hard drive with a solid-state drive (SSD). SSDs are much faster and can greatly improve overall performance.
+3. **Update your graphics drivers**: Outdated graphics drivers can cause slow performance. Go to the manufacturer's website and update your graphics drivers.
+4. **Consider a clean install**: If your laptop is several years old and you've tried all the above steps, a clean install of Windows may be necessary. This will erase all data on the drive, so be sure to back up your files before doing so.
+
+**Additional Tips:**
+
+* Regularly update your operating system and software to ensure you have the latest security patches and features.
+* Close unnecessary programs and background applications to free up resources.
+* Consider using a task manager or performance monitor to identify resource-intensive programs and optimize your laptop's performance.
+* Consider upgrading your laptop's hardware, such as the processor or storage, if it's several years old and outdated.
+
+By following
+```
+</details>
+
+---
+
+
+## summaries
+
+### `summaries_000` (idx: 0)
+> Summarize the main causes and consequences of the 2008 global financial crisis in 6–8
+sentences.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 192 | 212 | 20 | 10.4% |
+| Wall time (s)  | 25.101 | 17.080 | -8.022 | -32.0% |
+| Avg entropy    | 0.631 | 0.508 | -0.123 | -19.5% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The 2008 global financial crisis was triggered by a housing market bubble burst in the United States, which was fueled by excessive borrowing and subprime lending. The widespread issuance of mortgage-backed securities and collateralized debt obligations (CDOs) allowed these toxic assets to spread globally, infecting financial markets. As housing prices began to decline, defaults and foreclosures skyrocketed, causing a sharp decline in housing values and a subsequent credit crunch. This led to a global credit crisis, as financial institutions found themselves holding large amounts of worthless assets. The crisis ultimately led to a massive loss of confidence in financial markets, resulting in widespread job losses, home foreclosures, and a severe recession. The consequences of the crisis included a global economic contraction, a sharp decline in international trade, and a significant increase in government debt and unemployment. The crisis also led to a significant overhaul of financial regulations and a renewed focus on risk management and stability in the financial sector.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+The 2008 global financial crisis was triggered by a housing market bubble in the United States, which burst in 2007, causing a global economic downturn. The crisis was caused by a combination of factors, including excessive borrowing and spending, lax regulation, and the securitization of subprime mortgages. As housing prices began to decline, many homeowners defaulted on their mortgages, leading to a surge in foreclosures and a sharp decline in housing values. This caused a freeze in the credit markets, making it difficult for banks and other financial institutions to access capital, leading to widespread failures and bailouts. The crisis spread globally, affecting countries with significant trade and financial links to the US, and led to a sharp decline in economic output, widespread job losses, and a significant increase in government debt. The consequences of the crisis included a global recession, widespread unemployment, and a significant decline in household wealth. The crisis also led to a major overhaul of financial regulations and a renewed focus on macroprudential policies to prevent similar crises in the future.
+```
+</details>
+
+---
+
+### `summaries_001` (idx: 1)
+> Summarize the core ideas of natural selection and evolution for a non‑technical reader in
+~150–250 words.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 280 | 267 | -13 | -4.6% |
+| Wall time (s)  | 24.411 | 21.142 | -3.269 | -13.4% |
+| Avg entropy    | 0.455 | 0.476 | 0.021 | 4.6% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here's a summary of natural selection and evolution in simple terms:
+
+Natural selection is a process that helps species adapt to their environment and survive. It's like a filtering system that favors individuals with certain traits that help them thrive. Here's how it works:
+
+Imagine a group of birds living in a forest with limited food resources. Some birds have beaks that are better suited for cracking open nuts, while others have beaks that are better for catching seeds. The birds with the nut-cracking beaks are more likely to find food and survive, while the birds with seed-catching beaks may struggle to find enough food. As a result, the birds with the nut-cracking beaks are more likely to have babies, and pass on their beak trait to their offspring.
+
+Over time, this process of "survival of the fittest" leads to changes in the population. The birds with the nut-cracking beaks become more common, and the birds with seed-catching beaks become less common. This is because the traits that helped the birds survive and reproduce in their environment become more common in the next generation.
+
+This process of natural selection is what drives evolution. It's not a conscious process, but rather a natural result of the interactions between living organisms and their environment. Over millions of years, these small changes can add up, leading to the incredible diversity of species we see today.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here's a summary of natural selection and evolution in simple terms:
+
+Natural selection is a process that helps species adapt to their environment. It's like a game of survival where individuals with certain traits are more likely to live and have babies, passing those traits on to their offspring. This is because they're better suited to their surroundings, so they're more likely to find food, avoid predators, and stay healthy.
+
+For example, imagine a group of birds living in a forest. Some birds have strong, sharp beaks that help them crack open tough seeds, while others have weak, dull beaks that struggle to crack open the same seeds. The birds with strong beaks are more likely to find food and survive, so they're more likely to have babies. As a result, their strong beak trait becomes more common in the population over time.
+
+This process of "survival of the fittest" (where the fittest individuals are those best adapted to their environment) is called natural selection. Over many generations, natural selection can lead to significant changes in a species, like the development of new traits or the loss of old ones. This is what we call evolution.
+
+In short, natural selection is the driving force behind evolution, and it's what allows species to adapt and change over time to better suit their environment.
+```
+</details>
+
+---
+
+### `summaries_002` (idx: 2)
+> Summarize the plot and themes of Mary Shelley's 'Frankenstein' with attention to
+scientific ethics.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 517 | 735 | 218 | 42.2% |
+| Wall time (s)  | 50.539 | 89.950 | 39.410 | 78.0% |
+| Avg entropy    | 0.510 | 0.437 | -0.073 | -14.4% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Mary Shelley's novel "Frankenstein" (1818) is a classic work of Gothic horror that explores the consequences of unchecked scientific ambition and the ethics of playing God. The story revolves around the creation of a monster by Victor Frankenstein, a young scientist who, driven by his desire to unlock the secrets of life and death, brings a creature to life through an unnatural and morally questionable process.
+
+The novel's plot centers around the consequences of Frankenstein's creation, which he abandons and rejects due to its grotesque appearance. The creature, intelligent and capable of emotions, seeks revenge against its creator and wreaks havoc on Frankenstein's life and the lives of those he loves. As the story unfolds, the novel explores the themes of responsibility, morality, and the ethics of scientific discovery.
+
+Some of the key scientific ethics issues addressed in the novel include:
+
+1. The dangers of unchecked ambition: Frankenstein's obsessive pursuit of knowledge and his disregard for the potential consequences of his actions lead to devastating outcomes. This serves as a warning against the dangers of unchecked ambition and the importance of considering the potential risks and consequences of scientific discoveries.
+2. The ethics of playing God: Frankenstein's creation of life is a clear example of playing God, which raises questions about the morality of tampering with nature and the limits of scientific inquiry. The novel highlights the importance of respecting the natural order and avoiding attempts to usurp God's role.
+3. The consequences of abandoning responsibility: Frankenstein's rejection of his creation and failure to take responsibility for its well-being lead to catastrophic consequences. This serves as a warning against the importance of taking responsibility for one's actions and the consequences of scientific discoveries.
+4. The importance of empathy and compassion: The novel emphasizes the importance of empathy and compassion in scientific inquiry, particularly in relation to the treatment of living beings. The creature's desire for human connection and understanding serves as a reminder of the need for scientists to consider the emotional and social implications of their discoveries.
+5. The role of nature and the environment: The novel highlights the importance of nature and the environment in shaping human existence. The creature's rejection of its creator and its desire to return to nature serves as a reminder of the interconnectedness of all living beings and the need to respect the natural world.
+
+Overall, "Frankenstein" is a cautionary tale that explores the importance of scientific ethics and the need for responsible scientific inquiry. The novel highlights the dangers of unchecked ambition, the importance of empathy and compassion, and the need to respect the natural order and the consequences of scientific discoveries.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Mary Shelley's novel "Frankenstein" (1818) is a classic tale of horror and science fiction that explores the consequences of unchecked scientific progress and the ethics of playing God. The story revolves around the character of Victor Frankenstein, a young scientist who creates a monster from dead body parts and brings it to life through an unnatural process.
+
+Plot Summary:
+
+The novel begins with a series of letters from Robert Walton, an explorer, to his sister, detailing his journey to the North Pole. He becomes obsessed with discovering the secrets of life and death after finding a dying Victor Frankenstein on the ice. Frankenstein's story is then revealed through a series of flashbacks.
+
+Frankenstein, a brilliant and ambitious scientist, becomes fixated on the idea of creating life from dead matter. He spends years studying and experimenting, eventually succeeding in bringing a monster to life. However, he is horrified by the creature's appearance and abandons it, leaving it to fend for itself.
+
+The monster, intelligent and sensitive, is rejected by society due to its grotesque appearance and seeks revenge against its creator. It kills Frankenstein's younger brother, William, and frames the family's servant, Justine, for the crime. Frankenstein's family is torn apart by the tragedy, and Frankenstein himself becomes consumed by guilt and a desire for revenge against the monster.
+
+As the novel progresses, Frankenstein's obsessive pursuit of the monster leads to a series of tragic events, including the deaths of his loved ones and his own eventual demise. The monster, too, is driven by a desire for revenge and companionship, leading to a cycle of violence and destruction.
+
+Themes:
+
+1. Scientific Ethics: The novel explores the dangers of unchecked scientific progress and the ethics of playing God. Frankenstein's creation of the monster serves as a cautionary tale about the consequences of tampering with nature and the responsibilities that come with scientific discovery.
+2. The Nature of Monstrosity: The novel challenges the notion of what constitutes a monster. The creature, despite its appearance, is intelligent, sensitive, and capable of love and compassion. This blurs the lines between human and monster, highlighting the arbitrary nature of societal definitions.
+3. The Dangers of Isolation: Frankenstein's isolation and obsessive focus on his work lead to his downfall. The novel warns against the dangers of becoming disconnected from society and the importance of human connection and empathy.
+4. The Consequences of Creation: The novel explores the consequences of creation and the responsibility that comes with bringing new life into the world. Frankenstein's creation of the monster serves as a reminder of the potential consequences of scientific hubris and the importance of considering the moral implications of one's actions.
+
+Scientific Ethics:
+
+1. The novel highlights the importance of responsible scientific conduct, emphasizing the need for scientists to consider the potential consequences of their actions and the moral implications of their work.
+2. It warns against the dangers of scientific elitism, where scientists become detached from society and prioritize their own interests over the well-being of others.
+3. The novel also emphasizes the importance of understanding the natural world and respecting the boundaries of human knowledge. Frankenstein's attempts to defy nature and create life from dead matter ultimately lead to chaos and destruction.
+
+In conclusion, "Frankenstein" is a thought-provoking novel that explores the consequences of scientific progress and the ethics of playing God. Through its exploration of themes such as scientific ethics, the nature of monstrosity, and the dangers of isolation, the novel serves as a cautionary tale about the importance of responsible scientific conduct and the need for scientists to consider the moral implications of their work.
+```
+</details>
+
+---
+
+### `summaries_003` (idx: 3)
+> Summarize the greenhouse effect and its role in climate change, including at least two
+feedback loops.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 479 | 411 | -68 | -14.2% |
+| Wall time (s)  | 54.768 | 40.084 | -14.684 | -26.8% |
+| Avg entropy    | 0.376 | 0.381 | 0.005 | 1.3% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The greenhouse effect is a natural process that occurs when certain gases in the Earth's atmosphere, such as carbon dioxide (CO2), methane (CH4), and water vapor (H2O), trap heat from the sun, keeping the planet warm enough to support life. This process is essential for life on Earth, as it allows the planet to maintain a habitable temperature.
+
+However, human activities have increased the concentration of these greenhouse gases in the atmosphere, leading to an enhancement of the natural greenhouse effect, known as global warming or climate change. The main culprit is the emission of CO2 from burning fossil fuels such as coal, oil, and gas, as well as deforestation and land-use changes.
+
+Feedback loops play a crucial role in the greenhouse effect and climate change. Feedback loops are processes that amplify or dampen the initial effect of a change, creating a self-reinforcing cycle. Here are two examples of feedback loops related to the greenhouse effect and climate change:
+
+1. Ice-albedo feedback loop:
+	* As the Earth warms due to increased greenhouse gases, Arctic ice melts, reducing the Earth's albedo (reflectivity).
+	* With less ice, more solar radiation is absorbed by the dark ocean and land, leading to further warming.
+	* This increased warming accelerates ice melting, reducing the albedo even further, and so on.
+2. Water vapor feedback loop:
+	* As the Earth warms, the atmosphere holds more water vapor due to increased evaporation from oceans and melting snow.
+	* Water vapor is a potent greenhouse gas, amplifying the warming effect of CO2 and other greenhouse gases.
+	* As the atmosphere warms further, it can hold even more water vapor, creating a self-reinforcing cycle of warming and increased water vapor.
+
+These feedback loops, along with others, contribute to the acceleration of climate change. The ice-albedo feedback loop amplifies the warming effect, while the water vapor feedback loop reinforces the initial warming caused by greenhouse gases. As a result, the Earth's average temperature is expected to continue rising, leading to more severe and frequent heatwaves, droughts, and extreme weather events.
+
+Understanding these feedback loops is essential for developing effective strategies to mitigate and adapt to climate change. By reducing greenhouse gas emissions and slowing the rate of warming, we can help break these feedback loops and stabilize the Earth's climate.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+The greenhouse effect is a natural process that occurs when certain gases in the Earth's atmosphere, such as carbon dioxide (CO2), methane (CH4), and water vapor (H2O), trap heat from the sun, keeping the planet warm enough to support life. This process is essential for life on Earth, as it allows the planet to maintain a habitable temperature.
+
+However, human activities, such as burning fossil fuels and deforestation, have increased the concentration of these greenhouse gases in the atmosphere, leading to an enhancement of the natural greenhouse effect. This is known as global warming or climate change.
+
+The increased concentration of greenhouse gases in the atmosphere traps more heat, leading to a rise in global temperatures. This, in turn, amplifies the warming effect, creating a self-reinforcing feedback loop. Two key feedback loops associated with climate change are:
+
+1. Ice-albedo feedback loop:
+
+* As the Earth warms, Arctic ice melts, exposing darker ocean and land surfaces.
+* These darker surfaces absorb more solar radiation, heating the planet further.
+* The increased warming accelerates ice melting, which in turn increases the amount of dark surfaces, amplifying the warming effect.
+
+2. Water vapor feedback loop:
+
+* As the Earth warms, the atmosphere can hold more water vapor, which is a potent greenhouse gas.
+* The increased water vapor traps more heat, amplifying the warming effect.
+* The warmer temperatures also lead to more evaporation from oceans and land, releasing more water vapor into the atmosphere, which in turn traps more heat and amplifies the warming effect.
+
+These feedback loops, along with others, contribute to the accelerating rate of climate change. The increased concentration of greenhouse gases in the atmosphere creates a self-reinforcing cycle, making it more challenging to mitigate the effects of climate change.
+
+It's essential to reduce greenhouse gas emissions to slow down global warming and break these feedback loops. This can be achieved through a combination of measures, including transitioning to renewable energy sources, increasing energy efficiency, and implementing policies to reduce emissions.
+```
+</details>
+
+---
+
+### `summaries_004` (idx: 4)
+> Summarize the history and impact of the internet from ARPANET to modern cloud platforms in
+~200 words.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 313 | 305 | -8 | -2.6% |
+| Wall time (s)  | 28.679 | 24.795 | -3.884 | -13.5% |
+| Avg entropy    | 0.378 | 0.444 | 0.066 | 17.6% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The history of the internet began with ARPANET, the first operational packet switching network, developed in the 1960s by the United States Department of Defense's Advanced Research Projects Agency (ARPA). ARPANET connected four nodes in 1969, marking the birth of the internet. In the 1980s, the Internet Protocol (IP) was developed, allowing different networks to communicate with each other, and the internet began to expand globally.
+
+The World Wide Web (WWW) was introduced in 1989 by Tim Berners-Lee, enabling users to access and share information using web browsers and hyperlinks. This led to a rapid growth in internet adoption, with the number of users increasing from 16 million in 1995 to over 4.4 billion in 2020.
+
+The 1990s saw the rise of e-commerce, online banking, and email, while the 2000s brought social media, cloud computing, and mobile internet access. Cloud computing emerged as a model for delivering computing resources and services over the internet, allowing for scalability, flexibility, and cost savings. Today, cloud platforms like Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP) have revolutionized the way businesses and individuals store, process, and access data.
+
+The internet has had a profound impact on modern society, transforming the way we communicate, work, shop, and access information. It has also enabled global connectivity, e-commerce, and remote work, while creating new opportunities for education, healthcare, and entertainment.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+The internet has undergone significant transformations since its inception in the 1960s. ARPANET, the first operational packet switching network, was developed in 1969 by the United States Department of Defense's Advanced Research Projects Agency (ARPA). This pioneering network enabled communication between four nodes, paving the way for the development of the global internet.
+
+In the 1980s, the Internet Protocol (IP) was introduced, allowing different networks to communicate with each other, and the World Wide Web (WWW) was invented by Tim Berners-Lee in 1989. The web's popularity soared with the widespread adoption of the internet in the 1990s, facilitated by the development of browsers like Netscape Navigator and Internet Explorer.
+
+The early 2000s saw the rise of broadband internet, social media, and e-commerce, transforming the way people communicate, work, and shop. The cloud computing era began in the late 2000s, with Amazon Web Services (AWS) launching in 2002. This shift enabled on-demand access to computing resources, storage, and applications over the internet, revolutionizing the way businesses operate and data is processed.
+
+Today, cloud platforms like AWS, Microsoft Azure, and Google Cloud Platform have become the backbone of modern computing, offering scalability, flexibility, and cost-effectiveness. The internet has also given rise to new industries, such as big data analytics, artificial intelligence, and cybersecurity, and has transformed the way we live, work, and interact with each other.
+```
+</details>
+
+---
+
+### `summaries_005` (idx: 5)
+> Summarize how vaccines work and why herd immunity matters, including common
+misconceptions.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 611 | 464 | -147 | -24.1% |
+| Wall time (s)  | 69.948 | 55.064 | -14.884 | -21.3% |
+| Avg entropy    | 0.424 | 0.514 | 0.090 | 21.2% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here's a summary of how vaccines work, the importance of herd immunity, and common misconceptions:
+
+**How Vaccines Work:**
+
+Vaccines work by introducing a small, harmless piece of a pathogen (such as a virus or bacteria) to the body, which triggers an immune response. This response allows the body to recognize and remember the pathogen, so that if it encounters it again in the future, the immune system can mount a quick and effective response to fight it off.
+
+Vaccines can provide several types of immunity:
+
+1. **Active immunity**: The vaccine stimulates the body's immune system to produce antibodies, which remain in the body and provide protection against future infections.
+2. **Passive immunity**: The vaccine provides temporary immunity by introducing antibodies directly into the body, which can provide protection for a short period of time.
+
+**Herd Immunity:**
+
+Herd immunity occurs when a sufficient percentage of a population is immunized against a particular disease, creating a "herd" that is resistant to the spread of the disease. This provides protection not only to the vaccinated individuals but also to those who are not immunized, such as:
+
+1. **Young children**: Infants and young children are not yet eligible for certain vaccines, or their immune systems may not be able to mount an effective response.
+2. **People with compromised immune systems**: Individuals with weakened immune systems, such as those with cancer, HIV/AIDS, or taking immunosuppressive therapy, may not be able to fight off infections.
+3. **People who cannot receive vaccines**: Some individuals may have medical conditions that prevent them from receiving certain vaccines, such as egg allergies or a history of severe reactions to vaccines.
+
+**Common Misconceptions:**
+
+1. **Vaccines are not 100% effective**: While vaccines are highly effective, they are not 100% effective. This means that some individuals may still contract the disease, even if they have been vaccinated.
+2. **Vaccines can cause autism**: There is no scientific evidence to support this claim. The scientific consensus is that vaccines are safe and do not cause autism.
+3. **Vaccines are unnecessary because diseases are rare**: While it is true that diseases are rare in developed countries, they can still spread quickly and cause outbreaks if vaccination rates are low.
+4. **Vaccines are only for the individual**: As mentioned earlier, vaccines also provide herd immunity, which benefits not only the vaccinated individual but also those around them.
+5. **Vaccines are a recent invention**: Vaccines have been around for centuries, and the concept of vaccination dates back to the 1796 smallpox vaccine.
+
+**Conclusion:**
+
+Vaccines are a safe and effective way to prevent the spread of diseases, and herd immunity is essential to protect not only the vaccinated individuals but also those who are most vulnerable to infection. By understanding how vaccines work and the importance of herd immunity, we can make informed decisions about our own health and the health of those around us.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Vaccines work by introducing a small, harmless piece of a virus or bacteria to the body, which triggers the immune system to produce antibodies to fight the infection. These antibodies remain in the body, providing immunity against future infections. Vaccines can also stimulate the immune system to produce immune cells called T-cells, which can recognize and attack infected cells.
+
+Herd immunity occurs when a sufficient percentage of a population is immunized, providing protection not only for the individual but also for those who are not immunized, such as individuals with weakened immune systems or those who are too young to be vaccinated. This is because the vaccinated individuals are less likely to contract and spread the disease, reducing the number of susceptible individuals in the population.
+
+Common misconceptions about vaccines and herd immunity include:
+
+1. Myth: Vaccines are not effective or safe.
+Reality: Vaccines have been extensively tested and proven to be safe and effective in preventing diseases.
+2. Myth: Herd immunity is not necessary because vaccines are effective in preventing individual cases of disease.
+Reality: While vaccines do provide individual protection, herd immunity is necessary to prevent outbreaks and epidemics.
+3. Myth: If I get vaccinated, I won't get sick from the disease.
+Reality: While vaccines are highly effective, they are not 100% effective, and it is still possible to contract the disease even after being vaccinated.
+4. Myth: Herd immunity is only necessary for diseases that are highly contagious.
+Reality: Herd immunity is necessary for all vaccine-preventable diseases, regardless of their contagiousness.
+5. Myth: If I'm not around others, I don't need to worry about herd immunity.
+Reality: Herd immunity is a community-based concept, and the protection it provides is not limited to individual actions. Even if you're not around others, you can still benefit from herd immunity by living in a community where the majority of people are vaccinated.
+6. Myth: Herd immunity is a myth or a conspiracy theory.
+Reality: Herd immunity is a well-established scientific concept that has been extensively studied and proven through research.
+
+It's essential to understand the importance of vaccines and herd immunity to protect not only ourselves but also those around us, especially vulnerable populations such as the elderly, young children, and those with compromised immune systems.
+```
+</details>
+
+---
+
+### `summaries_006` (idx: 6)
+> Summarize the key contributions of Ada Lovelace and Alan Turing to computing history.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 575 | 476 | -99 | -17.2% |
+| Wall time (s)  | 73.045 | 54.689 | -18.356 | -25.1% |
+| Avg entropy    | 0.345 | 0.405 | 0.060 | 17.3% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+What a great question!
+
+Ada Lovelace and Alan Turing are two pioneers in the history of computing, each making significant contributions that have had a lasting impact on the development of computer science.
+
+**Ada Lovelace (1815-1852)**
+
+Ada Lovelace is often considered the world's first computer programmer, despite the fact that computers didn't exist during her lifetime. She is known for her work on Charles Babbage's proposed mechanical general-purpose computer, the Analytical Engine. Lovelace's contributions include:
+
+1. **First computer program**: Lovelace wrote the first algorithm intended to be processed by a machine (the Analytical Engine). Her notes on the engine include what is considered to be the first computer program.
+2. **Understanding the Analytical Engine's capabilities**: Lovelace recognized the Analytical Engine's potential to go beyond mere calculation and perform any task that could be expressed in a series of steps. This vision of the machine's capabilities is often referred to as "machine-independent programming."
+3. **Pioneering work in software**: Lovelace's work on the Analytical Engine's programming language, as well as her understanding of the machine's capabilities, laid the foundation for the development of modern software.
+
+**Alan Turing (1912-1954)**
+
+Alan Turing is widely considered the father of computer science and artificial intelligence. His contributions include:
+
+1. **Turing Machine**: Turing proposed the Turing Machine, a theoretical model for a computer that can perform calculations and store data using a tape of infinite length. This concept laid the foundation for the development of modern computers.
+2. **Turing Test**: Turing proposed the Turing Test, a measure of a machine's ability to exhibit intelligent behavior equivalent to, or indistinguishable from, that of a human. This test is still used today to evaluate the capabilities of artificial intelligence systems.
+3. **Codebreaking and the development of computer science**: Turing's work at Bletchley Park during World War II, where he helped crack the German Enigma code, demonstrated the importance of computer science in real-world applications. His work also led to the development of the Automatic Computing Engine (ACE), one of the first electronic stored-program computers.
+4. **Theoretical foundations of computer science**: Turing's work on the theoretical foundations of computation, including his paper "On Computable Numbers," laid the groundwork for the development of modern computer science and the study of algorithms.
+
+In summary, Ada Lovelace is credited with writing the first computer program and understanding the potential of the Analytical Engine, while Alan Turing is recognized for his work on the theoretical foundations of computation, the development of the Turing Machine and the Turing Test, and his contributions to codebreaking and the development of computer science. Both pioneers have had a lasting impact on the development of computer science and artificial intelligence.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+What a fantastic question!
+
+Ada Lovelace and Alan Turing are two pioneers in the field of computing, making significant contributions that have had a lasting impact on the development of computer science.
+
+**Ada Lovelace (1815-1852)**
+
+Ada Lovelace is often considered the first computer programmer, making her a trailblazer in the field. Her contributions include:
+
+1. **First computer program**: Lovelace wrote the first algorithm intended to be processed by a machine (Charles Babbage's Analytical Engine). Her notes on the engine's capabilities and limitations are considered the first computer program.
+2. **Understanding the Analytical Engine**: Lovelace was the only person to fully comprehend the potential of the Analytical Engine, recognizing its ability to go beyond mere calculation and perform any task that could be expressed in a series of steps.
+3. **Visionary thinking**: Lovelace's work on the Analytical Engine's capabilities and limitations showcased her ability to think critically about the potential of machines, long before the development of modern computers.
+
+**Alan Turing (1912-1954)**
+
+Alan Turing is widely regarded as the father of computer science and artificial intelligence. His contributions include:
+
+1. **Turing Machine**: Turing proposed the Turing Machine, a theoretical model for a computer that could perform calculations and store data using a tape of infinite length.
+2. **Turing Test**: Turing proposed the Turing Test, a measure of a machine's ability to exhibit intelligent behavior equivalent to, or indistinguishable from, that of a human. This test has become a benchmark for measuring the success of artificial intelligence.
+3. **Codebreaking**: Turing played a crucial role in cracking the German Enigma code during World War II, using his work on the Bombe machine to decipher enemy communications.
+4. **Computer architecture**: Turing's work on the Automatic Computing Engine (ACE) and the Pilot ACE influenced the development of modern computer architecture, including the stored-program concept, where programs and data are stored in the computer's memory.
+
+In summary, Ada Lovelace's contributions focused on the theoretical aspects of computing, while Alan Turing's work had a more practical impact on the development of computer science and artificial intelligence. Both pioneers have left an indelible mark on the history of computing, and their legacies continue to inspire and influence the field today.
+```
+</details>
+
+---
+
+### `summaries_007` (idx: 7)
+> Summarize how CRISPR‑Cas9 gene editing works and list two potential risks and two
+benefits.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 393 | 446 | 53 | 13.5% |
+| Wall time (s)  | 45.337 | 40.777 | -4.560 | -10.1% |
+| Avg entropy    | 0.518 | 0.449 | -0.069 | -13.3% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+I'd be happy to help!
+
+CRISPR-Cas9 is a powerful tool for editing genes, which involves a few key steps:
+
+1. **Targeting**: A specific sequence of DNA is identified and targeted by a small RNA molecule called a guide RNA (gRNA). The gRNA is designed to recognize and bind to the target sequence.
+2. **Cutting**: The CRISPR-Cas9 enzyme complex, which includes the Cas9 enzyme and the gRNA, cuts the target DNA sequence at a specific location.
+3. **Repair**: The cell's natural repair machinery kicks in, and the cell can either repair the cut DNA by inserting new genetic material or deleting the original sequence.
+
+Now, let's talk about potential risks and benefits:
+
+**Risks:**
+
+1. **Off-target effects**: The CRISPR-Cas9 system can sometimes cut the wrong DNA sequence, leading to unintended changes in the genome. This can have negative consequences, such as disrupting normal gene function or causing new health problems.
+2. **Genetic mosaicism**: When CRISPR-Cas9 is used to edit a specific cell type, it's possible that not all cells are edited uniformly. This can lead to a mixture of edited and unedited cells, which can be challenging to manage.
+
+**Benefits:**
+
+1. **Precision medicine**: CRISPR-Cas9 allows for precise editing of specific genes, which can potentially treat genetic disorders caused by single-gene mutations. This could lead to more targeted and effective treatments for diseases.
+2. **Gene therapy**: CRISPR-Cas9 can be used to correct genetic mutations that cause diseases, potentially curing or significantly improving the quality of life for patients with genetic disorders.
+
+Overall, CRISPR-Cas9 is a powerful tool with great potential for improving human health, but it's essential to carefully consider the risks and benefits and continue to develop and refine the technology to minimize its limitations.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+I'd be happy to help!
+
+**How CRISPR-Cas9 Gene Editing Works:**
+
+CRISPR-Cas9 is a powerful tool for editing genes by using a natural defense mechanism found in bacteria. Here's a simplified explanation:
+
+1. **Guide RNA (gRNA)**: A small piece of RNA is designed to target a specific sequence of DNA, which is complementary to the gene you want to edit.
+2. **Cas9 enzyme**: The gRNA is paired with the Cas9 enzyme, which is responsible for cutting the DNA at the targeted location.
+3. **Cutting the DNA**: The Cas9 enzyme cuts the DNA at the targeted location, creating a double-stranded break.
+4. **Repair mechanisms**: The cell's natural repair mechanisms, such as non-homologous end joining (NHEJ) or homologous recombination (HR), are triggered to repair the broken DNA.
+5. **Editing**: By providing a template with the desired changes, the cell can repair the DNA with the desired edit, resulting in a precise modification of the gene.
+
+**Potential Risks:**
+
+1. **Off-target effects**: The Cas9 enzyme can sometimes cut the DNA at unintended locations, leading to unintended edits or mutations. This can have unpredictable consequences, potentially causing harm to the cell or organism.
+2. **Insertional mutagenesis**: When the Cas9 enzyme cuts the DNA, it can sometimes integrate the repair template incorrectly, leading to the insertion of new genetic material, which can disrupt the normal functioning of the gene.
+
+**Potential Benefits:**
+
+1. **Precise gene editing**: CRISPR-Cas9 allows for precise editing of specific genes, enabling the correction of genetic diseases caused by single mutations. This can potentially cure or treat a wide range of genetic disorders.
+2. **Improved crop development**: CRISPR-Cas9 can be used to introduce desirable traits into crops, such as drought tolerance, pest resistance, or improved nutritional content, potentially increasing food security and sustainability.
+
+Please note that while CRISPR-Cas9 has shown great promise, it is still a relatively new technology, and further research is needed to fully understand its potential risks and benefits.
+```
+</details>
+
+---
+
+### `summaries_008` (idx: 8)
+> Summarize the causes of Roman Empire decline, separating economic, military, and political
+factors.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 601 | 632 | 31 | 5.2% |
+| Wall time (s)  | 72.866 | 85.356 | 12.490 | 17.1% |
+| Avg entropy    | 0.530 | 0.604 | 0.074 | 14.0% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The Roman Empire's decline is a complex and multifaceted process that cannot be attributed to a single cause. However, historians have identified several key economic, military, and political factors that contributed to its downfall. Here's a summary of the main causes:
+
+**Economic Factors:**
+
+1. Decline of Agriculture: The Roman Empire's agricultural system, which relied heavily on slave labor, became less productive over time. Soil depletion, over-farming, and climate change led to reduced crop yields, making it difficult to feed the growing population.
+2. Inflation and Currency Devaluation: The Roman Empire's economy was based on a system of bartering and commodity-based currency. As the empire expanded, the government printed more currency, leading to inflation and devaluation of the Roman denarius.
+3. Trade Disruptions: The empire's extensive trade network was disrupted by wars, piracy, and the decline of the Silk Road. This reduced the flow of goods and resources, leading to economic stagnation.
+4. Corruption and Mismanagement: Corruption and mismanagement of resources by the Roman elite led to waste, inefficiency, and economic stagnation.
+
+**Military Factors:**
+
+1. Overextension of the Empire: The Roman Empire's extensive borders were difficult to maintain, and the constant need to garrison troops and defend against external threats drained the empire's resources.
+2. Decline of the Legion System: The Roman legion system, which had been the backbone of the empire's military, began to decline. The legions were replaced by less effective auxiliary forces, and the empire struggled to respond to threats.
+3. Barbarian Invasions: The empire faced repeated invasions by barbarian tribes, which weakened the empire's defenses and drained its resources.
+4. Loss of Strategic Alliances: The empire's strategic alliances with other nations and tribes began to break down, leaving it vulnerable to attack.
+
+**Political Factors:**
+
+1. Imperial Decline and Succession Crisis: The Roman Empire's imperial system, which relied on the authority of the emperor, began to decline. The empire experienced a succession crisis, with multiple emperors rising and falling, leading to instability and weak leadership.
+2. Corruption and Nepotism: The Roman elite became increasingly corrupt and nepotistic, with emperors appointing family members and favorites to important positions, rather than selecting capable administrators.
+3. Decline of the Senate: The Roman Senate, which had once been a powerful institution, became increasingly ineffective and powerless, unable to provide effective governance or check the power of the emperor.
+4. Military Coups and Civil Wars: The empire experienced a series of military coups and civil wars, which further weakened the empire and created power vacuums that were exploited by external threats.
+
+These economic, military, and political factors combined to contribute to the decline and fall of the Roman Empire. The empire's decline was a gradual process that spanned several centuries, with multiple factors contributing to its ultimate collapse.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+The Roman Empire's decline was a complex and multifaceted process that can be attributed to a combination of economic, military, and political factors. Here's a summary of the main causes:
+
+**Economic Factors:**
+
+1. Decline of Trade and Commerce: The Roman Empire's extensive trade network and commerce began to decline due to various factors such as:
+	* Over-expansion and over-ambition, leading to excessive military campaigns and resource depletion.
+	* The rise of alternative trade routes, such as the Silk Road, which bypassed Roman territories.
+	* Economic stagnation and inflation, making it difficult for merchants to operate profitably.
+2. Corruption and Mismanagement: The Roman government's increasing corruption and mismanagement led to:
+	* Widespread tax evasion and avoidance, reducing revenue for the state.
+	* Inefficient allocation of resources, prioritizing lavish spending on public works and military campaigns over essential services.
+	* Decline of the Roman currency, leading to inflation and economic instability.
+3. Environmental Factors: Climate change, soil degradation, and over-farming led to:
+	* Reduced agricultural productivity, affecting food security and economic stability.
+	* Increased vulnerability to natural disasters, such as droughts and famines.
+
+**Military Factors:**
+
+1. Over-Extension and Over-Expansion: The Roman Empire's relentless expansion led to:
+	* Overstretching of military resources, making it difficult to maintain a strong defense.
+	* Increasing costs and logistical challenges, draining the empire's resources.
+2. Decline of the Legions: The Roman legions, once the backbone of the empire's military, began to decline due to:
+	* Low morale and discipline, as soldiers became increasingly disaffected and demoralized.
+	* Lack of new recruits, as the empire's population declined and the social class of small farmers and artisans disappeared.
+3. Barbarian Invasions: The empire's borders were repeatedly breached by barbarian tribes, leading to:
+	* Loss of territory, resources, and population.
+	* Increased pressure on the remaining Roman territories, making it difficult to maintain a strong defense.
+
+**Political Factors:**
+
+1. Imperial Crisis: The Roman Empire faced a series of imperial crises, including:
+	* Succession disputes and civil wars, weakening the imperial authority.
+	* Corruption and nepotism, as emperors favored their relatives and friends over competent administrators.
+2. Administrative Decline: The Roman administrative system, once efficient and effective, began to decline due to:
+	* Bureaucratic inefficiencies and corruption.
+	* Lack of effective communication and coordination between different regions and agencies.
+3. Social and Cultural Changes: The Roman Empire's social and cultural fabric began to unravel due to:
+	* The decline of the traditional Roman values and virtues, such as discipline, hard work, and civic responsibility.
+	* The rise of decadence, luxury, and corruption, as the empire's wealth and power became concentrated in the hands of a few.
+
+These economic, military, and political factors combined to contribute to the decline and eventual fall of the Roman Empire.
+```
+</details>
+
+---
+
+### `summaries_009` (idx: 9)
+> Summarize how modern search engines rank results, mentioning crawling, indexing, and
+ranking signals.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 660 | 459 | -201 | -30.5% |
+| Wall time (s)  | 98.670 | 56.836 | -41.834 | -42.4% |
+| Avg entropy    | 0.465 | 0.436 | -0.029 | -6.2% |
+| Stop reason    | eos_token | eos_patience_fallback | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Modern search engines, such as Google, use a complex algorithm to rank search results. The process involves three primary stages: crawling, indexing, and ranking. Here's a summary of each stage and the signals used to determine the relevance and ranking of search results:
+
+**Crawling:**
+
+1. **Web Crawling**: Search engines use software programs called "crawlers" or "spiders" to continuously scan the internet for new and updated content. These crawlers follow links from one webpage to another, indexing new pages and revisiting existing ones to detect changes.
+2. **Crawling Frequency**: Search engines crawl the web at varying frequencies, depending on the page's importance, relevance, and freshness. High-priority pages are crawled more frequently, while less important pages might be crawled less often.
+
+**Indexing:**
+
+1. **Indexing**: After crawling, the crawled data is stored in massive databases called indexes. These indexes contain a vast amount of data, including:
+	* Page content (text, images, videos, etc.)
+	* Meta tags (title, description, keywords, etc.)
+	* Links between pages
+	* Page structure (headers, headings, etc.)
+2. **Indexing Types**: Search engines use various indexing techniques, such as:
+	* **Inverted Index**: A data structure that stores keywords and their corresponding document IDs.
+	* **Full-text Index**: A database that stores the full text of each webpage.
+	* **Graph Index**: A database that stores link relationships between webpages.
+
+**Ranking:**
+
+1. **Ranking Signals**: Search engines use various ranking signals to determine the relevance and ranking of search results. These signals include:
+	* **Keyword Matching**: How well the page's content matches the search query's keywords.
+	* **PageRank**: A link-based algorithm that assesses a page's importance based on the number and quality of links pointing to it.
+	* **Content Quality**: The quality and relevance of the page's content, including factors like grammar, spelling, and readability.
+	* **User Experience**: How user-friendly and responsive the page is, including factors like page load time, mobile-friendliness, and accessibility.
+	* **Link Equivalency**: The number and quality of links pointing to the page, as well as the authority and relevance of those links.
+	* **Anchor Text**: The text used in links pointing to the page, which can indicate the page's relevance to the search query.
+	* **Entity Recognition**: The recognition of named entities, such as people, organizations, and locations, to disambiguate search results.
+	* **Entity Salience**: The importance or relevance of named entities within the page's content.
+	* **Semantic Search**: The ability to understand the meaning and context of search queries and content, rather than just matching keywords.
+	* **Query Deserves Diversity**: The algorithm's ability to provide diverse results for similar search queries, rather than repeating the same results.
+
+These ranking signals are combined and weighted to produce a relevance score, which determines the page's ranking in search engine results pages (SERPs). The ranking algorithm is constantly evolving, and new signals are being added to improve the accuracy and relevance of search results.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here's a summary of how modern search engines rank results:
+
+**Crawling**: The process of crawling, also known as spidering or web scraping, is the first step in search engine ranking. Search engines use software programs called crawlers or spiders to continuously scan the internet for new and updated content. These crawlers follow links from one webpage to another, indexing the content they find along the way.
+
+**Indexing**: Once the crawlers have gathered content, they store it in massive databases called indexes. These indexes are organized in a way that allows search engines to quickly retrieve relevant information when a user searches for something. The indexing process involves:
+
+1. **Content extraction**: The crawlers extract relevant information from the web pages, such as text, images, and metadata.
+2. **Tokenization**: The extracted content is broken down into individual words or phrases, called tokens.
+3. **Indexing**: The tokens are then stored in the index, along with information about the context in which they appear, such as the surrounding text and the webpage's metadata.
+
+**Ranking Signals**: When a user searches for something, the search engine's algorithm uses various ranking signals to determine the relevance and authority of each webpage. These ranking signals can be broadly categorized into three types:
+
+1. **On-page signals**: These signals are based on the content and structure of the webpage itself, such as:
+	* Keyword usage and density
+	* Content quality and relevance
+	* Page loading speed and mobile-friendliness
+	* Header tags and meta tags
+2. **Off-page signals**: These signals are based on the webpage's reputation and popularity, such as:
+	* Link equity and link diversity
+	* Social media engagement and shares
+	* User behavior and click-through rates
+	* Domain authority and trust
+3. **User signals**: These signals are based on user behavior and preferences, such as:
+	* Search history and query patterns
+	* User location and device type
+	* Click-through rates and dwell time
+	* User feedback and ratings
+
+The search engine's algorithm combines these ranking signals to produce a ranking score for each webpage. The webpage with the highest ranking score is then displayed at the top of the search engine results page (SERP).
+```
+</details>
+
+---
+
+### `summaries_010` (idx: 10)
+> Summarize the basics of blockchain and contrast proof‑of‑work vs proof‑of‑stake in plain
+language.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 616 | 625 | 9 | 1.5% |
+| Wall time (s)  | 82.492 | 79.929 | -2.564 | -3.1% |
+| Avg entropy    | 0.362 | 0.360 | -0.002 | -0.6% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here's a summary of the basics of blockchain and a comparison of proof-of-work and proof-of-stake in plain language:
+
+**What is Blockchain?**
+
+Blockchain is a type of distributed ledger technology that allows multiple parties to record and verify transactions without the need for a central authority. It's like a digital bookkeeping system that's maintained by a network of computers around the world. Each block in the chain contains a list of transactions, and once a block is added to the chain, it's linked to the previous block through a unique code called a "hash." This creates a permanent and unalterable record of all transactions.
+
+**Proof-of-Work (PoW)**
+
+Proof-of-work is the original consensus algorithm used by the Bitcoin blockchain. It's like a puzzle that miners must solve to validate transactions and add a new block to the chain. Here's how it works:
+
+1. Miners compete to solve a complex mathematical problem, which requires significant computational power.
+2. The first miner to solve the problem gets to add a new block to the chain and is rewarded with newly minted coins and transaction fees.
+3. The solution to the puzzle is broadcast to the network, and other miners verify that it's correct.
+4. Once verified, the new block is added to the chain, and the miner is rewarded.
+
+The problem with PoW is that it requires a lot of energy to solve the puzzle, which can lead to high electricity costs and environmental concerns.
+
+**Proof-of-Stake (PoS)**
+
+Proof-of-stake is an alternative consensus algorithm used by some blockchain networks, like Ethereum. It's like a lottery system where validators are chosen to create a new block based on the amount of "stake" they have in the network.
+
+Here's how it works:
+
+1. Validators "stake" their own cryptocurrency to participate in the validation process.
+2. The network randomly selects a validator to create a new block based on the amount of stake they've contributed.
+3. The selected validator creates a new block and adds it to the chain.
+4. Other validators verify the new block, and if it's correct, it's added to the chain.
+
+The advantages of PoS are:
+
+* Lower energy consumption: PoS doesn't require the same level of computational power as PoW, which reduces energy costs and environmental impact.
+* Faster block times: PoS can process transactions faster than PoW because it doesn't require the same level of computational power.
+* Increased security: PoS can be more secure because validators have a vested interest in the network and are incentivized to behave honestly.
+
+However, PoS has its own set of challenges, such as the risk of "nothing-at-stake" attacks, where a malicious validator can create multiple blocks and earn rewards without contributing to the network.
+
+In summary, both PoW and PoS are consensus algorithms used to validate transactions and secure blockchain networks. PoW is energy-intensive and requires significant computational power, while PoS is more energy-efficient and faster but has its own set of challenges.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+I'd be happy to help!
+
+**What is Blockchain?**
+
+Blockchain is a decentralized, digital ledger that records transactions and data across a network of computers. It's like a digital bookkeeping system that's maintained by a community of users, rather than a single entity. This decentralized nature makes it secure, transparent, and resistant to tampering.
+
+**How Does Blockchain Work?**
+
+Here's a simplified overview:
+
+1. A network of computers (nodes) is established, each with a copy of the blockchain.
+2. When a new transaction is made, it's broadcast to the network.
+3. The nodes verify the transaction using complex algorithms and cryptography.
+4. Once verified, the transaction is combined with other transactions in a "block."
+5. Each block is given a unique code, called a "hash," which connects it to the previous block, creating a chain.
+6. The nodes on the network compete to solve a complex mathematical puzzle, which requires significant computational power.
+7. The first node to solve the puzzle gets to add the block to the blockchain and is rewarded with a small amount of cryptocurrency (like Bitcoin).
+
+**Proof-of-Work (PoW) vs Proof-of-Stake (PoS)**
+
+**Proof-of-Work (PoW):**
+
+PoW is the original consensus algorithm used by Bitcoin and other cryptocurrencies. It's energy-intensive and relies on computational power to secure the network. Here's how it works:
+
+* Miners compete to solve a complex mathematical puzzle, which requires significant computational power.
+* The first miner to solve the puzzle gets to add a new block to the blockchain and is rewarded with cryptocurrency.
+* The energy consumption required to solve the puzzle is significant, which has led to concerns about environmental impact.
+
+**Proof-of-Stake (PoS):**
+
+PoS is an alternative consensus algorithm used by some cryptocurrencies, like Ethereum. It's designed to be more energy-efficient and less vulnerable to centralization. Here's how it works:
+
+* Validators are chosen to create a new block based on the amount of cryptocurrency they hold (i.e., their "stake").
+* Validators are randomly selected to create a new block, rather than competing in a mathematical puzzle.
+* The validator with the largest stake has a higher chance of being chosen, but the process is still pseudorandom and secure.
+
+**Key differences:**
+
+* Energy consumption: PoW is energy-intensive, while PoS is more energy-efficient.
+* Centralization: PoW can lead to centralization, as larger mining operations have more resources to devote to solving the puzzle. PoS is designed to be more decentralized, as anyone can participate by staking their cryptocurrency.
+* Security: Both PoW and PoS are secure, but PoS is considered more vulnerable to 51% attacks, where a single entity controls more than 50% of the network's stake.
+
+In summary, PoW is the original consensus algorithm used by Bitcoin, which is energy-intensive and can lead to centralization. PoS is an alternative algorithm used by some cryptocurrencies, which is more energy-efficient and designed to be more decentralized.
+```
+</details>
+
+---
+
+### `summaries_011` (idx: 11)
+> Summarize the science of sleep stages and why REM sleep is important for memory.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 517 | 540 | 23 | 4.4% |
+| Wall time (s)  | 69.530 | 61.411 | -8.120 | -11.7% |
+| Avg entropy    | 0.349 | 0.318 | -0.032 | -9.1% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Sleep is a complex and essential process that involves different stages, each with distinct brain wave patterns and physiological characteristics. The two main stages of sleep are non-rapid eye movement (NREM) sleep and rapid eye movement (REM) sleep.
+
+**NREM Sleep:**
+
+NREM sleep is further divided into three stages:
+
+1. **Stage 1 NREM:** This stage is characterized by a slow decline in brain activity, reduced muscle tone, and a decrease in body temperature. It's the lightest stage of sleep, and you can easily wake up during this stage.
+2. **Stage 2 NREM:** Brain waves slow down further, and body temperature continues to drop. Your heart rate and blood pressure decrease, and your immune system releases cytokines, which help fight off infections.
+3. **Stage 3 NREM:** This is the deepest stage of NREM sleep, also known as slow-wave sleep. Brain waves slow down even further, and it's difficult to wake up during this stage. This stage is important for physical restoration and repair.
+
+**REM Sleep:**
+
+REM sleep is characterized by:
+
+* Rapid eye movements (hence the name)
+* Increased brain activity similar to being awake
+* Vivid dreams
+* Paralysis of the muscles to prevent acting out dreams
+* Increased heart rate and blood pressure
+
+REM sleep is crucial for memory consolidation, which is the process of transferring information from short-term memory to long-term memory. During REM sleep, the brain replays and processes the events of the day, strengthening the connections between neurons and transferring the information to long-term storage. This process helps to:
+
+1. **Consolidate memories:** REM sleep helps to solidify memories, making them easier to retrieve and recall.
+2. **Prune unnecessary connections:** The brain eliminates unnecessary neural connections, refining and optimizing the neural network.
+3. **Reorganize and update memories:** REM sleep helps to reorganize and update memories, making them more accessible and easier to retrieve.
+
+**Why REM Sleep is Important for Memory:**
+
+REM sleep is essential for memory consolidation, and a lack of REM sleep can lead to:
+
+* Difficulty remembering new information
+* Decreased learning and memory capacity
+* Increased risk of neurodegenerative diseases, such as Alzheimer's and Parkinson's
+
+In summary, REM sleep is critical for memory consolidation, allowing the brain to process and strengthen memories, eliminate unnecessary connections, and reorganize and update memories. A good night's sleep, with adequate REM sleep, is essential for optimal memory function and overall brain health.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Sleep is a complex and essential process that plays a critical role in our overall health and well-being. During sleep, our brain goes through different stages, each with unique characteristics and functions. There are five stages of sleep, which are divided into two main categories: non-rapid eye movement (NREM) sleep and rapid eye movement (REM) sleep.
+
+**NREM Sleep:**
+
+The first four stages of sleep are NREM sleep, which are characterized by slow brain waves and a decrease in body temperature. These stages are further divided into:
+
+1. Stage 1 NREM: This is the lightest stage of sleep, during which you can easily wake up. Your brain waves slow down, and your muscles relax.
+2. Stage 2 NREM: Your heart rate and body temperature decrease, and your brain waves slow down further.
+3. Stage 3 NREM: This is the deepest stage of NREM sleep, also known as slow-wave sleep. Your brain waves slow down even further, and it's difficult to wake up during this stage.
+4. Stage 4 NREM: This stage is also known as slow-wave sleep, and it's characterized by slow brain waves and a decrease in body temperature.
+
+**REM Sleep:**
+
+REM sleep is the fifth and final stage of sleep, during which your brain activity increases, and your eyes move rapidly. This stage is characterized by:
+
+* Brain waves similar to those during wakefulness
+* Increased heart rate and blood pressure
+* Vivid dreams
+* Paralysis of the muscles to prevent acting out dreams
+
+**Why REM Sleep is Important for Memory:**
+
+REM sleep is crucial for memory consolidation, which is the process of transferring information from short-term memory to long-term memory. During REM sleep, the brain replays and processes the events of the day, strengthening the connections between neurons and transferring information from the hippocampus to other parts of the brain.
+
+Studies have shown that REM sleep is essential for:
+
+1. Memory consolidation: REM sleep helps to solidify memories, especially emotional and procedural memories.
+2. Learning and memory formation: REM sleep is important for the formation of new memories and the retrieval of previously learned information.
+3. Emotional regulation: REM sleep helps to regulate emotions and reduce stress and anxiety.
+4. Brain plasticity: REM sleep is important for the reorganization and refinement of neural connections in the brain.
+
+In summary, REM sleep is a critical stage of sleep that plays a vital role in memory consolidation, learning, and emotional regulation. During REM sleep, the brain processes and strengthens memories, making it easier to recall and retrieve information. Adequate REM sleep is essential for overall brain function and overall health.
+```
+</details>
+
+---
+
+### `summaries_012` (idx: 12)
+> Summarize the differences between correlation and causation with everyday examples.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 453 | 484 | 31 | 6.8% |
+| Wall time (s)  | 59.909 | 45.491 | -14.418 | -24.1% |
+| Avg entropy    | 0.486 | 0.409 | -0.077 | -15.8% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Correlation and causation are two important concepts in statistics and research that are often confused with each other. Here's a summary of the differences with everyday examples:
+
+**Correlation:**
+
+Correlation refers to the relationship between two variables, where one variable changes as the other changes. This doesn't necessarily mean that one causes the other, but rather that they are related. Correlation can be:
+
+* Positive (as one variable increases, the other increases)
+* Negative (as one variable increases, the other decreases)
+* Zero (no relationship)
+
+Example: There is a strong positive correlation between the number of ice cream sales and the temperature outside. As the temperature rises, ice cream sales increase. However, this doesn't mean that the temperature causes the ice cream sales to increase. Perhaps both are influenced by a third factor, such as the time of year or a marketing campaign.
+
+**Causation:**
+
+Causation refers to a cause-and-effect relationship between two variables, where one variable directly influences the other. In other words, if variable A causes variable B, then changing variable A should change variable B.
+
+Example: A study finds that people who exercise regularly tend to have lower blood pressure. This is an example of causation because the exercise is likely the cause of the lower blood pressure, rather than just being related.
+
+Key differences:
+
+1. Correlation is a relationship, while causation is a cause-and-effect relationship.
+2. Correlation doesn't imply causation; it only suggests a relationship between variables.
+3. Causation implies that one variable directly influences the other.
+
+To illustrate this, consider the example of a chicken and an egg. There is a correlation between the number of chickens and the number of eggs, but which one causes the other? In this case, it's difficult to say, as it's a chicken-and-egg problem! However, we know that chickens lay eggs, so we can conclude that the chicken causes the egg, not the other way around.
+
+In summary, correlation is a statistical relationship between variables, while causation is a cause-and-effect relationship. While correlation can be interesting and useful, it's important to be careful not to confuse it with causation, as it can lead to incorrect conclusions.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Correlation and causation are two important concepts in statistics and research that are often confused with each other. Here's a summary of the differences between them, along with some everyday examples:
+
+**Correlation:**
+
+Correlation refers to the relationship between two variables, where changes in one variable are associated with changes in the other variable. In other words, correlation shows that two variables tend to move together, but it does not imply that one causes the other.
+
+Example:
+
+* As the temperature rises, the number of ice cream sales increases. This is an example of a positive correlation between temperature and ice cream sales. However, just because the two variables are correlated, it doesn't mean that the temperature causes the increase in ice cream sales. Perhaps people buy more ice cream on hot days because they're looking for a cool treat, or maybe there's another factor at play.
+
+**Causation:**
+
+Causation, on the other hand, refers to a cause-and-effect relationship between two variables. In other words, causation implies that one variable directly influences the other, and that the effect is a direct result of the cause.
+
+Example:
+
+* Wearing a helmet while riding a bike reduces the risk of head injury. In this case, wearing a helmet is the cause, and the reduced risk of head injury is the effect. This is an example of causation, where the helmet directly influences the outcome.
+
+Key differences:
+
+* Correlation is a statistical association between two variables, while causation is a direct cause-and-effect relationship.
+* Correlation does not imply causation, but causation implies correlation.
+* Correlation can be due to a third variable or other factors, while causation is a direct result of the cause.
+
+To illustrate this, consider the following:
+
+* A study finds a correlation between the number of hours spent watching TV and the risk of obesity. This could be due to a third variable, such as a sedentary lifestyle, rather than TV watching causing obesity.
+* A study finds that taking a certain medication reduces the risk of heart disease. In this case, the medication is the cause, and the reduced risk of heart disease is the effect.
+
+In summary, correlation is a statistical association between two variables, while causation is a direct cause-and-effect relationship. While correlation can be interesting and useful, it's important to distinguish it from causation to avoid making incorrect conclusions.
+```
+</details>
+
+---
+
+### `summaries_013` (idx: 13)
+> Summarize plate tectonics and how it explains earthquakes, volcanoes, and mountain
+formation.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 458 | 500 | 42 | 9.2% |
+| Wall time (s)  | 55.142 | 48.662 | -6.480 | -11.8% |
+| Avg entropy    | 0.319 | 0.381 | 0.062 | 19.5% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Plate tectonics is the theory that the Earth's outer layer, known as the lithosphere, is broken into several large plates that move relative to each other. These plates are in constant motion, sliding over the more fluid asthenosphere below. This movement is driven by convection currents in the Earth's mantle, which are caused by heat from the Earth's core.
+
+Here's how plate tectonics explains earthquakes, volcanoes, and mountain formation:
+
+**Earthquakes:**
+
+* Earthquakes occur when there is a sudden release of energy as the plates move past each other. This energy release creates seismic waves that travel through the Earth's interior and are recorded as an earthquake.
+* There are three main types of plate boundaries where earthquakes occur:
+	+ Divergent boundaries: Where plates are moving apart and new crust is being created (e.g., mid-ocean ridges).
+	+ Convergent boundaries: Where plates are moving towards each other and collide (e.g., subduction zones).
+	+ Transform boundaries: Where plates are sliding past each other horizontally (e.g., San Andreas Fault).
+
+**Volcanoes:**
+
+* Volcanoes are formed when magma (molten rock) from the Earth's mantle rises to the surface through weaknesses in the overlying plates.
+* At convergent boundaries, one plate is forced beneath another, causing the overlying plate to melt and produce magma.
+* At divergent boundaries, new crust is being created, and magma rises to the surface to fill the gap.
+
+**Mountain Formation:**
+
+* Mountains are formed when plates collide and push up the Earth's surface.
+* At convergent boundaries, the plates are forced upwards to form mountain ranges, such as the Himalayas or the Andes.
+* The process of plate collision can also cause the Earth's crust to thicken, resulting in the formation of mountain ranges like the Rockies or the Alps.
+
+In summary, plate tectonics explains that earthquakes occur when plates move past each other, volcanoes form when magma rises to the surface through weaknesses in the plates, and mountains are formed when plates collide and push up the Earth's surface. The constant movement of the plates is responsible for shaping our planet's surface and creating the features we see today.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Plate tectonics is the theory that the Earth's outer layer, the lithosphere, is broken into large plates that move relative to each other. These plates are in constant motion, sliding over the more fluid asthenosphere below. This movement is known as plate tectonics. Here's how it explains earthquakes, volcanoes, and mountain formation:
+
+**Earthquakes:**
+
+* As plates move, they can get stuck at their boundaries, causing stress to build up.
+* When the stress becomes too great, the plates will suddenly move, releasing the stored energy as seismic waves, which we feel as an earthquake.
+* The type and location of earthquakes depend on the type of plate boundary and the movement of the plates.
+* Earthquakes can occur at three types of plate boundaries: divergent (where plates move apart), convergent (where plates move towards each other), and transform (where plates slide past each other).
+
+**Volcanoes:**
+
+* At convergent plate boundaries, one plate is being pushed beneath another (subduction) or two plates are colliding (continental-continental collision).
+* As the plates converge, the Earth's mantle is melted, producing magma that rises to the surface, resulting in volcanic activity.
+* Volcanoes can also form at divergent plate boundaries, where new crust is being created as magma rises to the surface.
+* Volcanoes can also form at hotspots, where mantle plumes rise to the surface, creating volcanic activity.
+
+**Mountain Formation:**
+
+* At convergent plate boundaries, the plates can collide and crumple, forming mountains.
+* The process of mountain building is known as orogenesis.
+* The type of mountain formed depends on the type of plate boundary and the movement of the plates.
+* Folding, faulting, and volcanic activity can all contribute to the formation of mountains.
+
+**Additional Key Points:**
+
+* The movement of plates is slow, taking millions of years to move just a few centimeters.
+* The plates are not rigid and can bend and deform as they move.
+* The movement of plates is driven by convection currents in the Earth's mantle and the release of heat from the Earth's core.
+
+In summary, plate tectonics explains earthquakes, volcanoes, and mountain formation by describing the movement of the Earth's lithosphere and the resulting interactions between the plates. The theory helps us understand the dynamic nature of the Earth's surface and the processes that shape our planet.
+```
+</details>
+
+---
+
+### `summaries_014` (idx: 14)
+> Summarize the Paris Agreement's goals, mechanisms, and criticisms in ~150 words.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 189 | 241 | 52 | 27.5% |
+| Wall time (s)  | 19.045 | 19.255 | 0.210 | 1.1% |
+| Avg entropy    | 0.478 | 0.422 | -0.056 | -11.7% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+The Paris Agreement is an international accord aimed at mitigating climate change by limiting global warming to well below 2°C above pre-industrial levels and pursuing efforts to limit it to 1.5°C. The agreement sets a framework for countries to reduce greenhouse gas emissions through Nationally Determined Contributions (NDCs), which outline each country's emission reduction targets. The agreement also establishes a global stocktake to review and increase ambition every five years, as well as a mechanism for providing finance and technology transfer to support developing countries. Critics argue that the agreement does not go far enough to address the scale of the climate crisis, as it does not include binding emissions targets or a timeline for achieving them. Additionally, some countries have been slow to submit their NDCs or have not set ambitious enough targets. Despite these criticisms, the Paris Agreement represents a significant step forward in global cooperation on climate change and has been ratified by almost all countries worldwide.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+The Paris Agreement is an international accord aimed at mitigating climate change by limiting global warming to well below 2°C above pre-industrial levels and pursuing efforts to limit it to 1.5°C. The agreement sets a framework for countries to reduce greenhouse gas emissions and adapt to the impacts of climate change. Key mechanisms include:
+
+* Nationally Determined Contributions (NDCs): Countries submit emission reduction targets and plans for implementation.
+* Global stocktake: A regular review process to assess collective progress and increase ambition.
+* Financing: Developed countries agreed to mobilize $100 billion per year in climate finance for developing countries by 2020.
+
+Criticisms include:
+
+* Inadequate ambition: Some argue that the agreement's goals are not sufficient to address the scale of the climate crisis.
+* Lack of enforcement: The agreement relies on voluntary commitments, leaving room for countries to backtrack on their pledges.
+* Inequitable distribution of responsibilities: Developed countries are not doing enough to reduce their emissions, while developing countries bear the brunt of climate impacts.
+
+Despite these criticisms, the Paris Agreement represents a crucial step towards global cooperation on climate action and has galvanized international efforts to address this pressing issue.
+```
+</details>
+
+---
+
+### `summaries_015` (idx: 15)
+> Summarize how electric vehicles work and the lifecycle emissions trade‑offs vs gasoline
+cars.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 546 | 579 | 33 | 6.0% |
+| Wall time (s)  | 65.621 | 65.445 | -0.177 | -0.3% |
+| Avg entropy    | 0.412 | 0.477 | 0.065 | 15.7% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here's a summary of how electric vehicles (EVs) work and their lifecycle emissions trade-offs compared to gasoline cars:
+
+**How Electric Vehicles Work:**
+
+Electric vehicles are powered by an electric motor that uses electricity stored in a battery pack. The battery is charged by an external power source, such as a wall socket or charging station. EVs can be charged at home, at public charging stations, or even at work.
+
+The electric motor uses electrical energy to propel the vehicle, eliminating the need for a gasoline engine. EVs typically have a single-speed or multi-speed transmission, and some models offer regenerative braking, which captures kinetic energy and converts it back into electrical energy to recharge the battery.
+
+**Lifecycle Emissions Trade-Offs:**
+
+The emissions trade-offs between electric vehicles and gasoline cars depend on several factors, including the source of electricity used to charge the EV, the production process of the vehicle, and the vehicle's usage patterns.
+
+**Advantages of Electric Vehicles:**
+
+1. **Zero Tailpipe Emissions:** EVs produce no tailpipe emissions, reducing air pollution and greenhouse gas emissions in urban areas.
+2. **Lower Well-to-Wheel Emissions:** When charged with renewable energy sources, EVs can have a significantly lower carbon footprint compared to gasoline cars.
+3. **Less Maintenance:** EVs have fewer moving parts and no oil changes are required, reducing maintenance costs.
+
+**Disadvantages of Electric Vehicles:**
+
+1. **Production Emissions:** The production process for EVs requires energy and generates emissions, which can offset some of the benefits.
+2. **Grid Emissions:** If charged using non-renewable energy sources, EVs can still contribute to greenhouse gas emissions.
+3. **Battery Production:** The production of EV batteries requires energy and generates emissions, although this is decreasing as technology improves.
+
+**Comparison to Gasoline Cars:**
+
+1. **Well-to-Wheel Emissions:** Gasoline cars emit an average of 4.6 metric tons of CO2 per year, while EVs charged with renewable energy emit an average of 1.4 metric tons of CO2 per year.
+2. **Production Emissions:** Gasoline cars require more energy to produce, resulting in higher emissions during the production process.
+3. **Lifespan Emissions:** EVs tend to have a longer lifespan than gasoline cars, reducing the total emissions over their lifetime.
+
+**Conclusion:**
+
+While electric vehicles have their own set of emissions trade-offs, they offer significant advantages over gasoline cars, particularly when charged with renewable energy sources. As the grid becomes increasingly powered by renewable energy, EVs are likely to become an increasingly important part of the transition to a low-carbon transportation sector.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here's a summary of how electric vehicles (EVs) work and the lifecycle emissions trade-offs compared to gasoline cars:
+
+**How Electric Vehicles Work:**
+
+Electric vehicles are powered by an electric motor, which is powered by a battery pack that can be charged from an external power source, such as a wall socket or charging station. The battery pack is typically made up of multiple cells that store electrical energy, which is converted into mechanical energy to propel the vehicle.
+
+**Lifecycle Emissions Trade-Offs:**
+
+When considering the environmental impact of EVs, it's essential to look at the entire lifecycle emissions, including production, use, and end-of-life disposal. Here's a breakdown of the trade-offs:
+
+**Production Emissions:**
+
+* EVs have a higher production emissions footprint due to the energy required to manufacture the battery pack, which is typically made from materials like lithium, cobalt, and nickel.
+* However, EVs tend to have a lower production emissions intensity than gasoline cars, as they require less energy to manufacture the vehicle itself.
+
+**Use Emissions:**
+
+* EVs produce zero tailpipe emissions, as they run solely on electricity from the battery pack.
+* However, the emissions from the power plant generating the electricity used to charge the vehicle can vary depending on the source of the electricity. In regions with a high share of renewable energy in the grid, EVs can have a significantly lower emissions footprint than gasoline cars.
+
+**End-of-Life Disposal:**
+
+* EV batteries can be recycled, reducing the need for primary material extraction and processing.
+* However, the recycling process itself can have emissions implications, and the environmental impact of battery disposal is still being researched and debated.
+
+**Comparison to Gasoline Cars:**
+
+* In regions with a high share of renewable energy in the grid, EVs can have a lower lifecycle emissions footprint than gasoline cars, especially over the vehicle's lifetime.
+* In regions with a high share of fossil fuels in the grid, EVs may have a higher emissions footprint than gasoline cars.
+* However, even in regions with a high share of fossil fuels, EVs can still offer significant emissions reductions over the vehicle's lifetime, especially if the vehicle is driven frequently and charged from the grid.
+
+**Key Takeaways:**
+
+* EVs have a higher production emissions footprint than gasoline cars, but lower emissions intensity.
+* EVs produce zero tailpipe emissions, reducing emissions during use.
+* End-of-life disposal and recycling of EV batteries are important considerations, but still being researched and debated.
+* The emissions trade-offs between EVs and gasoline cars depend on the source of the electricity used to charge the vehicle and the region's energy mix.
+
+Overall, electric vehicles offer a promising solution for reducing emissions and mitigating climate change, but it's essential to consider the entire lifecycle emissions footprint and the regional energy mix when evaluating their environmental impact.
+```
+</details>
+
+---
+
+### `summaries_016` (idx: 16)
+> Summarize quantum computing's basic idea (qubits, superposition, interference) without
+equations.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 266 | 340 | 74 | 27.8% |
+| Wall time (s)  | 32.221 | 28.304 | -3.917 | -12.2% |
+| Avg entropy    | 0.518 | 0.468 | -0.050 | -9.7% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Quantum computing is a new way of processing information that's different from classical computing. Here's a simplified explanation of its basic idea:
+
+**Qubits:** In classical computing, information is stored as bits, which can have a value of either 0 or 1. Quantum computers use "qubits," which are like special kinds of bits that can exist in multiple states at the same time. Imagine a coin that's not just heads or tails, but both heads and tails simultaneously!
+
+**Superposition:** Qubits can exist in multiple states, known as superposition. This means a single qubit can represent many different values or possibilities all at once. Think of it like a coin spinning in the air – it's not just heads or tails, but a mix of both until it lands.
+
+**Interference:** When multiple qubits interact, they can "talk" to each other and affect each other's states. This is called interference. Imagine two spinning coins that interact and create a new pattern – the outcome is not just a simple combination of the two, but a complex pattern that's hard to predict.
+
+These principles allow quantum computers to perform calculations and solve problems that are much faster and more efficient than classical computers. It's like having a superpower that lets you explore many possibilities simultaneously and find the best solution quickly!
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Quantum computing is a new way of processing information that's different from classical computing. Here's a simplified explanation of its basic idea:
+
+**Qubits:** In classical computing, information is stored as bits, which can have a value of either 0 or 1. Quantum computers use "qubits" (quantum bits) that can exist in multiple states at the same time. Think of it like a coin that can be both heads and tails simultaneously.
+
+**Superposition:** Qubits can exist in a state called superposition, where they can represent multiple values or states simultaneously. This means a qubit can be both 0 and 1 at the same time, allowing it to process multiple possibilities simultaneously.
+
+**Interference:** When multiple qubits are in superposition, they can interact with each other in a way that's called interference. This is like the sound waves of two different notes playing together - they can create a new sound that's different from either note alone. In quantum computing, this interference can help the qubits find the solution to a problem more efficiently.
+
+To illustrate this, imagine you're trying to find a specific combination of keys in a locked box. A classical computer would try each key one by one, but a quantum computer could try all the keys simultaneously, thanks to superposition. The qubits would then "interfere" with each other to find the correct combination, making the process much faster.
+
+In summary, quantum computing uses qubits that can exist in multiple states (superposition) and interact with each other in a way that allows them to process multiple possibilities simultaneously (interference), making it potentially much faster and more powerful than classical computing.
+```
+</details>
+
+---
+
+### `summaries_017` (idx: 17)
+> Summarize photosynthesis and cellular respiration and how they are coupled in ecosystems.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 502 | 441 | -61 | -12.2% |
+| Wall time (s)  | 53.550 | 44.680 | -8.869 | -16.6% |
+| Avg entropy    | 0.292 | 0.291 | -0.000 | -0.1% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here's a summary of photosynthesis and cellular respiration, as well as how they are coupled in ecosystems:
+
+**Photosynthesis:**
+
+Photosynthesis is the process by which plants, algae, and some bacteria convert light energy from the sun into chemical energy in the form of glucose (sugar). This process occurs in specialized organelles called chloroplasts and requires water, carbon dioxide, and light. The overall equation for photosynthesis is:
+
+6 CO2 + 6 H2O + light energy → C6H12O6 (glucose) + 6 O2
+
+**Cellular Respiration:**
+
+Cellular respiration is the process by which cells generate energy from the breakdown of glucose and other organic molecules. This process occurs in the mitochondria and involves three main stages: glycolysis, the citric acid cycle, and oxidative phosphorylation. The overall equation for cellular respiration is:
+
+C6H12O6 (glucose) + 6 O2 → 6 CO2 + 6 H2O + ATP (energy)
+
+**Coupling in Ecosystems:**
+
+Photosynthesis and cellular respiration are coupled in ecosystems because they are the two sides of the same energy coin. During photosynthesis, plants and other autotrophs produce glucose and oxygen as byproducts. The glucose is used by the plant for growth and energy, while the oxygen is released into the atmosphere.
+
+Meanwhile, heterotrophic organisms (such as animals, fungi, and bacteria) require energy to survive and reproduce. They obtain this energy by breaking down glucose and other organic molecules through cellular respiration. During cellular respiration, the glucose is converted into ATP, which is used to power the organism's metabolic processes.
+
+In ecosystems, the glucose produced during photosynthesis is transferred to heterotrophic organisms through the food chain. For example, plants are eaten by herbivores, which are then eaten by carnivores. At each trophic level, the energy from the glucose is passed from one organism to another, ultimately ending up back in the atmosphere as carbon dioxide and water vapor.
+
+In summary, photosynthesis and cellular respiration are coupled in ecosystems because they are the two processes that allow energy to be transferred from the sun to heterotrophic organisms. The energy from sunlight is captured by plants and other autotrophs during photosynthesis, and then transferred to heterotrophic organisms through the food chain, ultimately ending up back in the atmosphere as carbon dioxide and water vapor.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Photosynthesis and cellular respiration are two fundamental biological processes that are intimately connected and play a crucial role in ecosystems.
+
+**Photosynthesis:**
+
+Photosynthesis is the process by which plants, algae, and some bacteria convert light energy from the sun into chemical energy in the form of glucose (sugar). This process occurs in specialized organelles called chloroplasts and requires water, carbon dioxide, and light. The overall equation for photosynthesis is:
+
+6 CO2 + 6 H2O + light energy → C6H12O6 (glucose) + 6 O2
+
+**Cellular Respiration:**
+
+Cellular respiration is the process by which cells generate energy from the breakdown of glucose and other organic molecules. This process occurs in the mitochondria and requires oxygen. The overall equation for cellular respiration is:
+
+C6H12O6 (glucose) + 6 O2 → 6 CO2 + 6 H2O + ATP (energy)
+
+**Coupling in Ecosystems:**
+
+In ecosystems, photosynthesis and cellular respiration are coupled in a crucial way. The energy from sunlight is captured by plants during photosynthesis, which produces glucose and oxygen. This glucose is then used by the plant as energy and building blocks for growth and development.
+
+The oxygen produced during photosynthesis is released into the atmosphere, where it is used by other organisms, such as animals, during cellular respiration. These animals break down the glucose they consume to produce energy, releasing carbon dioxide and water as byproducts.
+
+In this way, the energy from sunlight is transferred from one organism to another, supporting the entire food chain. This coupling of photosynthesis and cellular respiration is essential for life on Earth, as it allows energy to be transferred and used by different organisms in the ecosystem.
+
+In summary, photosynthesis and cellular respiration are two interconnected processes that are crucial for life on Earth. Photosynthesis captures energy from sunlight and produces glucose and oxygen, while cellular respiration breaks down glucose to produce energy and releases carbon dioxide and water. The coupling of these two processes allows energy to be transferred and used by different organisms in the ecosystem, supporting the entire food chain.
+```
+</details>
+
+---
+
+### `summaries_018` (idx: 18)
+> Summarize the role of randomized controlled trials in medical research and their
+limitations.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 486 | 554 | 68 | 14.0% |
+| Wall time (s)  | 51.882 | 63.110 | 11.227 | 21.6% |
+| Avg entropy    | 0.521 | 0.562 | 0.041 | 7.9% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Randomized controlled trials (RCTs) are a type of clinical trial that are widely considered the gold standard in medical research. Here's a summary of their role and limitations:
+
+**Role:**
+
+1. **Establish causality**: RCTs help establish cause-and-effect relationships between an intervention (e.g., a new treatment or medication) and a specific health outcome.
+2. **Evaluate efficacy**: RCTs assess the effectiveness of an intervention in a controlled environment, reducing the risk of bias and confounding variables.
+3. **Compare interventions**: RCTs allow researchers to compare the effects of different interventions, treatments, or dosages to determine which one is most effective.
+4. **Generate evidence-based medicine**: RCTs provide high-quality evidence that informs clinical practice guidelines, healthcare policy, and treatment decisions.
+
+**Limitations:**
+
+1. **Limited generalizability**: RCTs often involve a specific population, which may not be representative of the broader patient population or real-world settings.
+2. **Selection bias**: Participants may not be randomly selected, which can lead to biased results if certain groups are overrepresented or underrepresented.
+3. **Blinding**: Blinding participants or investigators to the intervention can be challenging, especially in complex trials, which may introduce bias.
+4. **Sample size**: RCTs require large sample sizes to achieve statistical significance, which can be time-consuming and costly.
+5. **Resource-intensive**: RCTs are often resource-intensive, requiring significant funding, infrastructure, and personnel.
+6. **Ethical considerations**: RCTs involve randomization, which can raise ethical concerns, such as the risk of harm to participants or the potential for unequal access to interventions.
+7. **Long-term follow-up**: RCTs may not capture long-term effects or delayed adverse events, which can be important in chronic conditions.
+8. **Complexity of interventions**: RCTs may struggle to capture the complexity of real-world interventions, which can involve multiple components, interactions, or variables.
+9. **Regulatory hurdles**: RCTs must comply with regulatory requirements, which can be time-consuming and restrictive.
+10. **Publication bias**: RCTs may not always be published, which can lead to a biased understanding of the evidence base.
+
+Despite these limitations, RCTs remain a crucial tool in medical research, providing high-quality evidence that informs clinical practice and healthcare decision-making.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Randomized controlled trials (RCTs) are a crucial component of medical research, playing a vital role in establishing the efficacy and safety of new treatments, interventions, and therapies. Here's a summary of their role and limitations:
+
+Role:
+
+1. **Establishing causality**: RCTs help establish cause-and-effect relationships between an intervention and its outcomes by randomly assigning participants to treatment or control groups.
+2. **Comparing treatments**: RCTs allow researchers to compare the effects of different treatments, medications, or interventions on a specific health outcome, providing valuable insights into their relative benefits and risks.
+3. **Reducing bias**: Randomization minimizes confounding variables and selection bias, ensuring that the groups being compared are similar in all relevant aspects except for the intervention being tested.
+4. **Estimating treatment effects**: RCTs provide an estimate of the treatment effect, which can be used to inform clinical decision-making and guide future research.
+
+Limitations:
+
+1. **Sample size and generalizability**: RCTs often require large sample sizes to ensure statistical power, which can be challenging, especially for rare diseases or small patient populations. This may limit the generalizability of the findings to real-world settings.
+2. **Randomization bias**: Although randomization is designed to minimize bias, it's not always possible to account for all potential confounding variables, and some biases may still occur.
+3. **Blinding**: Blinding participants and researchers to the treatment allocation can be difficult, especially in certain types of studies (e.g., behavioral or surgical interventions). This may introduce bias and affect the outcome.
+4. **Long-term effects**: RCTs often have limited follow-up periods, which may not capture long-term effects or delayed outcomes.
+5. **Cost and logistics**: Conducting RCTs can be resource-intensive, requiring significant funding, infrastructure, and personnel.
+6. **Ethical considerations**: RCTs involve randomizing participants to control groups, which may not receive the treatment being tested. This raises ethical concerns, such as the potential for harm or delay in receiving effective treatment.
+7. **Practicality**: RCTs may not be feasible or practical for certain research questions, such as studying rare events or complex interventions.
+8. **Interpretation of results**: RCTs may not always provide a clear answer to the research question, and the results may be influenced by various factors, such as treatment adherence, patient characteristics, and study design.
+
+Despite these limitations, RCTs remain a cornerstone of medical research, providing valuable insights into the effectiveness and safety of new treatments. By acknowledging and addressing these limitations, researchers can design and conduct high-quality RCTs that inform evidence-based medicine and improve patient care.
+```
+</details>
+
+---
+
+### `summaries_019` (idx: 19)
+> Summarize cloud cost optimization best practices for startups in ~150 words.
+
+| Metric | Baseline | SRB | Δ (SRB - Base) | % Change |
+|---|---:|---:|---:|---:|
+| Tokens emitted | 246 | 252 | 6 | 2.4% |
+| Wall time (s)  | 30.037 | 19.734 | -10.303 | -34.3% |
+| Avg entropy    | 0.605 | 0.540 | -0.065 | -10.7% |
+| Stop reason    | eos_token | eos_token | — | — |
+
+<details>
+<summary><strong>Baseline response</strong></summary>
+
+```text
+Here's a summary of cloud cost optimization best practices for startups in 150 words:
+
+1. **Monitor and track usage**: Use cloud provider metrics and tools to monitor and track usage, identifying areas of inefficiency and opportunities for optimization.
+2. **Right-size instances**: Ensure instance types match workload requirements, and resize or downsize as needed to avoid overprovisioning.
+3. **Reserve instances**: Reserve instances for long-term commitments to reduce costs by up to 75%.
+4. **Use spot instances**: Leverage spot instances for non-critical workloads, which can provide up to 90% cost savings.
+5. **Shut down underutilized resources**: Regularly review and shut down underutilized resources, such as idle instances or unused storage.
+6. **Implement a cost allocation model**: Establish a cost allocation model to track costs by department, team, or project, promoting accountability and cost optimization.
+7. **Use cloud cost optimization tools**: Utilize third-party tools, such as Cloudability or ParkMyCloud, to help optimize and automate cloud cost management.
+8. **Plan for growth**: Plan for growth and scalability, avoiding costly upgrades or migrations by right-sizing resources from the start.
+```
+</details>
+
+<details>
+<summary><strong>SRB response</strong></summary>
+
+```text
+Here are some cloud cost optimization best practices for startups:
+
+1. **Monitor and track costs**: Use cloud provider's cost tracking tools to monitor and track cloud expenses. This helps identify areas of inefficiency and opportunities for cost reduction.
+2. **Right-size instances**: Ensure instance types and sizes match workload requirements to avoid overspending on resources.
+3. **Turn off unused resources**: Regularly review and turn off unused resources, such as instances, storage, and databases, to avoid unnecessary costs.
+4. **Use reserved instances**: Consider using reserved instances for long-term commitments to reduce costs.
+5. **Optimize storage**: Use cost-effective storage options, such as S3 instead of EBS, and compress data to reduce storage costs.
+6. **Use cloud-native services**: Leverage cloud-native services, such as serverless computing and containerization, to reduce costs and improve efficiency.
+7. **Plan for growth**: Anticipate growth and plan for scaling to avoid sudden spikes in costs.
+8. **Use cost estimation tools**: Utilize cost estimation tools, such as Cloudability or ParkMyCloud, to predict and optimize costs.
+
+By following these best practices, startups can optimize their cloud costs, reduce expenses, and allocate resources more efficiently.
+```
+</details>
+
+---
